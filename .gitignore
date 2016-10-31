@@ -1,0 +1,6 @@
+*~
+node_modules/
+.eslint*
+.sublime*
+gulpfile*
+package.json
