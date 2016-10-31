@@ -1,0 +1,25 @@
+body {
+	-webkit-touch-callout: none; 
+	-webkit-user-select: none;   
+	-moz-user-select: none;      
+	overflow:hidden;
+}
+
+.no-padding {
+	padding: 0px;
+}
+
+.container {
+	max-width: 600px;
+	padding: 0px;
+}
+
+.button-image-size {
+	height: 60px;
+	width: 60px;
+}
+
+.btn-rounded {
+	border-radius: 55px;
+    padding: 0px;
+}
