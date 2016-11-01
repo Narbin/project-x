@@ -55,7 +55,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		setImageSrc() {
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
-					this.arrayOfGems[i][j].imageSrc = `images/${type}.svg`;
+					this.arrayOfGems[i][j].imageSrc = `images/${this.arrayOfGems[i][j].type}.svg`;
 				}
 			}
 		}
