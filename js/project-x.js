@@ -2,7 +2,7 @@
 document.addEventListener(`DOMContentLoaded`, () => {
 
 	class Board {
-		constructor(_size, _numberOfGemTypes, _typeOfBundle){
+		constructor(_size, _numberOfGemTypes, _typeOfBundle) {
 			this.size = _size;
 			this.numberOfGemTypes = _numberOfGemTypes;
 			this.numberOfGems = Math.pow(_size, 2);
@@ -11,36 +11,45 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			this.createGems();
 		}
 
-		createGems(){
+		createGems() {
 			let positionY = 0;
-			for(let i = 0; i < this.numberOfGems; i += 1){
-				if(i%this.size === 0){
+			for (let i = 0; i < this.numberOfGems; i += 1) {
+				if (i % this.size === 0) {
 					positionY += 1;
 				}
 				this.arrayOfGems[i] = {
 					type: this.randomTypeOfGem(this.typeOfBundle),
 					imageSrc: null,
-					points: null,
-					positionXY: [i%this.size,positionY-1],
-				}
+					points: 1,
+					positionXY: [i % this.size, positionY - 1]
+				};
+				this.setImageSrc(this.arrayOfGems[i].type, i);
 			}
 			return this;
-		};
+		}
 
-		randomTypeOfGem(bundle){
-			let bundleObject = [ ]; 
-			switch(bundle) {
+		randomTypeOfGem(bundle) {
+			let bundleObject = [ ];
+			switch (bundle) {
 				case `fruits`:
-					bundleObject = [`banana`,`cherry`,`pear`,`pineapple`,`raspberry`,`strawberry`];
+					bundleObject = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
+					break;
 				default:
-					bundleObject = [`banana`,`cherry`,`pear`,`pineapple`,`raspberry`,`strawberry`];
+					bundleObject = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
+					break;
 			}
-			return bundleObject[Math.floor(Math.random()*bundleObject.length)];
-		};
+			return bundleObject[Math.floor(Math.random() * bundleObject.length)];
+		}
+
+		setImageSrc(type, i) {
+			this.arrayOfGems[i].imageSrc = `images/${type}.svg`;
+			return this.arrayOfGems[i].imageSrc;
+		}
+
 
 	}
 	function createNewBoard() {
-		newBoard = new Board(8,6,`fruits`);
+		newBoard = new Board(8, 6, `fruits`);
 	}
 	createNewBoard();
 
