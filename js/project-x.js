@@ -9,6 +9,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			this.arrayOfGems = [ ];
 			this.typeOfBundle = _typeOfBundle;
 			this.createGems();
+			this.drawGems();
 		}
 
 		createGems() {
@@ -46,6 +47,15 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			return this.arrayOfGems[i].imageSrc;
 		}
 
+		drawGems() {
+			let divForGems = $(`.panel-body`)[0];
+
+			for (let i = 0; i < this.numberOfGems; i += 1) {
+				let creatingImg = $("<img>", {"class": "col-xs-2 no-padding", "src": this.arrayOfGems[i].imageSrc});
+				$(divForGems).append(creatingImg);
+			}
+			return this;
+		}
 
 	}
 	function createNewBoard() {
