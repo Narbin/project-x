@@ -19,23 +19,21 @@ document.addEventListener(`DOMContentLoaded`, () => {
 	}
 
 	function changeGemsPosition(gem) {
-		let actualPoxX = parseInt(gem.getAttribute(`x`)),
-			actualPosY = parseInt(gem.getAttribute(`y`)),
-			selectedPosX = parseInt(alreadyGemSelected.getAttribute(`x`)),
-			selectedPosY = parseInt(alreadyGemSelected.getAttribute(`y`)),
+		let x1 = parseInt(gem.getAttribute(`x`)),
+			y1 = parseInt(gem.getAttribute(`y`)),
+			x2 = parseInt(alreadyGemSelected.getAttribute(`x`)),
+			y2 = parseInt(alreadyGemSelected.getAttribute(`y`)),
 			tempGem;
 
-		if(actualPoxX === selectedPosX + 1 && actualPosY === selectedPosY || actualPoxX === selectedPosX - 1 && actualPosY === selectedPosY || actualPoxX === selectedPosX && actualPosY === selectedPosY + 1 || actualPoxX === selectedPosX && actualPosY === selectedPosY - 1){
+		if(x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1){
 			
-			tempGem = newBoard.arrayOfGems[selectedPosX, selectedPosY];
-			
-			newBoard.arrayOfGems[selectedPosX, selectedPosY] = newBoard.arrayOfGems[actualPoxX, actualPosY];
-			
-			newBoard.arrayOfGems[actualPoxX, actualPosY] = tempGem;
+			//swap:
+			tempGem = newBoard.arrayOfGems[y2][x2];
+			newBoard.arrayOfGems[y2][x2] = newBoard.arrayOfGems[y1][x1];
+			newBoard.arrayOfGems[y1][x1] = tempGem;
 			
 			newBoard.clearBoardDOM();
 			newBoard.drawGems();
-			console.log(actualPoxX,actualPosY);
 			return true;
 
 		}
