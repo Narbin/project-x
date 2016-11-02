@@ -1,6 +1,33 @@
 /* global document:true $:true*/
 document.addEventListener(`DOMContentLoaded`, () => {
 
+	let alreadyGemSelected = ``;
+
+	$(`.panel-body`).bind('click', whatGemWasClicked);
+
+	$('#resetBoard').bind('click', function() {
+		newBoard.clearBoardDOM();
+		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
+	});
+
+	function whatGemWasClicked(event) {
+		if (event.target !== event.currentTarget) {
+			console.log(event.target);
+			selectGem(event.target);
+		}
+		event.stopPropagation();
+	}
+
+	function selectGem(gem) {
+		if(alreadyGemSelected === event.target) {
+			$(event.target).toggleClass( "selected" );
+			alreadyGemSelected = ``;
+		} else if (alreadyGemSelected === ``) {
+			$(event.target).toggleClass( "selected" );
+			alreadyGemSelected = event.target;
+		} 
+	}
+
 	class Board {
 		constructor(_size, _typeOfBundle) {
 			this.size = _size;
@@ -80,6 +107,11 @@ document.addEventListener(`DOMContentLoaded`, () => {
 				}
 			}
 		}
+	
+		clearBoardDOM() {
+			$(`.panel-body`)[0].innerHTML = ``;
+		}
+
 	}
 	function createNewBoard() {
 		newBoard = new Board(8, `fruits`);

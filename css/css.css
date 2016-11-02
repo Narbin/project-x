@@ -5,6 +5,10 @@ body {
 	overflow:hidden;
 }
 
+img {
+	border-radius: 40px;
+}
+
 .no-padding {
 	padding: 0px;
 }
@@ -22,4 +26,16 @@ body {
 .btn-rounded {
 	border-radius: 55px;
     padding: 0px;
+}
+
+.selected{
+	z-index:100;
+    animation: selectedDiv 3s ease infinite;
+    
+}
+
+@keyframes selectedDiv { 
+    0%{box-shadow:#FFC107 0px 0px 0.5px 0.5px}
+    50%{box-shadow:#FF9800 0px 0px 3px 3px}
+    100%{box-shadow:#FFC107 0px 0px 0.5px 0.5px}
 }
