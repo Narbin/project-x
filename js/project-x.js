@@ -70,7 +70,9 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			let divForGems = $(`.panel-body`)[0];
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
-					let creatingImg = $('<img>', { 'class': 'col-xs-2 no-padding', 'src': this.arrayOfGems[i][j].imageSrc });
+					let creatingImg = $('<img>', { 'class': 'col-xs-2 no-padding gem', 'src': this.arrayOfGems[i][j].imageSrc});
+					$(creatingImg).attr(`x`, `${j}`);
+					$(creatingImg).attr(`y`, `${i}`);
 					$(divForGems).append(creatingImg);
 				}
 			}

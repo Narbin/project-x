@@ -5,8 +5,9 @@ body {
 	overflow:hidden;
 }
 
-img {
+.gem {
 	border-radius: 40px;
+	cursor: pointer;
 }
 
 .no-padding {
