@@ -13,19 +13,43 @@ document.addEventListener(`DOMContentLoaded`, () => {
 	function whatGemWasClicked(event) {
 		if (event.target !== event.currentTarget) {
 			console.log(event.target);
-			selectGem(event.target);
+			selectGemDOM(event.target);
 		}
 		event.stopPropagation();
 	}
 
-	function selectGem(gem) {
+	function changeGemsPosition(gem) {
+		let actualPositionX = parseInt(gem.getAttribute(`x`)),
+			actualPositionY = parseInt(gem.getAttribute(`y`)),
+			selectedPositionX = parseInt(alreadyGemSelected.getAttribute(`x`)),
+			selectedPositionY = parseInt(alreadyGemSelected.getAttribute(`y`)),
+			tempGem;
+
+		if(actualPositionX === selectedPositionX + 1 && actualPositionY === selectedPositionY || actualPositionX === selectedPositionX - 1 && actualPositionY === selectedPositionY || actualPositionX === selectedPositionX && actualPositionY === selectedPositionY + 1 || actualPositionX === selectedPositionX && actualPositionY === selectedPositionY - 1){
+			tempGem = newBoard.arrayOfGems[selectedPositionX, selectedPositionY];
+			newBoard.arrayOfGems[selectedPositionX, selectedPositionY] = newBoard[actualPositionX, actualPositionY];
+			newBoard.arrayOfGems[actualPositionX, actualPositionY] = tempGem;
+			newBoard.clearBoardDOM();
+			newBoard.drawGems();
+			console.log(actualPositionX,actualPositionY);
+			return true;
+
+		}
+	}
+
+	function selectGemDOM(gem) {
 		if(alreadyGemSelected === event.target) {
 			$(event.target).toggleClass( "selected" );
 			alreadyGemSelected = ``;
 		} else if (alreadyGemSelected === ``) {
 			$(event.target).toggleClass( "selected" );
 			alreadyGemSelected = event.target;
-		} 
+		} else {
+			if(changeGemsPosition(event.target)){
+				$(alreadyGemSelected).toggleClass( "selected" );
+				alreadyGemSelected = ``;
+			}
+		}
 	}
 
 	class Board {
@@ -46,7 +70,8 @@ document.addEventListener(`DOMContentLoaded`, () => {
 					this.arrayOfGems[i][j] = {
 						type: this.randomTypeOfGem(this.typeOfBundle),
 						imageSrc: null,
-						points: 1
+						points: 1,
+						isSelected: false
 					};
 				}
 			}
