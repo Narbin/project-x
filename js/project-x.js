@@ -1,55 +1,77 @@
-/* global document:true $:true*/
+/* global document:true $:true event:true*/
 document.addEventListener(`DOMContentLoaded`, () => {
 
 	let alreadyTileSelected = ``;
 
-	$(`.panel-body`).bind('click', whatTileWasClicked);
+	$(`.panel-body`).bind(`click`, whatTileWasClicked);
 
-	$('#resetBoard').bind('click', function() {
+	$(`#resetBoard`).bind(`click`, function() {
 		newBoard.clearBoardDOM();
 		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
 	});
 
 	function whatTileWasClicked(event) {
 		if (event.target !== event.currentTarget) {
-			console.log(event.target);
 			selectTileDOM(event.target);
 		}
 		event.stopPropagation();
 	}
 
-	function changeTilesPosition(Tile) {
-		let x1 = parseInt(Tile.getAttribute(`x`)),
-			y1 = parseInt(Tile.getAttribute(`y`)),
-			x2 = parseInt(alreadyTileSelected.getAttribute(`x`)),
-			y2 = parseInt(alreadyTileSelected.getAttribute(`y`)),
+	function changeTilesPosition(tile) {
+		let x1 = parseInt(tile.getAttribute(`x`), 10),
+			y1 = parseInt(tile.getAttribute(`y`), 10),
+			x2 = parseInt(alreadyTileSelected.getAttribute(`x`), 10),
+			y2 = parseInt(alreadyTileSelected.getAttribute(`y`), 10),
 			tempTile;
 
-		if(x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1){
-			
-			//swap:
+		if (x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1) {
 			tempTile = newBoard.arrayOfTiles[y2][x2];
 			newBoard.arrayOfTiles[y2][x2] = newBoard.arrayOfTiles[y1][x1];
 			newBoard.arrayOfTiles[y1][x1] = tempTile;
-			
-			newBoard.clearBoardDOM();
-			newBoard.drawTiles();
-			return true;
 
+			$(tile).attr(`x`, `${x2}`);
+			$(tile).attr(`y`, `${y2}`);
+			$(alreadyTileSelected).attr(`x`, `${x1}`);
+			$(alreadyTileSelected).attr(`y`, `${y1}`);
+
+			let toTop = tile.offsetTop,
+				toLeft = tile.offsetLeft,
+				fromTop = alreadyTileSelected.offsetTop,
+				fromLeft = alreadyTileSelected.offsetLeft,
+				distanseX,
+				distanseY;
+
+			distanseX = fromTop - toTop;
+			distanseY = fromLeft - toLeft;
+
+			$(tile).animate({
+				left: `+=` + distanseY,
+				top: `+=` + distanseX
+			}, 150);
+
+			$(alreadyTileSelected).animate({
+				left: `-=` + distanseY,
+				top: `-=` + distanseX
+			}, 150, function () {
+				alreadyTileSelected = ``;
+			});
+
+			return true;
+		} else {
+			return false;
 		}
 	}
 
-	function selectTileDOM(Tile) {
-		if(alreadyTileSelected === event.target) {
-			$(event.target).toggleClass( "selected" );
+	function selectTileDOM() {
+		if (alreadyTileSelected === event.target) {
+			$(event.target).toggleClass(`selected`);
 			alreadyTileSelected = ``;
 		} else if (alreadyTileSelected === ``) {
-			$(event.target).toggleClass( "selected" );
+			$(event.target).toggleClass(`selected`);
 			alreadyTileSelected = event.target;
 		} else {
-			if(changeTilesPosition(event.target)){
-				$(alreadyTileSelected).toggleClass( "selected" );
-				alreadyTileSelected = ``;
+			if (changeTilesPosition(event.target)){
+				$(alreadyTileSelected).toggleClass(`selected`);
 			}
 		}
 	}
@@ -97,7 +119,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			let divForTiles = $(`.panel-body`)[0];
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
-					let creatingImg = $('<img>', { 'class': 'col-xs-2 no-padding Tile', 'src': this.arrayOfTiles[i][j].imageSrc});
+					let creatingImg = $('<img>', { 'class': 'col-xs-2 no-padding tile', 'src': this.arrayOfTiles[i][j].imageSrc });
 					$(creatingImg).attr(`x`, `${j}`);
 					$(creatingImg).attr(`y`, `${i}`);
 					$(divForTiles).append(creatingImg);
