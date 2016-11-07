@@ -1,53 +1,77 @@
-/* global document:true $:true*/
+/* global document:true $:true event:true*/
 document.addEventListener(`DOMContentLoaded`, () => {
 
-	let alreadyGemSelected = ``;
+	let alreadyTileSelected = ``;
 
-	$(`.panel-body`).bind('click', whatGemWasClicked);
+	$(`.panel-body`).bind(`click`, whatTileWasClicked);
 
-	$('#resetBoard').bind('click', function() {
+	$(`#resetBoard`).bind(`click`, function() {
 		newBoard.clearBoardDOM();
 		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
 	});
 
-	function whatGemWasClicked(event) {
+	function whatTileWasClicked(event) {
 		if (event.target !== event.currentTarget) {
-			console.log(event.target);
-			selectGemDOM(event.target);
+			selectTileDOM(event.target);
 		}
 		event.stopPropagation();
 	}
 
-	function changeGemsPosition(gem) {
-		let actualPositionX = parseInt(gem.getAttribute(`x`)),
-			actualPositionY = parseInt(gem.getAttribute(`y`)),
-			selectedPositionX = parseInt(alreadyGemSelected.getAttribute(`x`)),
-			selectedPositionY = parseInt(alreadyGemSelected.getAttribute(`y`)),
-			tempGem;
+	function changeTilesPosition(tile) {
+		let x1 = parseInt(tile.getAttribute(`x`), 10),
+			y1 = parseInt(tile.getAttribute(`y`), 10),
+			x2 = parseInt(alreadyTileSelected.getAttribute(`x`), 10),
+			y2 = parseInt(alreadyTileSelected.getAttribute(`y`), 10),
+			tempTile;
 
-		if(actualPositionX === selectedPositionX + 1 && actualPositionY === selectedPositionY || actualPositionX === selectedPositionX - 1 && actualPositionY === selectedPositionY || actualPositionX === selectedPositionX && actualPositionY === selectedPositionY + 1 || actualPositionX === selectedPositionX && actualPositionY === selectedPositionY - 1){
-			tempGem = newBoard.arrayOfGems[selectedPositionX, selectedPositionY];
-			newBoard.arrayOfGems[selectedPositionX, selectedPositionY] = newBoard[actualPositionX, actualPositionY];
-			newBoard.arrayOfGems[actualPositionX, actualPositionY] = tempGem;
-			newBoard.clearBoardDOM();
-			newBoard.drawGems();
-			console.log(actualPositionX,actualPositionY);
+		if (x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1) {
+			tempTile = newBoard.arrayOfTiles[y2][x2];
+			newBoard.arrayOfTiles[y2][x2] = newBoard.arrayOfTiles[y1][x1];
+			newBoard.arrayOfTiles[y1][x1] = tempTile;
+
+			$(tile).attr(`x`, `${x2}`);
+			$(tile).attr(`y`, `${y2}`);
+			$(alreadyTileSelected).attr(`x`, `${x1}`);
+			$(alreadyTileSelected).attr(`y`, `${y1}`);
+
+			let toTop = tile.offsetTop,
+				toLeft = tile.offsetLeft,
+				fromTop = alreadyTileSelected.offsetTop,
+				fromLeft = alreadyTileSelected.offsetLeft,
+				distanseX,
+				distanseY;
+
+			distanseX = fromTop - toTop;
+			distanseY = fromLeft - toLeft;
+
+			$(tile).animate({
+				left: `+=` + distanseY,
+				top: `+=` + distanseX
+			}, 150);
+
+			$(alreadyTileSelected).animate({
+				left: `-=` + distanseY,
+				top: `-=` + distanseX
+			}, 150, function () {
+				alreadyTileSelected = ``;
+			});
+
 			return true;
-
+		} else {
+			return false;
 		}
 	}
 
-	function selectGemDOM(gem) {
-		if(alreadyGemSelected === event.target) {
-			$(event.target).toggleClass( "selected" );
-			alreadyGemSelected = ``;
-		} else if (alreadyGemSelected === ``) {
-			$(event.target).toggleClass( "selected" );
-			alreadyGemSelected = event.target;
+	function selectTileDOM() {
+		if (alreadyTileSelected === event.target) {
+			$(event.target).toggleClass(`selected`);
+			alreadyTileSelected = ``;
+		} else if (alreadyTileSelected === ``) {
+			$(event.target).toggleClass(`selected`);
+			alreadyTileSelected = event.target;
 		} else {
-			if(changeGemsPosition(event.target)){
-				$(alreadyGemSelected).toggleClass( "selected" );
-				alreadyGemSelected = ``;
+			if (changeTilesPosition(event.target)){
+				$(alreadyTileSelected).toggleClass(`selected`);
 			}
 		}
 	}
@@ -56,19 +80,19 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		constructor(_size, _typeOfBundle) {
 			this.size = _size;
 			this.typeOfBundle = _typeOfBundle;
-			this.createGems();
+			this.createTiles();
 			this.shuffleBoard();
 			this.setImageSrc();
-			this.drawGems();
+			this.drawTiles();
 		}
 
-		createGems() {
-			this.arrayOfGems = new Array(this.size);
+		createTiles() {
+			this.arrayOfTiles = new Array(this.size);
 			for (let i = 0; i < this.size; i += 1) {
-				this.arrayOfGems[i] = new Array(this.size);
+				this.arrayOfTiles[i] = new Array(this.size);
 				for (let j = 0; j < this.size; j += 1) {
-					this.arrayOfGems[i][j] = {
-						type: this.randomTypeOfGem(this.typeOfBundle),
+					this.arrayOfTiles[i][j] = {
+						type: this.randomTypeOfTile(this.typeOfBundle),
 						imageSrc: null,
 						points: 1,
 						isSelected: false
@@ -78,7 +102,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			return this;
 		}
 
-		randomTypeOfGem(bundle) {
+		randomTypeOfTile(bundle) {
 			let bundleObject = [ ];
 			switch (bundle) {
 				case `fruits`:
@@ -91,14 +115,14 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			return bundleObject[Math.floor(Math.random() * bundleObject.length)];
 		}
 
-		drawGems() {
-			let divForGems = $(`.panel-body`)[0];
+		drawTiles() {
+			let divForTiles = $(`.panel-body`)[0];
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
-					let creatingImg = $('<img>', { 'class': 'col-xs-2 no-padding gem', 'src': this.arrayOfGems[i][j].imageSrc});
+					let creatingImg = $('<img>', { 'class': 'col-xs-2 no-padding tile', 'src': this.arrayOfTiles[i][j].imageSrc });
 					$(creatingImg).attr(`x`, `${j}`);
 					$(creatingImg).attr(`y`, `${i}`);
-					$(divForGems).append(creatingImg);
+					$(divForTiles).append(creatingImg);
 				}
 			}
 			return this;
@@ -107,7 +131,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		setImageSrc() {
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
-					this.arrayOfGems[i][j].imageSrc = `images/${this.arrayOfGems[i][j].type}.svg`;
+					this.arrayOfTiles[i][j].imageSrc = `images/${this.arrayOfTiles[i][j].type}.svg`;
 				}
 			}
 		}
@@ -116,18 +140,18 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
 					if (i > 1) {
-						if (this.arrayOfGems[i][j].type === this.arrayOfGems[i - 1][j].type && this.arrayOfGems[i][j].type === this.arrayOfGems[i - 2][j].type) {
-							let oldType = this.arrayOfGems[i][j].type;
-							while (oldType === this.arrayOfGems[i][j].type) {
-								this.arrayOfGems[i][j].type = this.randomTypeOfGem(this.typeOfBundle);
+						if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 1][j].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 2][j].type) {
+							let oldType = this.arrayOfTiles[i][j].type;
+							while (oldType === this.arrayOfTiles[i][j].type) {
+								this.arrayOfTiles[i][j].type = this.randomTypeOfTile(this.typeOfBundle);
 							}
 						}
 					}
 					if (j > 1) {
-						if (this.arrayOfGems[i][j].type === this.arrayOfGems[i][j - 1].type && this.arrayOfGems[i][j].type === this.arrayOfGems[i][j - 2].type) {
-							let oldType = this.arrayOfGems[i][j].type;
-							while (oldType === this.arrayOfGems[i][j].type) {
-								this.arrayOfGems[i][j].type = this.randomTypeOfGem(this.typeOfBundle);
+						if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j - 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j - 2].type) {
+							let oldType = this.arrayOfTiles[i][j].type;
+							while (oldType === this.arrayOfTiles[i][j].type) {
+								this.arrayOfTiles[i][j].type = this.randomTypeOfTile(this.typeOfBundle);
 							}
 						}
 					}

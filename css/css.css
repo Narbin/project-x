@@ -5,7 +5,11 @@ body {
 	overflow:hidden;
 }
 
-.gem {
+.panel-body{
+	position: relative;
+}
+
+.tile {
 	border-radius: 40px;
 	cursor: pointer;
 }
