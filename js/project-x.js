@@ -176,6 +176,58 @@ document.addEventListener(`DOMContentLoaded`, () => {
 					}
 				}
 			}
+			return this;
+		}
+
+		checkBoard() {
+			let array = newBoard.arrayOfTiles;
+
+			for(let i = 0; i < this.size; i += 1){
+				for (let j = 0; j < this.size - 2; j += 1) {
+					if(array[i][j].type === array[i][j + 1].type && array[i][j].type === array[i][j + 2].type) {
+						array[i][j].toDelete = true;
+						array[i][j + 1].toDelete = true;
+						array[i][j + 2].toDelete = true;
+					}
+				}
+			}
+
+			for(let i = 0; i < this.size - 2; i += 1){
+				for (let j = 0; j < this.size; j += 1) {
+					if(array[i][j].type === array[i + 1][j].type && array[i][j].type === array[i + 2][j].type) {
+						array[i][j].toDelete = true;
+						array[i + 1][j].toDelete = true;
+						array[i + 2][j].toDelete = true;
+					}
+				}
+			}
+			return this;
+		}
+
+		deleteTiles() {
+			let array = newBoard.arrayOfTiles;
+
+			for(let i = 0; i < this.size; i += 1){
+				for (let j = 0; j < this.size; j += 1) {
+					if(array[i][j].toDelete) {
+						for(let k = 0; k < $(`.tile`).length; k += 1){
+							console.log(k);
+							if(parseInt($(`.tile`)[k].getAttribute(`x`), 10) === j && parseInt($(`.tile`)[k].getAttribute(`y`), 10) === i){
+								let tile = $(`.tile`)[k];
+								$(tile).animate({
+									opacity: 0
+								}, 500, function () {
+									tile.src = ``;
+									tile.className = `col-xs-2 no-padding`;
+									tile.remove();
+								});
+
+							}
+						}
+					}
+				}
+			}
+			return this;
 		}
 	
 		clearBoardDOM() {
