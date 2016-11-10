@@ -12,6 +12,8 @@ body {
 .tile {
 	border-radius: 40px;
 	cursor: pointer;
+	position: relative;
+	z-index:10;
 }
 
 .no-padding {

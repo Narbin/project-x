@@ -34,10 +34,10 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			$(alreadyTileSelected).attr(`x`, `${x1}`);
 			$(alreadyTileSelected).attr(`y`, `${y1}`);
 
-			let toTop = tile.offsetTop,
-				toLeft = tile.offsetLeft,
-				fromTop = alreadyTileSelected.offsetTop,
-				fromLeft = alreadyTileSelected.offsetLeft,
+			let toTop = $(tile).offset().top,
+				toLeft = $(tile).offset().left,
+				fromTop = $(alreadyTileSelected).offset().top,
+				fromLeft = $(alreadyTileSelected).offset().left,
 				distanseX,
 				distanseY;
 
@@ -63,19 +63,30 @@ document.addEventListener(`DOMContentLoaded`, () => {
 	}
 
 	function selectTileDOM() {
-		if (alreadyTileSelected === event.target) {
-			$(event.target).toggleClass(`selected`);
-			alreadyTileSelected = ``;
-		} else if (alreadyTileSelected === ``) {
-			$(event.target).toggleClass(`selected`);
-			alreadyTileSelected = event.target;
-		} else {
-			if (changeTilesPosition(event.target)){
-				$(alreadyTileSelected).toggleClass(`selected`);
+
+		if($(event.target).hasClass(`tile`)){
+			if (alreadyTileSelected === event.target) {
+				$(event.target).toggleClass(`selected`);
+				alreadyTileSelected = ``;
+			} else if (alreadyTileSelected === ``) {
+				$(event.target).toggleClass(`selected`);
+				alreadyTileSelected = event.target;
+			} else {
+				if (changeTilesPosition(event.target)){
+					profile.addTurns();
+					refreshAmount(`turns`, profile.turns);
+					$(alreadyTileSelected).toggleClass(`selected`);
+					newBoard.checkBoard();
+					newBoard.deleteTiles();
+
+				}
 			}
 		}
 	}
 
+	function refreshAmount(id,variable) {
+		$(`#${id}`).text(variable);
+	}
 
 	class Profile {
 		constructor(_name) {
@@ -114,7 +125,8 @@ document.addEventListener(`DOMContentLoaded`, () => {
 						type: this.randomTypeOfTile(this.typeOfBundle),
 						imageSrc: null,
 						points: 1,
-						isSelected: false
+						isSelected: false,
+						toDelete: false
 					};
 				}
 			}
@@ -138,11 +150,14 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			let divForTiles = $(`.panel-body`)[0];
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
-					let creatingImg = $('<img>', { 'class': 'col-xs-2 no-padding tile', 'src': this.arrayOfTiles[i][j].imageSrc });
+					let creatingDiv = $('<div>', { 'class': 'col-xs-2 no-padding'});
+					let creatingImg = $('<img>', { 'class': 'no-padding tile', 'src': this.arrayOfTiles[i][j].imageSrc});
 					$(creatingImg).attr(`x`, `${j}`);
 					$(creatingImg).attr(`y`, `${i}`);
-					$(divForTiles).append(creatingImg);
+					$(divForTiles).append(creatingDiv);
+					$(creatingDiv).append(creatingImg);
 				}
+
 			}
 			return this;
 		}
@@ -153,6 +168,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 					this.arrayOfTiles[i][j].imageSrc = `images/${this.arrayOfTiles[i][j].type}.svg`;
 				}
 			}
+			return this;
 		}
 
 		shuffleBoard() {
