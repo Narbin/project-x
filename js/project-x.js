@@ -106,6 +106,16 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		}
 	}
 
+	class Tile {
+		constructor(_typeOfBundle) {
+			this.type = _typeOfBundle,
+			this.imageSrc = null,
+			this.points = 1,
+			this.isSelected = false,
+			this.toDelete = false
+		}
+	}
+
 	class Board {
 		constructor(_size, _typeOfBundle) {
 			this.size = _size;
@@ -121,13 +131,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			for (let i = 0; i < this.size; i += 1) {
 				this.arrayOfTiles[i] = new Array(this.size);
 				for (let j = 0; j < this.size; j += 1) {
-					this.arrayOfTiles[i][j] = {
-						type: this.randomTypeOfTile(this.typeOfBundle),
-						imageSrc: null,
-						points: 1,
-						isSelected: false,
-						toDelete: false
-					};
+					this.arrayOfTiles[i][j] = new Tile(this.randomTypeOfTile(this.typeOfBundle));
 				}
 			}
 			return this;
