@@ -76,6 +76,25 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		}
 	}
 
+
+	class Profile {
+		constructor(_name) {
+			this.name = _name;
+			this.points = 0;
+			this.turns = 0;
+		}
+
+		addPoints(howMany = 1) {
+			this.points += howMany;
+			return this;
+		}
+
+		addTurns(howMany = 1) {
+			this.turns += howMany;
+			return this;
+		}
+	}
+
 	class Board {
 		constructor(_size, _typeOfBundle) {
 			this.size = _size;
@@ -166,6 +185,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 	}
 	function createNewBoard() {
 		newBoard = new Board(8, `fruits`);
+		profile = new Profile(`test`);
 	}
 	createNewBoard();
 
