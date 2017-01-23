@@ -35,7 +35,7 @@ body {
     padding: 0px;
 }
 
-.selected{
+.selected {
 	z-index:100;
     animation: selectedDiv 3s ease infinite;
     
@@ -45,4 +45,23 @@ body {
     0%{box-shadow:#FFC107 0px 0px 0.5px 0.5px}
     50%{box-shadow:#FF9800 0px 0px 3px 3px}
     100%{box-shadow:#FFC107 0px 0px 0.5px 0.5px}
+}
+
+#icon {
+	 animation: iconRotate 20s linear infinite;
+}
+
+@keyframes iconRotate { 
+    from {transform: rotate(0deg) ;}
+    to {transform: rotate(360deg) ;}
+}
+
+#play {
+	margin-top: 50px;
+}
+
+.button-menu {
+	margin-top: 10px;
+	padding: 20px;
+	width: 200px
 }

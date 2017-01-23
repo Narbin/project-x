@@ -13,75 +13,97 @@
 
 </head>
 <body>
-	<div class="container">
-		<div class="panel panel-default">
+	<div class="modal fade" id="menu" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="container">
+			<div class="panel panel-default">
+				<img src="images/icon.svg" alt="..." class="center-block" id="icon" height="200px">
 
-			<div class="panel-heading clearfix">
-				<div class="col-xs-12 no-padding">
-					<span class="glyphicon glyphicon-tasks "></span>
-					Cele
-					<div class="col-xs-16 no-padding">
-						<div class="col-xs-3 no-padding text-center">
-							10x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
-						</div>
-						<div class="col-xs-3 no-padding text-center">
-							8x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
-						</div>
-						<div class="col-xs-3 no-padding text-center">
-							6x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
-						</div>
-						<div class="col-xs-3 no-padding text-center">
-							4x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
-						</div>
-						<div class="col-xs-3 no-padding text-center">
-							2x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
-						</div>
-					</div>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" id="play">
+					Graj
 				</div>
-				<div class="col-xs-4 no-padding">
-					<span class="glyphicon glyphicon-star"></span>
-					Punkty
-					<div class="text-right" id="points">
-						0
-					</div>
-					<span class="glyphicon glyphicon-share-alt"></span>
-					Tury
-					<div class="text-right" id="turns">
-						0
-					</div>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" id="achievements">
+					Osiągnięcia
+				</div>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" id="settings">
+					Ustawienia
 				</div>
 			</div>
-
-			<div class="panel-body">
-
-			</div>
-			
-			<div class="panel-footer clearfix">
-				<div class="col-xs-11 no-padding">
-					<div type="button" class="btn btn-rounded col-xs-4">
-						<img src="images/crosshair.svg" alt="..." class="img-responsive">
-					</div>
-					<div type="button" class="btn btn-rounded col-xs-4">
-						<img src="images/crosshair.svg" alt="..." class="img-responsive">
-					</div>
-					<div type="button" class="btn btn-rounded col-xs-4">
-						<img src="images/crosshair.svg" alt="..." class="img-responsive">
-					</div>
-					<div type="button" class="btn btn-rounded col-xs-4">
-						<img src="images/crosshair.svg" alt="..." class="img-responsive">
-					</div>
-				</div>
-				<div class="col-xs-5 no-padding">
-					<div type="button" class="btn btn-rounded col-xs-8">
-						<img src="images/reset.svg" alt="..." class="img-responsive" id="resetBoard">
-					</div>
-					<div type="button" class="btn btn-rounded col-xs-8">
-						<img src="images/back.svg" alt="..." class="img-responsive" id="goBack">
-					</div>
-				</div>
-			</div>
-
 		</div>
+	</div>
+
+	<div class="modal fade" id="board" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+		<div class="container">
+			<div class="panel panel-default">
+
+				<div class="panel-heading clearfix">
+					<div class="col-xs-12 no-padding">
+						<span class="glyphicon glyphicon-tasks "></span>
+						Cele
+						<div class="col-xs-16 no-padding">
+							<div class="col-xs-3 no-padding text-center">
+								10x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
+							</div>
+							<div class="col-xs-3 no-padding text-center">
+								8x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
+							</div>
+							<div class="col-xs-3 no-padding text-center">
+								6x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
+							</div>
+							<div class="col-xs-3 no-padding text-center">
+								4x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
+							</div>
+							<div class="col-xs-3 no-padding text-center">
+								2x<img src="images/banana.svg" alt="..." class="img-responsive no-padding">
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-4 no-padding">
+						<span class="glyphicon glyphicon-star"></span>
+						Punkty
+						<div class="text-right" id="points">
+							0
+						</div>
+						<span class="glyphicon glyphicon-share-alt"></span>
+						Tury
+						<div class="text-right" id="turns">
+							0
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-body">
+
+				</div>
+				
+				<div class="panel-footer clearfix">
+					<div class="col-xs-11 no-padding">
+						<div type="button" class="btn btn-rounded col-xs-4">
+							<img src="images/crosshair.svg" alt="..." class="img-responsive">
+						</div>
+						<div type="button" class="btn btn-rounded col-xs-4">
+							<img src="images/crosshair.svg" alt="..." class="img-responsive">
+						</div>
+						<div type="button" class="btn btn-rounded col-xs-4">
+							<img src="images/crosshair.svg" alt="..." class="img-responsive">
+						</div>
+						<div type="button" class="btn btn-rounded col-xs-4">
+							<img src="images/crosshair.svg" alt="..." class="img-responsive">
+						</div>
+					</div>
+					<div class="col-xs-5 no-padding">
+						<div type="button" class="btn btn-rounded col-xs-8">
+							<img src="images/reset.svg" alt="..." class="img-responsive" id="resetBoard">
+						</div>
+						<div type="button" class="btn btn-rounded col-xs-8">
+							<img src="images/back.svg" alt="..." class="img-responsive" id="goBack">
+						</div>
+					</div>
+				</div>
+
+			</div>
+	  
+	</div>
 	</body>
 	</html>
 

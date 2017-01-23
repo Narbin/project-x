@@ -1,14 +1,32 @@
 /* global document:true $:true event:true*/
 document.addEventListener(`DOMContentLoaded`, () => {
 
+	$(`#menu`).modal(`toggle`);
+	$(`#play`).bind(`click`, function () {
+		$(`#menu`).modal(`toggle`);
+		createNewBoard();
+		$(`#board`).modal(`toggle`);
+	});
+
 	let alreadyTileSelected = ``;
 
 	$(`.panel-body`).bind(`click`, whatTileWasClicked);
 
-	$(`#resetBoard`).bind(`click`, function() {
+	$(`#resetBoard`).bind(`click`, function () {
 		newBoard.clearBoardDOM();
 		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
 	});
+
+	function setMinHeight() {
+		if (!newBoard.minHeight) {
+			let getActualHeight = $(`.panel-body`).children().height(),
+				boardSize = newBoard.size * newBoard.size;
+			for (let i = 0; i < boardSize; i += 1) {
+				$(`.panel-body`).children()[i].style.minHeight = getActualHeight + 'px';
+			}
+			newBoard.minHeight = true;
+		}
+	}
 
 	function whatTileWasClicked(event) {
 		if (event.target !== event.currentTarget) {
@@ -63,8 +81,9 @@ document.addEventListener(`DOMContentLoaded`, () => {
 	}
 
 	function selectTileDOM() {
+		setMinHeight();
 
-		if($(event.target).hasClass(`tile`)){
+		if ($(event.target).hasClass(`tile`)) {
 			if (alreadyTileSelected === event.target) {
 				$(event.target).toggleClass(`selected`);
 				alreadyTileSelected = ``;
@@ -72,7 +91,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 				$(event.target).toggleClass(`selected`);
 				alreadyTileSelected = event.target;
 			} else {
-				if (changeTilesPosition(event.target)){
+				if (changeTilesPosition(event.target)) {
 					profile.addTurns();
 					refreshAmount(`turns`, profile.turns);
 					$(alreadyTileSelected).toggleClass(`selected`);
@@ -84,7 +103,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		}
 	}
 
-	function refreshAmount(id,variable) {
+	function refreshAmount(id, variable) {
 		$(`#${id}`).text(variable);
 	}
 
@@ -108,11 +127,11 @@ document.addEventListener(`DOMContentLoaded`, () => {
 
 	class Tile {
 		constructor(_typeOfBundle) {
-			this.type = _typeOfBundle,
-			this.imageSrc = null,
-			this.points = 1,
-			this.isSelected = false,
-			this.toDelete = false
+			this.type = _typeOfBundle;
+			this.imageSrc = null;
+			this.points = 1;
+			this.isSelected = false;
+			this.toDelete = false;
 		}
 	}
 
@@ -120,6 +139,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		constructor(_size, _typeOfBundle) {
 			this.size = _size;
 			this.typeOfBundle = _typeOfBundle;
+			this.minHeight = false;
 			this.createTiles();
 			this.shuffleBoard();
 			this.setImageSrc();
@@ -154,8 +174,8 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			let divForTiles = $(`.panel-body`)[0];
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
-					let creatingDiv = $('<div>', { 'class': 'col-xs-2 no-padding'});
-					let creatingImg = $('<img>', { 'class': 'no-padding tile', 'src': this.arrayOfTiles[i][j].imageSrc});
+					let creatingDiv = $('<div>', { 'class': 'col-xs-2 no-padding' });
+					let creatingImg = $('<img>', { 'class': 'no-padding tile', 'src': this.arrayOfTiles[i][j].imageSrc });
 					$(creatingImg).attr(`x`, `${j}`);
 					$(creatingImg).attr(`y`, `${i}`);
 					$(divForTiles).append(creatingDiv);
@@ -202,9 +222,9 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		checkBoard() {
 			let array = newBoard.arrayOfTiles;
 
-			for(let i = 0; i < this.size; i += 1){
+			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size - 2; j += 1) {
-					if(array[i][j].type === array[i][j + 1].type && array[i][j].type === array[i][j + 2].type) {
+					if (array[i][j].type === array[i][j + 1].type && array[i][j].type === array[i][j + 2].type) {
 						array[i][j].toDelete = true;
 						array[i][j + 1].toDelete = true;
 						array[i][j + 2].toDelete = true;
@@ -212,9 +232,9 @@ document.addEventListener(`DOMContentLoaded`, () => {
 				}
 			}
 
-			for(let i = 0; i < this.size - 2; i += 1){
+			for (let i = 0; i < this.size - 2; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
-					if(array[i][j].type === array[i + 1][j].type && array[i][j].type === array[i + 2][j].type) {
+					if (array[i][j].type === array[i + 1][j].type && array[i][j].type === array[i + 2][j].type) {
 						array[i][j].toDelete = true;
 						array[i + 1][j].toDelete = true;
 						array[i + 2][j].toDelete = true;
@@ -227,12 +247,11 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		deleteTiles() {
 			let array = newBoard.arrayOfTiles;
 
-			for(let i = 0; i < this.size; i += 1){
+			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
-					if(array[i][j].toDelete) {
-						for(let k = 0; k < $(`.tile`).length; k += 1){
-							console.log(k);
-							if(parseInt($(`.tile`)[k].getAttribute(`x`), 10) === j && parseInt($(`.tile`)[k].getAttribute(`y`), 10) === i){
+					if (array[i][j].toDelete) {
+						for (let k = 0; k < $(`.tile`).length; k += 1) {
+							if (parseInt($(`.tile`)[k].getAttribute(`x`), 10) === j && parseInt($(`.tile`)[k].getAttribute(`y`), 10) === i) {
 								let tile = $(`.tile`)[k];
 								$(tile).animate({
 									opacity: 0
@@ -241,6 +260,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 									tile.className = `col-xs-2 no-padding`;
 									tile.remove();
 								});
+								
 
 							}
 						}
@@ -259,7 +279,6 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		newBoard = new Board(8, `fruits`);
 		profile = new Profile(`test`);
 	}
-	createNewBoard();
 
 });
 
