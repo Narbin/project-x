@@ -108,7 +108,16 @@ document.addEventListener(`DOMContentLoaded`, () => {
 	}
 
 	function refreshAmount(id, variable) {
-		$(`#${id}`).text(variable);
+		let oldNumber = parseInt($(`#${id}`).text(), 10);
+		$(`#${id}`)
+			.prop('number', oldNumber)
+			.animateNumber(
+			{
+				number: variable
+			},
+				300
+		);
+		//$(`#${id}`).text(variable);
 	}
 
 	class Profile {
