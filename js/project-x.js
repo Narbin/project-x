@@ -142,7 +142,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 	class Board {
 		constructor(_size, _typeOfBundle) {
 			this.size = _size;
-			this.typeOfBundle = _typeOfBundle;
+			this.bundleObj = this.createBundleObj(_typeOfBundle);
 			this.minHeight = false;
 			this.createTiles();
 			this.shuffleBoard();
@@ -155,23 +155,27 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			for (let i = 0; i < this.size; i += 1) {
 				this.arrayOfTiles[i] = new Array(this.size);
 				for (let j = 0; j < this.size; j += 1) {
-					this.arrayOfTiles[i][j] = new Tile(this.randomTypeOfTile(this.typeOfBundle));
+					this.arrayOfTiles[i][j] = new Tile(this.randomTypeOfTile(this.bundleObj));
 				}
 			}
 			return this;
 		}
 
-		randomTypeOfTile(bundle) {
-			let bundleObject = [ ];
-			switch (bundle) {
+		createBundleObj(nameOfBundle) {
+			let bundle = '';
+			switch (nameOfBundle) {
 				case `fruits`:
-					bundleObject = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
+					bundle = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
 					break;
 				default:
-					bundleObject = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
+					bundle = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
 					break;
 			}
-			return bundleObject[Math.floor(Math.random() * bundleObject.length)];
+			return bundle;
+		}
+
+		randomTypeOfTile() {
+			return this.bundleObj[Math.floor(Math.random() * this.bundleObj.length)];
 		}
 
 		drawTiles() {
@@ -249,29 +253,28 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		}
 
 		countFoundedTiles() {
-			let array = newBoard.arrayOfTiles,
-				bundleObject = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
+			let array = newBoard.arrayOfTiles;
 
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
 					if (array[i][j].toDelete) {
 						switch(array[i][j].type) {
-						    case bundleObject[0]:
+						    case this.bundleObj[0]:
 						        typesOfTiles[0] += 1;
 						        break;
-						    case bundleObject[1]:
+						    case this.bundleObj[1]:
 						        typesOfTiles[1]+= 1;
 						        break;
-						    case bundleObject[2]:
+						    case this.bundleObj[2]:
 						    	typesOfTiles[2] += 1;
 						        break;
-						    case bundleObject[3]:
+						    case this.bundleObj[3]:
 						    	typesOfTiles[3] += 1;
 						    	break;
-						    case bundleObject[4]:
+						    case this.bundleObj[4]:
 						    	typesOfTiles[4] += 1;
 						    	break;
-						    case bundleObject[5]:
+						    case this.bundleObj[5]:
 						   		typesOfTiles[5] += 1;
 						    	break;
 						}
