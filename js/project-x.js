@@ -8,7 +8,8 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		$(`#board`).modal(`toggle`);
 	});
 
-	let alreadyTileSelected = ``;
+	let alreadyTileSelected = ``,
+		typesOfTiles = [0, 0, 0, 0, 0, 0];
 
 	$(`.panel-body`).bind(`click`, whatTileWasClicked);
 
@@ -93,10 +94,13 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			} else {
 				if (changeTilesPosition(event.target)) {
 					profile.addTurns();
-					refreshAmount(`turns`, profile.turns);
 					$(alreadyTileSelected).toggleClass(`selected`);
-					newBoard.checkBoard();
+					newBoard.findMatch();
+					newBoard.countFoundedTiles();
+					newBoard.addPointsToProfile();
 					newBoard.deleteTiles();
+					refreshAmount(`points`, profile.points);
+					refreshAmount(`turns`, profile.turns);
 
 				}
 			}
@@ -219,7 +223,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			return this;
 		}
 
-		checkBoard() {
+		findMatch() {
 			let array = newBoard.arrayOfTiles;
 
 			for (let i = 0; i < this.size; i += 1) {
@@ -244,9 +248,63 @@ document.addEventListener(`DOMContentLoaded`, () => {
 			return this;
 		}
 
+		countFoundedTiles() {
+			let array = newBoard.arrayOfTiles,
+				bundleObject = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
+
+			for (let i = 0; i < this.size; i += 1) {
+				for (let j = 0; j < this.size; j += 1) {
+					if (array[i][j].toDelete) {
+						switch(array[i][j].type) {
+						    case bundleObject[0]:
+						        typesOfTiles[0] += 1;
+						        break;
+						    case bundleObject[1]:
+						        typesOfTiles[1]+= 1;
+						        break;
+						    case bundleObject[2]:
+						    	typesOfTiles[2] += 1;
+						        break;
+						    case bundleObject[3]:
+						    	typesOfTiles[3] += 1;
+						    	break;
+						    case bundleObject[4]:
+						    	typesOfTiles[4] += 1;
+						    	break;
+						    case bundleObject[5]:
+						   		typesOfTiles[5] += 1;
+						    	break;
+						}
+					}
+				}
+			}
+		}
+
+		addPointsToProfile() {
+		let len = typesOfTiles.length-1;
+			for(let i = 0; i <= len; i += 1) {
+				
+				switch(typesOfTiles[i]) {
+					case (3 || 6 || 9):
+						profile.addPoints(typesOfTiles[i]);
+						break;
+					case (4 || 8):
+						profile.addPoints(typesOfTiles[i]*2);
+						break;
+					case (5 || 10):
+						profile.addPoints(typesOfTiles[i]*3);
+						break;
+					case 7:
+						profile.addPoints(typesOfTiles[i]+4);
+						break;
+				}
+			}
+
+			typesOfTiles = [0, 0, 0, 0, 0, 0];
+		}
+
 		deleteTiles() {
 			let array = newBoard.arrayOfTiles;
-
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
 					if (array[i][j].toDelete) {
@@ -260,10 +318,10 @@ document.addEventListener(`DOMContentLoaded`, () => {
 									tile.className = `col-xs-2 no-padding`;
 									tile.remove();
 								});
-								
-
 							}
 						}
+						array[i][j].toDelete = false;
+						array[i][j].type = '';
 					}
 				}
 			}
