@@ -228,7 +228,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		}
 
 		findMatch() {
-			let array = newBoard.arrayOfTiles;
+			let array = this.arrayOfTiles;
 
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size - 2; j += 1) {
@@ -253,35 +253,22 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		}
 
 		countFoundedTiles() {
-			let array = newBoard.arrayOfTiles;
+			let array = this.arrayOfTiles,
+				bundleLength = this.bundleObj.length;
 
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
 					if (array[i][j].toDelete) {
-						switch(array[i][j].type) {
-						    case this.bundleObj[0]:
-						        typesOfTiles[0] += 1;
-						        break;
-						    case this.bundleObj[1]:
-						        typesOfTiles[1]+= 1;
-						        break;
-						    case this.bundleObj[2]:
-						    	typesOfTiles[2] += 1;
-						        break;
-						    case this.bundleObj[3]:
-						    	typesOfTiles[3] += 1;
-						    	break;
-						    case this.bundleObj[4]:
-						    	typesOfTiles[4] += 1;
-						    	break;
-						    case this.bundleObj[5]:
-						   		typesOfTiles[5] += 1;
-						    	break;
+						for (let k = 0; k < bundleLength; k +=1) {
+							if (array[i][j].type === this.bundleObj[k]) {
+								typesOfTiles[k] += 1;
+							}
 						}
 					}
 				}
 			}
 		}
+		
 
 		addPointsToProfile() {
 		let len = typesOfTiles.length-1;
@@ -307,7 +294,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		}
 
 		deleteTiles() {
-			let array = newBoard.arrayOfTiles;
+			let array = this.arrayOfTiles;
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
 					if (array[i][j].toDelete) {
