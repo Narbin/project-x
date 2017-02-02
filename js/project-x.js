@@ -18,6 +18,44 @@
 		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
 	});
 
+	function moveDownTile(firstTileY, firstTileX, secondTileY, secondTileX) {
+		let i = 0;
+		while (firstTileY - i > 0) {
+			let firstTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i}"]`),
+			secondTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i - 1}"]`),
+			tempTile;
+
+			console.log(firstTile,secondTile);
+			firstX = parseInt(firstTile.getAttribute(`x`), 10);
+			firstY = parseInt(firstTile.getAttribute(`y`), 10);
+			secondY = parseInt(secondTile.getAttribute(`y`), 10);
+
+			tempTile = newBoard.arrayOfTiles[secondY][firstX];
+			newBoard.arrayOfTiles[secondY][firstX] = newBoard.arrayOfTiles[firstY][firstX];
+			newBoard.arrayOfTiles[firstY][firstX] = tempTile;
+
+			let toTop = $(firstTile).offset().top,
+			toLeft = $(firstTile).offset().left,
+			fromTop = $(secondTile).offset().top,
+			fromLeft = $(secondTile).offset().left,
+			distanseX,
+			distanseY;
+
+			distanseX = fromTop - toTop;
+			distanseY = fromLeft - toLeft;
+
+			$(secondTile).animate({
+				left: `-=` + distanseY,
+				top: `-=` + distanseX
+			}, 200, function () { 
+				$(firstTile).attr(`y`, secondY);
+				$(secondTile).attr(`y`, firstY);
+				alreadyTileSelected = ``;
+			});
+			i += 1;
+		}
+	}
+
 	function setMinHeight() {
 		if (!newBoard.minHeight) {
 			let getActualHeight = $(`.panel-body`).children().height(),
@@ -66,12 +104,23 @@
 			$(tile).animate({
 				left: `+=` + distanseY,
 				top: `+=` + distanseX
-			}, 150);
+			}, 200);
 
 			$(alreadyTileSelected).animate({
 				left: `-=` + distanseY,
 				top: `-=` + distanseX
-			}, 150, function () {
+			}, 200, function () {
+				while (newBoard.findFit()) {
+					newBoard
+							.findFit()
+							.countFoundedTiles()
+							.addPointsToProfile()
+							.deleteTiles()
+							.findClearTiles()
+							.setClearTiles()
+							.generateNewTiles();
+							
+				}
 				alreadyTileSelected = ``;
 			});
 
@@ -95,12 +144,9 @@
 				if (changeTilesPosition(event.target)) {
 					profile.addTurns();
 					$(alreadyTileSelected).toggleClass(`selected`);
-					newBoard.findMatch();
-					newBoard.countFoundedTiles();
-					newBoard.addPointsToProfile();
-					newBoard.deleteTiles();
 					refreshAmount(`points`, profile.points);
 					refreshAmount(`turns`, profile.turns);
+
 
 				}
 			}
@@ -115,7 +161,7 @@
 			{
 				number: variable
 			},
-				300
+				200
 		);
 		//$(`#${id}`).text(variable);
 	}
@@ -153,6 +199,7 @@
 			this.size = _size;
 			this.bundleObj = this.createBundleObj(_typeOfBundle);
 			this.minHeight = false;
+			this.clearTilesObj = [ ];
 			this.createTiles();
 			this.shuffleBoard();
 			this.setImageSrc();
@@ -236,8 +283,10 @@
 			return this;
 		}
 
-		findMatch() {
-			let array = this.arrayOfTiles;
+		findFit() {
+			let array = this.arrayOfTiles,
+				founded = false;
+
 
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size - 2; j += 1) {
@@ -245,6 +294,8 @@
 						array[i][j].toDelete = true;
 						array[i][j + 1].toDelete = true;
 						array[i][j + 2].toDelete = true;
+						founded = true;
+
 					}
 				}
 			}
@@ -255,10 +306,15 @@
 						array[i][j].toDelete = true;
 						array[i + 1][j].toDelete = true;
 						array[i + 2][j].toDelete = true;
+						founded = true;
 					}
 				}
 			}
-			return this;
+			if (founded) {
+				return this;
+			} else {
+				return false;
+			}
 		}
 
 		countFoundedTiles() {
@@ -276,6 +332,7 @@
 					}
 				}
 			}
+			return this;
 		}
 		
 
@@ -288,18 +345,19 @@
 						profile.addPoints(typesOfTiles[i]);
 						break;
 					case (4 || 8):
-						profile.addPoints(typesOfTiles[i]*2);
+						profile.addPoints(typesOfTiles[i] * 2);
 						break;
 					case (5 || 10):
-						profile.addPoints(typesOfTiles[i]*3);
+						profile.addPoints(typesOfTiles[i] * 3);
 						break;
 					case 7:
-						profile.addPoints(typesOfTiles[i]+4);
+						profile.addPoints(typesOfTiles[i] + 4);
 						break;
 				}
 			}
 
 			typesOfTiles = [0, 0, 0, 0, 0, 0];
+			return this;
 		}
 
 		deleteTiles() {
@@ -320,12 +378,63 @@
 							}
 						}
 						array[i][j].toDelete = false;
-						array[i][j].type = '';
+						array[i][j].type = `clear`;
 					}
 				}
 			}
 			return this;
 		}
+
+		findClearTiles() {
+			newBoard.clearTilesObj = [ ];
+			let array = this.arrayOfTiles;
+			for (let i = 0; i < this.size; i += 1) {
+				for (let j = 0; j < this.size; j += 1) {
+					if (array[i][j].type === `clear`) {
+						this.clearTilesObj.push([i,j]);
+					}
+				}
+			}
+			return this;
+		}
+
+		setClearTiles() {
+			let objLength = this.clearTilesObj.length;
+
+			for (let i = 0; i < objLength; i += 1) {
+				moveDownTile(this.clearTilesObj[i][0],this.clearTilesObj[i][1]);
+			}
+			return this;
+		}
+
+		generateNewTiles() {
+			this.findClearTiles();
+			let objLength = this.clearTilesObj.length;
+			let i = 0;
+			let boardSize = this.size * this.size;
+			for (let j = 0; j < objLength; j += 1) {
+				this.arrayOfTiles[this.clearTilesObj[j][0]][this.clearTilesObj[j][1]] = new Tile(this.randomTypeOfTile(this.bundleObj));
+			}
+
+				/*for (let j = 0; j < boardSize; j += 1) {
+					console.log($(".col-xs-2")[j].children.length);
+					if ($(".col-xs-2")[j].children.length == 0) {
+						
+						let creatingImg = $('<img>', { 'class': 'no-padding tile', 'src': this.arrayOfTiles[this.clearTilesObj[i][0]][this.clearTilesObj[i][1]].imageSrc });
+						creatingImg.css('opacity', '0');
+						creatingImg.appendTo($(".col-xs-2")[j]);
+						$(creatingImg).animate({
+							opacity: '1'
+						}, 500);
+					}*/
+				//$(".col-xs-2 > :empty")[i].append(creatingImg);
+				//$(".panel-body > :empty")[i].parent().append(creatingImg);
+				return this;
+			}
+			
+
+			
+		
 	
 		clearBoardDOM() {
 			$(`.panel-body`)[0].innerHTML = ``;
