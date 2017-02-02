@@ -1,5 +1,5 @@
 /* global document:true $:true event:true*/
-document.addEventListener(`DOMContentLoaded`, () => {
+
 
 	$(`#menu`).modal(`toggle`);
 	$(`#play`).bind(`click`, function () {
@@ -337,6 +337,5 @@ document.addEventListener(`DOMContentLoaded`, () => {
 		profile = new Profile(`test`);
 	}
 
-});
 
 
