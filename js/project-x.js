@@ -429,6 +429,9 @@
 					}*/
 				//$(".col-xs-2 > :empty")[i].append(creatingImg);
 				//$(".panel-body > :empty")[i].parent().append(creatingImg);
+				this.clearBoardDOM();
+				this.setImageSrc();
+				this.drawTiles()
 				return this;
 			}
 			
