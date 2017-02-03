@@ -223,6 +223,9 @@
 				case `fruits`:
 					bundle = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
 					break;
+				case `gems`:
+					bundle = [`amethyst`, `cut-diamond`, `emerald`, `rupee`, `saphir`, `topaz`];
+					break;
 				default:
 					bundle = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
 					break;
@@ -445,7 +448,7 @@
 
 	}
 	function createNewBoard() {
-		newBoard = new Board(8, `fruits`);
+		newBoard = new Board(8, `gems`);
 		profile = new Profile(`test`);
 	}
 
