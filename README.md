@@ -1,3 +1,2 @@
-# project-x
-simple puzzle game
-name is temporary, i think 
+# Match 3
+Simple match 3 game written in js
