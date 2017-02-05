@@ -192,7 +192,8 @@
 	class Board {
 		constructor(_size, _typeOfBundle) {
 			this.size = _size;
-			this.bundleObj = this.createBundleObj(_typeOfBundle);
+			this.typeOfBundle = _typeOfBundle;
+			this.bundleObj = this.createBundleObj(this.typeOfBundle);
 			this.minHeight = false;
 			this.clearTilesObj = [ ];
 			this.createTiles();
