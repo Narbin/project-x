@@ -117,7 +117,8 @@
 							.findClearTiles()
 							.setClearTiles()
 							.generateNewTiles();
-							
+
+					refreshAmount(`points`, profile.points);
 				}
 				alreadyTileSelected = ``;
 			});
@@ -140,9 +141,8 @@
 				alreadyTileSelected = event.target;
 			} else {
 				if (changeTilesPosition(event.target)) {
-					profile.addTurns();
 					$(alreadyTileSelected).toggleClass(`selected`);
-					refreshAmount(`points`, profile.points);
+					profile.addTurns();
 					refreshAmount(`turns`, profile.turns);
 				}
 			}
