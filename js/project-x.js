@@ -18,28 +18,26 @@
 		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
 	});
 
-	function moveDownTile(firstTileY, firstTileX, secondTileY, secondTileX) {
+	function moveDownTile(firstTileY, firstTileX) {
 		let i = 0;
 		while (firstTileY - i > 0) {
 			let firstTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i}"]`),
-			secondTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i - 1}"]`),
-			tempTile;
-
-			console.log(firstTile,secondTile);
-			firstX = parseInt(firstTile.getAttribute(`x`), 10);
-			firstY = parseInt(firstTile.getAttribute(`y`), 10);
-			secondY = parseInt(secondTile.getAttribute(`y`), 10);
+				secondTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i - 1}"]`),
+				tempTile,
+				firstX = parseInt(firstTile.getAttribute(`x`), 10),
+				firstY = parseInt(firstTile.getAttribute(`y`), 10),
+				secondY = parseInt(secondTile.getAttribute(`y`), 10);
 
 			tempTile = newBoard.arrayOfTiles[secondY][firstX];
 			newBoard.arrayOfTiles[secondY][firstX] = newBoard.arrayOfTiles[firstY][firstX];
 			newBoard.arrayOfTiles[firstY][firstX] = tempTile;
 
 			let toTop = $(firstTile).offset().top,
-			toLeft = $(firstTile).offset().left,
-			fromTop = $(secondTile).offset().top,
-			fromLeft = $(secondTile).offset().left,
-			distanseX,
-			distanseY;
+				toLeft = $(firstTile).offset().left,
+				fromTop = $(secondTile).offset().top,
+				fromLeft = $(secondTile).offset().left,
+				distanseX,
+				distanseY;
 
 			distanseX = fromTop - toTop;
 			distanseY = fromLeft - toLeft;
@@ -47,7 +45,7 @@
 			$(secondTile).animate({
 				left: `-=` + distanseY,
 				top: `-=` + distanseX
-			}, 200, function () { 
+			}, 200, function () {
 				$(firstTile).attr(`y`, secondY);
 				$(secondTile).attr(`y`, firstY);
 				alreadyTileSelected = ``;
@@ -61,7 +59,7 @@
 			let getActualHeight = $(`.panel-body`).children().height(),
 				boardSize = newBoard.size * newBoard.size;
 			for (let i = 0; i < boardSize; i += 1) {
-				$(`.panel-body`).children()[i].style.minHeight = getActualHeight + 'px';
+				$(`.panel-body`).children()[i].style.minHeight = getActualHeight + `px`;
 			}
 			newBoard.minHeight = true;
 		}
@@ -146,8 +144,6 @@
 					$(alreadyTileSelected).toggleClass(`selected`);
 					refreshAmount(`points`, profile.points);
 					refreshAmount(`turns`, profile.turns);
-
-
 				}
 			}
 		}
@@ -156,14 +152,13 @@
 	function refreshAmount(id, variable) {
 		let oldNumber = parseInt($(`#${id}`).text(), 10);
 		$(`#${id}`)
-			.prop('number', oldNumber)
+			.prop(`number`, oldNumber)
 			.animateNumber(
 			{
 				number: variable
 			},
 				200
 		);
-		//$(`#${id}`).text(variable);
 	}
 
 	class Profile {
@@ -218,7 +213,7 @@
 		}
 
 		createBundleObj(nameOfBundle) {
-			let bundle = '';
+			let bundle = ``;
 			switch (nameOfBundle) {
 				case `fruits`:
 					bundle = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
@@ -327,7 +322,7 @@
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
 					if (array[i][j].toDelete) {
-						for (let k = 0; k < bundleLength; k +=1) {
+						for (let k = 0; k < bundleLength; k += 1) {
 							if (array[i][j].type === this.bundleObj[k]) {
 								typesOfTiles[k] += 1;
 							}
@@ -340,10 +335,9 @@
 		
 
 		addPointsToProfile() {
-		let len = typesOfTiles.length-1;
-			for(let i = 0; i <= len; i += 1) {
-				
-				switch(typesOfTiles[i]) {
+			let len = typesOfTiles.length - 1;
+			for (let i = 0; i <= len; i += 1) {
+				switch (typesOfTiles[i]) {
 					case (3 || 6 || 9):
 						profile.addPoints(typesOfTiles[i]);
 						break;
@@ -355,6 +349,8 @@
 						break;
 					case 7:
 						profile.addPoints(typesOfTiles[i] + 4);
+						break;
+					default:
 						break;
 				}
 			}
@@ -394,7 +390,7 @@
 			for (let i = 0; i < this.size; i += 1) {
 				for (let j = 0; j < this.size; j += 1) {
 					if (array[i][j].type === `clear`) {
-						this.clearTilesObj.push([i,j]);
+						this.clearTilesObj.push([i, j]);
 					}
 				}
 			}
@@ -405,16 +401,16 @@
 			let objLength = this.clearTilesObj.length;
 
 			for (let i = 0; i < objLength; i += 1) {
-				moveDownTile(this.clearTilesObj[i][0],this.clearTilesObj[i][1]);
+				moveDownTile(this.clearTilesObj[i][0], this.clearTilesObj[i][1]);
 			}
 			return this;
 		}
 
 		generateNewTiles() {
 			this.findClearTiles();
-			let objLength = this.clearTilesObj.length;
-			let i = 0;
-			let boardSize = this.size * this.size;
+			let objLength = this.clearTilesObj.length,
+				boardSize = this.size * this.size;
+
 			for (let j = 0; j < objLength; j += 1) {
 				this.arrayOfTiles[this.clearTilesObj[j][0]][this.clearTilesObj[j][1]] = new Tile(this.randomTypeOfTile(this.bundleObj));
 			}
@@ -432,11 +428,11 @@
 					}*/
 				//$(".col-xs-2 > :empty")[i].append(creatingImg);
 				//$(".panel-body > :empty")[i].parent().append(creatingImg);
-				this.clearBoardDOM();
-				this.setImageSrc();
-				this.drawTiles()
-				return this;
-			}
+			this.clearBoardDOM();
+			this.setImageSrc();
+			this.drawTiles();
+			return this;
+		}
 			
 
 			
