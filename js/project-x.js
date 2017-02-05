@@ -117,9 +117,9 @@
 							.findClearTiles()
 							.setClearTiles()
 							.generateNewTiles();
-
-					refreshAmount(`points`, profile.points);
+					
 				}
+				refreshAmount(`points`, profile.points);
 				alreadyTileSelected = ``;
 			});
 
