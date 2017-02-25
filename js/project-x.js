@@ -146,18 +146,20 @@ const changeTilesPosition = (tile) => {
 const selectTileDOM = () => {
 	setMinHeight();
 
-	if ($(event.target).hasClass(`tile`)) {
-		if (newBoard.alreadyTileSelected === event.target) {
-			$(event.target).toggleClass(`selected`);
-			newBoard.alreadyTileSelected = ``;
-		} else if (newBoard.alreadyTileSelected === ``) {
-			$(event.target).toggleClass(`selected`);
-			newBoard.alreadyTileSelected = event.target;
-		} else {
-			if (changeTilesPosition(event.target)) {
-				$(newBoard.alreadyTileSelected).toggleClass(`selected`);
-				profile.addTurns();
-				refreshAmount(`turns`, profile.turns);
+	if (newBoard.ableToSelect) {
+		if ($(event.target).hasClass(`tile`)) {
+			if (newBoard.alreadyTileSelected === event.target) {
+				$(event.target).toggleClass(`selected`);
+				newBoard.alreadyTileSelected = ``;
+			} else if (newBoard.alreadyTileSelected === ``) {
+				$(event.target).toggleClass(`selected`);
+				newBoard.alreadyTileSelected = event.target;
+			} else {
+				if (changeTilesPosition(event.target)) {
+					$(newBoard.alreadyTileSelected).toggleClass(`selected`);
+					profile.addTurns();
+					refreshAmount(`turns`, profile.turns);
+				}
 			}
 		}
 	}
@@ -213,6 +215,7 @@ class Board {
 		this.clearTilesObj = [ ];
 		this.alreadyTileSelected = ``;
 		this.typesOfTiles = [0, 0, 0, 0, 0, 0];
+		this.ableToSelect = true;
 		this.createTiles();
 		this.shuffleBoard();
 		this.setImageSrc();
@@ -450,6 +453,7 @@ class Board {
 
 
 const engine = () => {
+	newBoard.ableToSelect = false;
 	newBoard.findFit();
 
 	if (newBoard.foundedFit) {
@@ -465,6 +469,8 @@ const engine = () => {
 		setTimeout(() => {
 			engine();
 		}, 550);
+	} else {
+		newBoard.ableToSelect = true;
 	}
 };
 
