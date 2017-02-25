@@ -20,9 +20,9 @@
 
 	function moveDownTile(firstTileY, firstTileX) {
 		let i = 0;
+		console.log(firstTileY,firstTileX)
 		while (firstTileY - i > 0) {
-			console.log(firstTileY, firstTileX)
-			console.log(document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i}"]`), document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i - 1}"]`))
+
 			let firstTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i}"]`),
 				secondTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i - 1}"]`),
 				tempTile,
@@ -49,12 +49,14 @@
 				distanseY = fromLeft - toLeft;
 
 				$(secondTile).animate({
-					//left: `-=` + distanseY, // powinna być animacja, ale kiedy jest, to się tam dzieją dziwne rzeczy 
-					//top: `-=` + distanseX
+				//left: `-=` + distanseY, // powinna być animacja
+				//top: `-=` + distanseX
 			}, 200, function () {
+				console.log(parentFirstTile,parentSecondTile)
 				$(firstTile).attr(`y`, secondY);
 				$(secondTile).attr(`y`, firstY);
-
+				//$(firstTile).css({'top' : '0px', 'left' : '0px'});
+				//$(secondTile).css({'top' : '0px', 'left' : '0px'});
 				parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
 				parentSecondTile.appendChild(childParentFirstTile);
 				
@@ -64,6 +66,7 @@
 
 				i += 1;
 			}
+			setTimeout( function() {newBoard.generateNewTiles()}, 300);
 		}
 
 		function setMinHeight() {
@@ -128,11 +131,10 @@
 					$(alreadyTileSelected).css({'top' : '0px', 'left' : '0px'});
 					parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
 					parentSecondTile.appendChild(childParentFirstTile);
+					alreadyTileSelected = ``;
 
-				setTimeout(something, 300)
-				
-				alreadyTileSelected = ``;
-			});
+					engine();
+				});
 
 				return true;
 			} else {
@@ -142,6 +144,7 @@
 
 		function selectTileDOM() {
 			setMinHeight();
+			console.log(alreadyTileSelected);
 			if ($(event.target).hasClass(`tile`)) {
 				if (alreadyTileSelected === event.target) {
 					$(event.target).toggleClass(`selected`);
@@ -164,10 +167,10 @@
 			$(`#${id}`)
 			.prop(`number`, oldNumber)
 			.animateNumber(
-				{
-					number: variable
-				},
-				200
+			{
+				number: variable
+			},
+			200
 			);
 		}
 
@@ -366,7 +369,7 @@
 				return this;
 			}
 
-			deleteTiles(callback) {
+			deleteTiles() {
 				let array = this.arrayOfTiles;
 				for (let i = 0; i < this.size; i += 1) {
 					for (let j = 0; j < this.size; j += 1) {
@@ -376,62 +379,60 @@
 									let tile = $(`.tile`)[k];
 									$(tile).animate({
 										opacity: 0
-									}, 450, function () {
+									}, 200, function () {
 										tile.src = ``;
 										tile.className = `col-xs-2 no-padding`;
 										tile.remove();
-										
 									});
 								}
 							}
 							array[i][j].toDelete = false;
 							array[i][j].type = `clear`;
-							setTimeout(callback, 600);
 						}
 					}
 				}
-				
 				return this;
 			}
 
 			findClearTiles() {
-				newBoard.clearTilesObj = [ ];
-				let array = newBoard.arrayOfTiles;
-				for (let i = 0; i < newBoard.size; i += 1) {
-					for (let j = 0; j < newBoard.size; j += 1) {
+				this.clearTilesObj = [ ];
+				let array = this.arrayOfTiles;
+				for (let i = 0; i < this.size; i += 1) {
+					for (let j = 0; j < this.size; j += 1) {
 						if (array[i][j].type === `clear`) {
-							newBoard.clearTilesObj.push([i, j]);
+							this.clearTilesObj.push([i, j]);
 						}
 					}
 				}
-				return newBoard;
+				return this;
 			}
 
 			setClearTiles() {
-				let objLength = newBoard.clearTilesObj.length;
+				let objLength = this.clearTilesObj.length;
+
 				for (let i = 0; i < objLength; i += 1) {
-					moveDownTile(newBoard.clearTilesObj[i][0], newBoard.clearTilesObj[i][1]);
+					moveDownTile(this.clearTilesObj[i][0], this.clearTilesObj[i][1]);
 				}
-				return newBoard;
+				return this;
 			}
 
 			generateNewTiles() {
-				newBoard.findClearTiles();
-				let objLength = newBoard.clearTilesObj.length,
-					boardSize = newBoard.size * newBoard.size,
+				this.findClearTiles();
+				let objLength = this.clearTilesObj.length,
+					boardSize = this.size * this.size,
 					i = 0;
 
-				if (newBoard.clearTilesObj.length) {
+				if (this.clearTilesObj.length) {
 					for (let j = 0; j < objLength; j += 1) {
-						newBoard.arrayOfTiles[newBoard.clearTilesObj[j][0]][newBoard.clearTilesObj[j][1]] = new Tile(newBoard.randomTypeOfTile(newBoard.bundleObj));
+						this.arrayOfTiles[this.clearTilesObj[j][0]][this.clearTilesObj[j][1]] = new Tile(this.randomTypeOfTile(this.bundleObj));
 
 					}
 
 					for (let k = 0; k < boardSize; k += 1) {
 						if ($(".col-xs-2")[k].children.length === 0) {
-							let creatingImg = $('<img>', { 'class': 'no-padding tile', 'src': `images/${newBoard.arrayOfTiles[newBoard.clearTilesObj[i][0]][newBoard.clearTilesObj[i][1]].type}.svg` });
-							$(creatingImg).attr(`x`, `${newBoard.clearTilesObj[i][1]}`);
-							$(creatingImg).attr(`y`, `${newBoard.clearTilesObj[i][0]}`);
+							let creatingImg = $('<img>', { 'class': 'no-padding tile', 'src': `images/${this.arrayOfTiles[this.clearTilesObj[i][0]][this.clearTilesObj[i][1]].type}.svg` });
+							$(creatingImg).attr(`x`, `${this.clearTilesObj[i][1]}`);
+							$(creatingImg).attr(`y`, `${this.clearTilesObj[i][0]}`);
 							$(creatingImg).css('opacity', '0');
 							creatingImg.appendTo($(".col-xs-2")[k]);
 							$(creatingImg).animate({
@@ -441,36 +442,39 @@
 						}
 					}
 			return this;
-			}
 		}
+	}
+
+			
+		
 	
 		clearBoardDOM() {
 			$(`.panel-body`)[0].innerHTML = ``;
 		}
 
 	}
+
+	function engine() {
+		newBoard.findFit();
+
+		if (newBoard.foundedFit) {
+			
+			newBoard.countFoundedTiles()
+			.addPointsToProfile()
+			.deleteTiles()
+			.findClearTiles()
+			.setClearTiles();
+
+			refreshAmount(`points`, profile.points);
+
+			setTimeout( function() {engine()}, 550); 
+		} 
+
+	}
 	function createNewBoard() {
 		newBoard = new Board(8, `gems`);
 		profile = new Profile(`test`);
 	}
-
-function engine () {
-  				newBoard
-				.findFit()
-				.countFoundedTiles()
-				.addPointsToProfile()
-				.deleteTiles(function () {
-                                     newBoard
-                                       .generateNewTiles();
-                                 })
-				.findClearTiles()
-				.setClearTiles();
-                refreshAmount(`points`, profile.points);
-
-   if ( newBoard.foundedFit ) {
-     setTimeout(engine, 650);
-   }
-}
 
 
 
