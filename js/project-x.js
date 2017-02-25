@@ -159,6 +159,10 @@ const selectTileDOM = () => {
 					$(newBoard.alreadyTileSelected).toggleClass(`selected`);
 					profile.addTurns();
 					refreshAmount(`turns`, profile.turns);
+				} else {
+					$(newBoard.alreadyTileSelected).toggleClass(`selected`);
+					newBoard.alreadyTileSelected = event.target;
+					$(event.target).toggleClass(`selected`);
 				}
 			}
 		}
