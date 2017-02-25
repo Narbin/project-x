@@ -1,480 +1,477 @@
 /* global document:true $:true event:true*/
 
-
+$(`#menu`).modal(`toggle`);
+$(`#play`).bind(`click`, () => {
 	$(`#menu`).modal(`toggle`);
-	$(`#play`).bind(`click`, function () {
-		$(`#menu`).modal(`toggle`);
-		createNewBoard();
-		$(`#board`).modal(`toggle`);
-	});
+	createNewBoard();
+	$(`#board`).modal(`toggle`);
+});
 
-	let alreadyTileSelected = ``,
-		typesOfTiles = [0, 0, 0, 0, 0, 0];
+$(`.panel-body`).bind(`click`, () => {
+	whatTileWasClicked(event);
+});
 
-	$(`.panel-body`).bind(`click`, whatTileWasClicked);
+$(`#resetBoard`).bind(`click`, () => {
+	newBoard.clearBoardDOM();
+	newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
+});
 
-	$(`#resetBoard`).bind(`click`, function () {
-		newBoard.clearBoardDOM();
-		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
-	});
+const moveDownTile = (firstTileY, firstTileX) => {
+	let i = 0;
 
-	function moveDownTile(firstTileY, firstTileX) {
+	while (firstTileY - i > 0) {
+
+		const firstTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i}"]`),
+			secondTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i - 1}"]`),
+			firstX = parseInt(firstTile.getAttribute(`x`), 10),
+			firstY = parseInt(firstTile.getAttribute(`y`), 10),
+			secondY = parseInt(secondTile.getAttribute(`y`), 10),
+			parentFirstTile = firstTile.parentNode,
+			parentSecondTile = secondTile.parentNode,
+			childParentFirstTile = parentFirstTile.firstChild,
+			childParentSecondTile = parentSecondTile.firstChild,
+			toTop = $(firstTile).offset().top,
+			toLeft = $(firstTile).offset().left,
+			fromTop = $(secondTile).offset().top,
+			fromLeft = $(secondTile).offset().left;
+
+		let tempTile,
+			distanseX,
+			distanseY;
+
+		tempTile = newBoard.arrayOfTiles[secondY][firstX];
+		newBoard.arrayOfTiles[secondY][firstX] = newBoard.arrayOfTiles[firstY][firstX];
+		newBoard.arrayOfTiles[firstY][firstX] = tempTile;
+
+		distanseX = fromTop - toTop;
+		distanseY = fromLeft - toLeft;
+
+		$(secondTile).animate({
+			//left: `-=` + distanseY, // powinna być animacja
+			//top: `-=` + distanseX
+		}, 200, () => {
+			$(firstTile).attr(`y`, secondY);
+			$(secondTile).attr(`y`, firstY);
+			//$(firstTile).css({'top' : '0px', 'left' : '0px'});
+			//$(secondTile).css({'top' : '0px', 'left' : '0px'});
+			parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
+			parentSecondTile.appendChild(childParentFirstTile);
+			
+			newBoard.alreadyTileSelected = ``;
+		});
+		i += 1;
+	}
+	setTimeout(() => {
+		newBoard.generateNewTiles();
+	}, 300);
+};
+
+const setMinHeight = () => {
+	if (!newBoard.minHeight) {
+		const getActualHeight = $(`.panel-body`).children().height(),
+			boardSize = newBoard.size * newBoard.size;
+		for (let i = 0; i < boardSize; i += 1) {
+			$(`.panel-body`).children()[i].style.minHeight = getActualHeight + `px`;
+		}
+		newBoard.minHeight = true;
+	}
+};
+
+const whatTileWasClicked = (event) => {
+	if (event.target !== event.currentTarget) {
+		selectTileDOM(event.target);
+	}
+	event.stopPropagation();
+};
+
+const changeTilesPosition = (tile) => {
+	const x1 = parseInt(tile.getAttribute(`x`), 10),
+		y1 = parseInt(tile.getAttribute(`y`), 10),
+		x2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
+		y2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`y`), 10),
+		parentFirstTile = tile.parentNode,
+		parentSecondTile = newBoard.alreadyTileSelected.parentNode,
+		childParentFirstTile = parentFirstTile.firstChild,
+		childParentSecondTile = parentSecondTile.firstChild;
+
+	let tempTile;
+
+	if (x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1) {
+
+		const toTop = $(tile).offset().top,
+			toLeft = $(tile).offset().left,
+			fromTop = $(newBoard.alreadyTileSelected).offset().top,
+			fromLeft = $(newBoard.alreadyTileSelected).offset().left;
+					
+		let distanseX,
+			distanseY;
+
+		tempTile = newBoard.arrayOfTiles[y2][x2];
+		newBoard.arrayOfTiles[y2][x2] = newBoard.arrayOfTiles[y1][x1];
+		newBoard.arrayOfTiles[y1][x1] = tempTile;
+
+		$(tile).attr(`x`, `${x2}`);
+		$(tile).attr(`y`, `${y2}`);
+		$(newBoard.alreadyTileSelected).attr(`x`, `${x1}`);
+		$(newBoard.alreadyTileSelected).attr(`y`, `${y1}`);
+
+		distanseX = fromTop - toTop;
+		distanseY = fromLeft - toLeft;
+
+		$(tile).animate({
+			left: `+=` + distanseY,
+			top: `+=` + distanseX
+		}, 200);
+
+		$(newBoard.alreadyTileSelected).animate({
+			left: `-=` + distanseY,
+			top: `-=` + distanseX
+		}, 200, () => {
+			$(tile).css({'top':'0px', 'left':'0px'});
+			$(newBoard.alreadyTileSelected).css({'top':'0px', 'left':'0px'});
+
+			parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
+			parentSecondTile.appendChild(childParentFirstTile);
+
+			newBoard.alreadyTileSelected = ``;
+
+			engine();
+		});
+		return true;
+	} else {
+		return false;
+	}
+};
+
+const selectTileDOM = () => {
+	setMinHeight();
+
+	if ($(event.target).hasClass(`tile`)) {
+		if (newBoard.alreadyTileSelected === event.target) {
+			$(event.target).toggleClass(`selected`);
+			newBoard.alreadyTileSelected = ``;
+		} else if (newBoard.alreadyTileSelected === ``) {
+			$(event.target).toggleClass(`selected`);
+			newBoard.alreadyTileSelected = event.target;
+		} else {
+			if (changeTilesPosition(event.target)) {
+				$(newBoard.alreadyTileSelected).toggleClass(`selected`);
+				profile.addTurns();
+				refreshAmount(`turns`, profile.turns);
+			}
+		}
+	}
+};
+
+const refreshAmount = (id, variable) => {
+	const oldNumber = parseInt($(`#${id}`).text(), 10);
+	$(`#${id}`)
+	.prop(`number`, oldNumber)
+	.animateNumber(
+		{
+			number: variable
+		},
+	200
+	);
+};
+
+class Profile {
+	constructor(_name) {
+		this.name = _name;
+		this.points = 0;
+		this.turns = 0;
+	}
+
+	addPoints(howMany = 1) {
+		this.points += howMany;
+		return this;
+	}
+
+	addTurns(howMany = 1) {
+		this.turns += howMany;
+		return this;
+	}
+}
+
+class Tile {
+	constructor(_typeOfBundle) {
+		this.type = _typeOfBundle;
+		this.imageSrc = null;
+		this.points = 1;
+		this.isSelected = false;
+		this.toDelete = false;
+	}
+}
+
+class Board {
+	constructor(_size, _typeOfBundle) {
+		this.size = _size;
+		this.typeOfBundle = _typeOfBundle;
+		this.bundleObj = this.createBundleObj(this.typeOfBundle);
+		this.minHeight = false;
+		this.foundedFit = false;
+		this.clearTilesObj = [ ];
+		this.alreadyTileSelected = ``;
+		this.typesOfTiles = [0, 0, 0, 0, 0, 0];
+		this.createTiles();
+		this.shuffleBoard();
+		this.setImageSrc();
+		this.drawTiles();
+	}
+
+	createTiles() {
+		this.arrayOfTiles = new Array(this.size);
+		for (let i = 0; i < this.size; i += 1) {
+			this.arrayOfTiles[i] = new Array(this.size);
+			for (let j = 0; j < this.size; j += 1) {
+				this.arrayOfTiles[i][j] = new Tile(this.randomTypeOfTile(this.bundleObj));
+			}
+		}
+		return this;
+	}
+
+	createBundleObj(nameOfBundle = `gems`) {
+		let bundle = [ ];
+		switch (nameOfBundle) {
+			case `fruits`:
+				bundle = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
+				break;
+			case `gems`:
+				bundle = [`amethyst`, `cut-diamond`, `emerald`, `rupee`, `saphir`, `topaz`];
+				break;
+			default:
+				break;
+		}
+		return bundle;
+	}
+
+	randomTypeOfTile() {
+		return this.bundleObj[Math.floor(Math.random() * this.bundleObj.length)];
+	}
+
+	drawTiles() {
+		const divForTiles = $(`.panel-body`)[0];
+		for (let i = 0; i < this.size; i += 1) {
+			for (let j = 0; j < this.size; j += 1) {
+				const creatingDiv = $('<div>', { 'class': 'col-xs-2 no-padding' }),
+					creatingImg = $('<img>', { 'class': 'no-padding tile', 'src': this.arrayOfTiles[i][j].imageSrc });
+				$(creatingImg).attr(`x`, `${j}`);
+				$(creatingImg).attr(`y`, `${i}`);
+				$(divForTiles).append(creatingDiv);
+				$(creatingDiv).append(creatingImg);
+			}
+		}
+		return this;
+	}
+
+	setImageSrc() {
+		for (let i = 0; i < this.size; i += 1) {
+			for (let j = 0; j < this.size; j += 1) {
+				this.arrayOfTiles[i][j].imageSrc = `images/${this.arrayOfTiles[i][j].type}.svg`;
+			}
+		}
+		return this;
+	}
+
+	shuffleBoard() {
+		let oldType;
+		for (let i = 0; i < this.size; i += 1) {
+			for (let j = 0; j < this.size; j += 1) {
+				if (i > 1) {
+					if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 1][j].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 2][j].type) {
+						oldType = this.arrayOfTiles[i][j].type;
+						while (oldType === this.arrayOfTiles[i][j].type) {
+							this.arrayOfTiles[i][j].type = this.randomTypeOfTile(this.typeOfBundle);
+						}
+					}
+				}
+				if (j > 1) {
+					if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j - 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j - 2].type) {
+						oldType = this.arrayOfTiles[i][j].type;
+						while (oldType === this.arrayOfTiles[i][j].type) {
+							this.arrayOfTiles[i][j].type = this.randomTypeOfTile(this.typeOfBundle);
+						}
+					}
+				}
+			}
+		}
+		return this;
+	}
+
+	findFit() {
+		const array = this.arrayOfTiles;
+		this.foundedFit = false;
+
+		for (let i = 0; i < this.size; i += 1) {
+			for (let j = 0; j < this.size - 2; j += 1) {
+				if (array[i][j].type === array[i][j + 1].type && array[i][j].type === array[i][j + 2].type) {
+					array[i][j].toDelete = true;
+					array[i][j + 1].toDelete = true;
+					array[i][j + 2].toDelete = true;
+					this.foundedFit = true;
+				}
+			}
+		}
+
+		for (let i = 0; i < this.size - 2; i += 1) {
+			for (let j = 0; j < this.size; j += 1) {
+				if (array[i][j].type === array[i + 1][j].type && array[i][j].type === array[i + 2][j].type) {
+					array[i][j].toDelete = true;
+					array[i + 1][j].toDelete = true;
+					array[i + 2][j].toDelete = true;
+					this.foundedFit = true;
+				}
+			}
+		}
+		return this;
+	}
+
+	countFoundedTiles() {
+		const array = this.arrayOfTiles,
+			bundleLength = this.bundleObj.length;
+
+		for (let i = 0; i < this.size; i += 1) {
+			for (let j = 0; j < this.size; j += 1) {
+				if (array[i][j].toDelete) {
+					for (let k = 0; k < bundleLength; k += 1) {
+						if (array[i][j].type === this.bundleObj[k]) {
+							this.typesOfTiles[k] += 1;
+						}
+					}
+				}
+			}
+		}
+		return this;
+	}
+
+	addPointsToProfile() {
+		const len = this.typesOfTiles.length - 1;
+		for (let i = 0; i <= len; i += 1) {
+			switch (this.typesOfTiles[i]) {
+				case (3 || 6 || 9):
+					profile.addPoints(this.typesOfTiles[i]);
+					break;
+				case (4 || 8):
+					profile.addPoints(this.typesOfTiles[i] * 2);
+					break;
+				case (5 || 10):
+					profile.addPoints(this.typesOfTiles[i] * 3);
+					break;
+				case 7:
+					profile.addPoints(this.typesOfTiles[i] + 4);
+					break;
+				default:
+					break;
+			}
+		}
+		this.typesOfTiles = [0, 0, 0, 0, 0, 0];
+		return this;
+	}
+
+	deleteTiles() {
+		const array = this.arrayOfTiles;
+		for (let i = 0; i < this.size; i += 1) {
+			for (let j = 0; j < this.size; j += 1) {
+				if (array[i][j].toDelete) {
+					for (let k = 0; k < $(`.tile`).length; k += 1) {
+						if (parseInt($(`.tile`)[k].getAttribute(`x`), 10) === j && parseInt($(`.tile`)[k].getAttribute(`y`), 10) === i) {
+							const tile = $(`.tile`)[k];
+							$(tile).animate({
+								opacity: 0
+							}, 200, () => {
+								tile.src = ``;
+								tile.className = `col-xs-2 no-padding`;
+								tile.remove();
+							});
+						}
+					}
+					array[i][j].toDelete = false;
+					array[i][j].type = `clear`;
+				}
+			}
+		}
+		return this;
+	}
+
+	findClearTiles() {
+		this.clearTilesObj = [ ];
+		const array = this.arrayOfTiles;
+		for (let i = 0; i < this.size; i += 1) {
+			for (let j = 0; j < this.size; j += 1) {
+				if (array[i][j].type === `clear`) {
+					this.clearTilesObj.push([i, j]);
+				}
+			}
+		}
+		return this;
+	}
+
+	setClearTiles() {
+		const objLength = this.clearTilesObj.length;
+
+		for (let i = 0; i < objLength; i += 1) {
+			moveDownTile(this.clearTilesObj[i][0], this.clearTilesObj[i][1]);
+		}
+		return this;
+	}
+
+	generateNewTiles() {
+		this.findClearTiles();
+		const objLength = this.clearTilesObj.length,
+			boardSize = this.size * this.size;
 		let i = 0;
-		console.log(firstTileY,firstTileX)
-		while (firstTileY - i > 0) {
 
-			let firstTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i}"]`),
-				secondTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i - 1}"]`),
-				tempTile,
-				firstX = parseInt(firstTile.getAttribute(`x`), 10),
-				firstY = parseInt(firstTile.getAttribute(`y`), 10),
-				secondY = parseInt(secondTile.getAttribute(`y`), 10),
-				parentFirstTile = firstTile.parentNode,
-				parentSecondTile = secondTile.parentNode,
-				childParentFirstTile = parentFirstTile.firstChild,
-				childParentSecondTile = parentSecondTile.firstChild;
-
-			tempTile = newBoard.arrayOfTiles[secondY][firstX];
-			newBoard.arrayOfTiles[secondY][firstX] = newBoard.arrayOfTiles[firstY][firstX];
-			newBoard.arrayOfTiles[firstY][firstX] = tempTile;
-
-			let toTop = $(firstTile).offset().top,
-				toLeft = $(firstTile).offset().left,
-				fromTop = $(secondTile).offset().top,
-				fromLeft = $(secondTile).offset().left,
-				distanseX,
-				distanseY;
-
-				distanseX = fromTop - toTop;
-				distanseY = fromLeft - toLeft;
-
-				$(secondTile).animate({
-				//left: `-=` + distanseY, // powinna być animacja
-				//top: `-=` + distanseX
-			}, 200, function () {
-				console.log(parentFirstTile,parentSecondTile)
-				$(firstTile).attr(`y`, secondY);
-				$(secondTile).attr(`y`, firstY);
-				//$(firstTile).css({'top' : '0px', 'left' : '0px'});
-				//$(secondTile).css({'top' : '0px', 'left' : '0px'});
-				parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-				parentSecondTile.appendChild(childParentFirstTile);
-				
-				alreadyTileSelected = ``;
-			});
-
-
-				i += 1;
+		if (this.clearTilesObj.length) {
+			for (let j = 0; j < objLength; j += 1) {
+				this.arrayOfTiles[this.clearTilesObj[j][0]][this.clearTilesObj[j][1]] = new Tile(this.randomTypeOfTile(this.bundleObj));
 			}
-			setTimeout( function() {newBoard.generateNewTiles()}, 300);
-		}
 
-		function setMinHeight() {
-			if (!newBoard.minHeight) {
-				let getActualHeight = $(`.panel-body`).children().height(),
-					boardSize = newBoard.size * newBoard.size;
-				for (let i = 0; i < boardSize; i += 1) {
-					$(`.panel-body`).children()[i].style.minHeight = getActualHeight + `px`;
-				}
-				newBoard.minHeight = true;
-			}
-		}
-
-		function whatTileWasClicked(event) {
-			if (event.target !== event.currentTarget) {
-				selectTileDOM(event.target);
-			}
-			event.stopPropagation();
-		}
-
-		function changeTilesPosition(tile) {
-			let x1 = parseInt(tile.getAttribute(`x`), 10),
-				y1 = parseInt(tile.getAttribute(`y`), 10),
-				x2 = parseInt(alreadyTileSelected.getAttribute(`x`), 10),
-				y2 = parseInt(alreadyTileSelected.getAttribute(`y`), 10),
-				tempTile,				
-				parentFirstTile = tile.parentNode,
-				parentSecondTile = alreadyTileSelected.parentNode,
-				childParentFirstTile = parentFirstTile.firstChild,
-				childParentSecondTile = parentSecondTile.firstChild;
-
-			if (x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1) {
-				tempTile = newBoard.arrayOfTiles[y2][x2];
-				newBoard.arrayOfTiles[y2][x2] = newBoard.arrayOfTiles[y1][x1];
-				newBoard.arrayOfTiles[y1][x1] = tempTile;
-
-				$(tile).attr(`x`, `${x2}`);
-				$(tile).attr(`y`, `${y2}`);
-				$(alreadyTileSelected).attr(`x`, `${x1}`);
-				$(alreadyTileSelected).attr(`y`, `${y1}`);
-
-				let toTop = $(tile).offset().top,
-					toLeft = $(tile).offset().left,
-					fromTop = $(alreadyTileSelected).offset().top,
-					fromLeft = $(alreadyTileSelected).offset().left,
-					distanseX,
-					distanseY;
-
-				distanseX = fromTop - toTop;
-				distanseY = fromLeft - toLeft;
-
-				$(tile).animate({
-					left: `+=` + distanseY,
-					top: `+=` + distanseX
-				}, 200);
-
-				$(alreadyTileSelected).animate({
-					left: `-=` + distanseY,
-					top: `-=` + distanseX
-				}, 200, function () {
-					$(tile).css({'top' : '0px', 'left' : '0px'});
-					$(alreadyTileSelected).css({'top' : '0px', 'left' : '0px'});
-					parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-					parentSecondTile.appendChild(childParentFirstTile);
-					alreadyTileSelected = ``;
-
-					engine();
-				});
-
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		function selectTileDOM() {
-			setMinHeight();
-			console.log(alreadyTileSelected);
-			if ($(event.target).hasClass(`tile`)) {
-				if (alreadyTileSelected === event.target) {
-					$(event.target).toggleClass(`selected`);
-					alreadyTileSelected = ``;
-				} else if (alreadyTileSelected === ``) {
-					$(event.target).toggleClass(`selected`);
-					alreadyTileSelected = event.target;
-				} else {
-					if (changeTilesPosition(event.target)) {
-						$(alreadyTileSelected).toggleClass(`selected`);
-						profile.addTurns();
-						refreshAmount(`turns`, profile.turns);
-					}
+			for (let k = 0; k < boardSize; k += 1) {
+				if ($(".col-xs-2")[k].children.length === 0) {
+					const creatingImg = $(`<img>`, { 'class': `no-padding tile`, 'src': `images/${this.arrayOfTiles[this.clearTilesObj[i][0]][this.clearTilesObj[i][1]].type}.svg` });
+					$(creatingImg).attr(`x`, `${this.clearTilesObj[i][1]}`);
+					$(creatingImg).attr(`y`, `${this.clearTilesObj[i][0]}`);
+					$(creatingImg).css(`opacity`, `0`);
+					creatingImg.appendTo($(".col-xs-2")[k]);
+					$(creatingImg).animate({
+						opacity: '1'
+					}, 200);
+					i += 1;
 				}
 			}
 		}
-
-		function refreshAmount(id, variable) {
-			let oldNumber = parseInt($(`#${id}`).text(), 10);
-			$(`#${id}`)
-			.prop(`number`, oldNumber)
-			.animateNumber(
-			{
-				number: variable
-			},
-			200
-			);
-		}
-
-		class Profile {
-			constructor(_name) {
-				this.name = _name;
-				this.points = 0;
-				this.turns = 0;
-			}
-
-			addPoints(howMany = 1) {
-				this.points += howMany;
-				return this;
-			}
-
-			addTurns(howMany = 1) {
-				this.turns += howMany;
-				return this;
-			}
-		}
-
-		class Tile {
-			constructor(_typeOfBundle) {
-				this.type = _typeOfBundle;
-				this.imageSrc = null;
-				this.points = 1;
-				this.isSelected = false;
-				this.toDelete = false;
-			}
-		}
-
-		class Board {
-			constructor(_size, _typeOfBundle) {
-				this.size = _size;
-				this.typeOfBundle = _typeOfBundle;
-				this.bundleObj = this.createBundleObj(this.typeOfBundle);
-				this.minHeight = false;
-				this.foundedFit = false;
-				this.clearTilesObj = [ ];
-				this.createTiles();
-				this.shuffleBoard();
-				this.setImageSrc();
-				this.drawTiles();
-			}
-
-			createTiles() {
-				this.arrayOfTiles = new Array(this.size);
-				for (let i = 0; i < this.size; i += 1) {
-					this.arrayOfTiles[i] = new Array(this.size);
-					for (let j = 0; j < this.size; j += 1) {
-						this.arrayOfTiles[i][j] = new Tile(this.randomTypeOfTile(this.bundleObj));
-					}
-				}
-				return this;
-			}
-
-			createBundleObj(nameOfBundle) {
-				let bundle = ``;
-				switch (nameOfBundle) {
-					case `fruits`:
-					bundle = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
-					break;
-					case `gems`:
-					bundle = [`amethyst`, `cut-diamond`, `emerald`, `rupee`, `saphir`, `topaz`];
-					break;
-					default:
-					bundle = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
-					break;
-				}
-				return bundle;
-			}
-
-			randomTypeOfTile() {
-				return this.bundleObj[Math.floor(Math.random() * this.bundleObj.length)];
-			}
-
-			drawTiles() {
-				let divForTiles = $(`.panel-body`)[0];
-				for (let i = 0; i < this.size; i += 1) {
-					for (let j = 0; j < this.size; j += 1) {
-						let creatingDiv = $('<div>', { 'class': 'col-xs-2 no-padding' });
-						let creatingImg = $('<img>', { 'class': 'no-padding tile', 'src': this.arrayOfTiles[i][j].imageSrc });
-						$(creatingImg).attr(`x`, `${j}`);
-						$(creatingImg).attr(`y`, `${i}`);
-						$(divForTiles).append(creatingDiv);
-						$(creatingDiv).append(creatingImg);
-					}
-
-				}
-				return this;
-			}
-
-			setImageSrc() {
-				for (let i = 0; i < this.size; i += 1) {
-					for (let j = 0; j < this.size; j += 1) {
-						this.arrayOfTiles[i][j].imageSrc = `images/${this.arrayOfTiles[i][j].type}.svg`;
-					}
-				}
-				return this;
-			}
-
-			shuffleBoard() {
-				for (let i = 0; i < this.size; i += 1) {
-					for (let j = 0; j < this.size; j += 1) {
-						if (i > 1) {
-							if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 1][j].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 2][j].type) {
-								let oldType = this.arrayOfTiles[i][j].type;
-								while (oldType === this.arrayOfTiles[i][j].type) {
-									this.arrayOfTiles[i][j].type = this.randomTypeOfTile(this.typeOfBundle);
-								}
-							}
-						}
-						if (j > 1) {
-							if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j - 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j - 2].type) {
-								let oldType = this.arrayOfTiles[i][j].type;
-								while (oldType === this.arrayOfTiles[i][j].type) {
-									this.arrayOfTiles[i][j].type = this.randomTypeOfTile(this.typeOfBundle);
-								}
-							}
-						}
-					}
-				}
-				return this;
-			}
-
-			findFit() {
-				let array = this.arrayOfTiles;
-				this.foundedFit = false;
-
-
-				for (let i = 0; i < this.size; i += 1) {
-					for (let j = 0; j < this.size - 2; j += 1) {
-						if (array[i][j].type === array[i][j + 1].type && array[i][j].type === array[i][j + 2].type) {
-							array[i][j].toDelete = true;
-							array[i][j + 1].toDelete = true;
-							array[i][j + 2].toDelete = true;
-							this.foundedFit = true;
-						}
-					}
-				}
-
-				for (let i = 0; i < this.size - 2; i += 1) {
-					for (let j = 0; j < this.size; j += 1) {
-						if (array[i][j].type === array[i + 1][j].type && array[i][j].type === array[i + 2][j].type) {
-							array[i][j].toDelete = true;
-							array[i + 1][j].toDelete = true;
-							array[i + 2][j].toDelete = true;
-							this.foundedFit = true;
-						}
-					}
-				}
-				return this;
-			}
-
-			countFoundedTiles() {
-				let array = this.arrayOfTiles,
-					bundleLength = this.bundleObj.length;
-
-				for (let i = 0; i < this.size; i += 1) {
-					for (let j = 0; j < this.size; j += 1) {
-						if (array[i][j].toDelete) {
-							for (let k = 0; k < bundleLength; k += 1) {
-								if (array[i][j].type === this.bundleObj[k]) {
-									typesOfTiles[k] += 1;
-								}
-							}
-						}
-					}
-				}
-				return this;
-			}
-
-
-			addPointsToProfile() {
-				let len = typesOfTiles.length - 1;
-				for (let i = 0; i <= len; i += 1) {
-					switch (typesOfTiles[i]) {
-						case (3 || 6 || 9):
-						profile.addPoints(typesOfTiles[i]);
-						break;
-						case (4 || 8):
-						profile.addPoints(typesOfTiles[i] * 2);
-						break;
-						case (5 || 10):
-						profile.addPoints(typesOfTiles[i] * 3);
-						break;
-						case 7:
-						profile.addPoints(typesOfTiles[i] + 4);
-						break;
-						default:
-						break;
-					}
-				}
-
-				typesOfTiles = [0, 0, 0, 0, 0, 0];
-				return this;
-			}
-
-			deleteTiles() {
-				let array = this.arrayOfTiles;
-				for (let i = 0; i < this.size; i += 1) {
-					for (let j = 0; j < this.size; j += 1) {
-						if (array[i][j].toDelete) {
-							for (let k = 0; k < $(`.tile`).length; k += 1) {
-								if (parseInt($(`.tile`)[k].getAttribute(`x`), 10) === j && parseInt($(`.tile`)[k].getAttribute(`y`), 10) === i) {
-									let tile = $(`.tile`)[k];
-									$(tile).animate({
-										opacity: 0
-									}, 200, function () {
-										tile.src = ``;
-										tile.className = `col-xs-2 no-padding`;
-										tile.remove();
-									});
-								}
-							}
-							array[i][j].toDelete = false;
-							array[i][j].type = `clear`;
-						}
-					}
-				}
-				return this;
-			}
-
-			findClearTiles() {
-				this.clearTilesObj = [ ];
-				let array = this.arrayOfTiles;
-				for (let i = 0; i < this.size; i += 1) {
-					for (let j = 0; j < this.size; j += 1) {
-						if (array[i][j].type === `clear`) {
-							this.clearTilesObj.push([i, j]);
-						}
-					}
-				}
-				return this;
-			}
-
-			setClearTiles() {
-				let objLength = this.clearTilesObj.length;
-
-				for (let i = 0; i < objLength; i += 1) {
-					moveDownTile(this.clearTilesObj[i][0], this.clearTilesObj[i][1]);
-				}
-				return this;
-			}
-
-			generateNewTiles() {
-				this.findClearTiles();
-				let objLength = this.clearTilesObj.length,
-					boardSize = this.size * this.size,
-					i = 0;
-
-				if (this.clearTilesObj.length) {
-					for (let j = 0; j < objLength; j += 1) {
-						this.arrayOfTiles[this.clearTilesObj[j][0]][this.clearTilesObj[j][1]] = new Tile(this.randomTypeOfTile(this.bundleObj));
-
-					}
-
-					for (let k = 0; k < boardSize; k += 1) {
-						if ($(".col-xs-2")[k].children.length === 0) {
-							let creatingImg = $('<img>', { 'class': 'no-padding tile', 'src': `images/${this.arrayOfTiles[this.clearTilesObj[i][0]][this.clearTilesObj[i][1]].type}.svg` });
-							$(creatingImg).attr(`x`, `${this.clearTilesObj[i][1]}`);
-							$(creatingImg).attr(`y`, `${this.clearTilesObj[i][0]}`);
-							$(creatingImg).css('opacity', '0');
-							creatingImg.appendTo($(".col-xs-2")[k]);
-							$(creatingImg).animate({
-								opacity: '1'
-							}, 200);
-							i += 1;
-						}
-					}
-			return this;
-		}
+		return this;
 	}
 
-			
-		
-	
-		clearBoardDOM() {
-			$(`.panel-body`)[0].innerHTML = ``;
-		}
-
+	clearBoardDOM() {
+		$(`.panel-body`)[0].innerHTML = ``;
 	}
+}
 
-	function engine() {
-		newBoard.findFit();
 
-		if (newBoard.foundedFit) {
+const engine = () => {
+	newBoard.findFit();
+
+	if (newBoard.foundedFit) {
 			
-			newBoard.countFoundedTiles()
+		newBoard.countFoundedTiles()
 			.addPointsToProfile()
 			.deleteTiles()
 			.findClearTiles()
 			.setClearTiles();
 
-			refreshAmount(`points`, profile.points);
+		refreshAmount(`points`, profile.points);
 
-			setTimeout( function() {engine()}, 550); 
-		} 
+		setTimeout(() => {
+			engine();
+		}, 550);
+	}
+};
 
-	}
-	function createNewBoard() {
-		newBoard = new Board(8, `gems`);
-		profile = new Profile(`test`);
-	}
+const createNewBoard = () => {
+	newBoard = new Board(8, `gems`);
+	profile = new Profile(`test`);
+};
 
 
 
