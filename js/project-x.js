@@ -98,6 +98,8 @@ const changeTilesPosition = (tile) => {
 
 	if (x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1) {
 
+		newBoard.ableToSelect = false;
+
 		const toTop = $(tile).offset().top,
 			toLeft = $(tile).offset().left,
 			fromTop = $(newBoard.alreadyTileSelected).offset().top,
