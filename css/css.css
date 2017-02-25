@@ -26,8 +26,12 @@ body {
 }
 
 .container {
-	max-width: 600px;
+	max-width: 320px;
 	padding: 0px;
+}
+.container > .panel {
+	margin-bottom: 0px;
+	height: 480px;
 }
 
 .button-image-size {
