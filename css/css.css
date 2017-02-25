@@ -3,6 +3,7 @@ body {
 	-webkit-user-select: none;   
 	-moz-user-select: none;      
 	overflow:hidden;
+	touch-action: none; /* Unable to preventDefault inside passive event listener due to target being treated as passive. See https://www.chromestatus.com/features/5093566007214080 */
 }
 
 .panel-body{
@@ -14,6 +15,10 @@ body {
 	cursor: pointer;
 	position: relative;
 	z-index:10;
+	-moz-user-drag: none;
+	-khtml-user-drag: none;
+	-webkit-user-drag: none;
+	user-drag: none;
 }
 
 .no-padding {

@@ -7,7 +7,23 @@ $(`#play`).bind(`click`, () => {
 	$(`#board`).modal(`toggle`);
 });
 
-$(`.panel-body`).bind(`click`, () => {
+$(`.panel-body`).bind(`swipeup`, () => {
+	changeTileWith(`up`);
+});
+
+$(`.panel-body`).bind(`swipedown`, () => {
+	changeTileWith(`down`);
+});
+
+$(`.panel-body`).bind(`swipeleft`, () => {
+	changeTileWith(`left`);
+});
+
+$(`.panel-body`).bind(`swiperight`, () => {
+	changeTileWith(`right`);
+});
+
+$(`.panel-body`).on(`vmousedown`, () => {
 	whatTileWasClicked(event);
 });
 
@@ -15,6 +31,34 @@ $(`#resetBoard`).bind(`click`, () => {
 	newBoard.clearBoardDOM();
 	newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
 });
+
+const changeTileWith = (direction) => {
+	if (newBoard.alreadyTileSelected) {
+		const x = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
+			y = parseInt(newBoard.alreadyTileSelected.getAttribute(`y`), 10);
+		switch (direction) {
+			case `right`:
+				changeTilesPosition(document.querySelector(`[x="${x + 1}"][y="${y}"]`));
+				$(newBoard.alreadyTileSelected).toggleClass(`selected`);
+			break;
+			case `left`:
+				changeTilesPosition(document.querySelector(`[x="${x - 1}"][y="${y}"]`));
+				$(newBoard.alreadyTileSelected).toggleClass(`selected`);
+			break;
+			case `up`:
+				changeTilesPosition(document.querySelector(`[x="${x}"][y="${y - 1}"]`));
+				$(newBoard.alreadyTileSelected).toggleClass(`selected`);
+			break;
+			case `down`:
+				changeTilesPosition(document.querySelector(`[x="${x}"][y="${y + 1}"]`));
+				$(newBoard.alreadyTileSelected).toggleClass(`selected`);
+			break;
+			default:
+				console.log('err')
+			break;
+		}
+	}
+} 
 
 const moveDownTile = (firstTileY, firstTileX) => {
 	let i = 0;
@@ -85,63 +129,67 @@ const whatTileWasClicked = (event) => {
 };
 
 const changeTilesPosition = (tile) => {
-	const x1 = parseInt(tile.getAttribute(`x`), 10),
-		y1 = parseInt(tile.getAttribute(`y`), 10),
-		x2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
-		y2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`y`), 10),
-		parentFirstTile = tile.parentNode,
-		parentSecondTile = newBoard.alreadyTileSelected.parentNode,
-		childParentFirstTile = parentFirstTile.firstChild,
-		childParentSecondTile = parentSecondTile.firstChild;
+	if (tile) {
+		const x1 = parseInt(tile.getAttribute(`x`), 10),
+			y1 = parseInt(tile.getAttribute(`y`), 10),
+			x2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
+			y2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`y`), 10),
+			parentFirstTile = tile.parentNode,
+			parentSecondTile = newBoard.alreadyTileSelected.parentNode,
+			childParentFirstTile = parentFirstTile.firstChild,
+			childParentSecondTile = parentSecondTile.firstChild;
 
-	let tempTile;
+		let tempTile;
 
-	if (x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1) {
+		if (x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1) {
 
-		newBoard.ableToSelect = false;
+			newBoard.ableToSelect = false;
 
-		const toTop = $(tile).offset().top,
-			toLeft = $(tile).offset().left,
-			fromTop = $(newBoard.alreadyTileSelected).offset().top,
-			fromLeft = $(newBoard.alreadyTileSelected).offset().left;
-					
-		let distanseX,
-			distanseY;
+			const toTop = $(tile).offset().top,
+				toLeft = $(tile).offset().left,
+				fromTop = $(newBoard.alreadyTileSelected).offset().top,
+				fromLeft = $(newBoard.alreadyTileSelected).offset().left;
+						
+			let distanseX,
+				distanseY;
 
-		tempTile = newBoard.arrayOfTiles[y2][x2];
-		newBoard.arrayOfTiles[y2][x2] = newBoard.arrayOfTiles[y1][x1];
-		newBoard.arrayOfTiles[y1][x1] = tempTile;
+			tempTile = newBoard.arrayOfTiles[y2][x2];
+			newBoard.arrayOfTiles[y2][x2] = newBoard.arrayOfTiles[y1][x1];
+			newBoard.arrayOfTiles[y1][x1] = tempTile;
 
-		$(tile).attr(`x`, `${x2}`);
-		$(tile).attr(`y`, `${y2}`);
-		$(newBoard.alreadyTileSelected).attr(`x`, `${x1}`);
-		$(newBoard.alreadyTileSelected).attr(`y`, `${y1}`);
+			$(tile).attr(`x`, `${x2}`);
+			$(tile).attr(`y`, `${y2}`);
+			$(newBoard.alreadyTileSelected).attr(`x`, `${x1}`);
+			$(newBoard.alreadyTileSelected).attr(`y`, `${y1}`);
 
-		distanseX = fromTop - toTop;
-		distanseY = fromLeft - toLeft;
+			distanseX = fromTop - toTop;
+			distanseY = fromLeft - toLeft;
 
-		$(tile).animate({
-			left: `+=` + distanseY,
-			top: `+=` + distanseX
-		}, 200);
+			$(tile).animate({
+				left: `+=` + distanseY,
+				top: `+=` + distanseX
+			}, 200);
 
-		$(newBoard.alreadyTileSelected).animate({
-			left: `-=` + distanseY,
-			top: `-=` + distanseX
-		}, 200, () => {
-			$(tile).css({'top':'0px', 'left':'0px'});
-			$(newBoard.alreadyTileSelected).css({'top':'0px', 'left':'0px'});
+			$(newBoard.alreadyTileSelected).animate({
+				left: `-=` + distanseY,
+				top: `-=` + distanseX
+			}, 200, () => {
+				$(tile).css({'top':'0px', 'left':'0px'});
+				$(newBoard.alreadyTileSelected).css({'top':'0px', 'left':'0px'});
 
-			parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-			parentSecondTile.appendChild(childParentFirstTile);
+				parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
+				parentSecondTile.appendChild(childParentFirstTile);
 
-			newBoard.alreadyTileSelected = ``;
+				newBoard.alreadyTileSelected = ``;
 
-			engine();
-		});
-		return true;
-	} else {
-		return false;
+				engine();
+			});
+			profile.addTurns();
+			refreshAmount(`turns`, profile.turns);
+			return true;
+		} else {
+			return false;
+		}
 	}
 };
 
@@ -159,8 +207,6 @@ const selectTileDOM = () => {
 			} else {
 				if (changeTilesPosition(event.target)) {
 					$(newBoard.alreadyTileSelected).toggleClass(`selected`);
-					profile.addTurns();
-					refreshAmount(`turns`, profile.turns);
 				} else {
 					$(newBoard.alreadyTileSelected).toggleClass(`selected`);
 					newBoard.alreadyTileSelected = event.target;
