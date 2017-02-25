@@ -3,7 +3,9 @@
 $(`#menu`).modal(`toggle`);
 $(`#play`).bind(`click`, () => {
 	$(`#menu`).modal(`toggle`);
-	createNewBoard();
+	if (typeof newBoard === 'undefined') {
+		createNewBoard();
+	}
 	$(`#board`).modal(`toggle`);
 });
 
@@ -30,6 +32,11 @@ $(`.panel-body`).on(`vmousedown`, () => {
 $(`#resetBoard`).bind(`click`, () => {
 	newBoard.clearBoardDOM();
 	newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
+});
+
+$(`#goBack`).bind(`click`, () => {
+	$(`#board`).modal(`toggle`);
+	$(`#menu`).modal(`toggle`);
 });
 
 const changeTileWith = (direction) => {
