@@ -98,3 +98,26 @@ body {
 	padding: 20px;
 	width: 200px
 }
+
+.achievements-div {
+	overflow: auto;
+	max-height: 400px;
+	background-color: #00e2ff
+}
+
+.achievement{
+	height: 200px;
+	width: 100%;
+	padding: 5px;
+	text-align: center;
+	border: #03A9F4 2px solid;
+    margin-bottom: 2px;
+    border-radius: 50px;
+    background-color: #abf6ff;
+}
+
+.achievement img{
+	height: 150px;
+	display: block;
+	margin: auto;
+}

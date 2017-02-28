@@ -9,6 +9,17 @@ $(`#play`).bind(`click`, () => {
 	$(`#board`).modal(`toggle`);
 });
 
+$(`#achievementsButton`).bind(`click`, () => {
+	$(`#menu`).modal(`toggle`);
+	showAchievementsDOM();
+	$(`#achievements`).modal(`toggle`);
+});
+
+$(`#goBackAchievements`).bind(`click`, () => {
+	$(`#achievements`).modal(`toggle`);
+	$(`#menu`).modal(`toggle`);
+});
+
 $(`.panel-body`).bind(`swipeup`, () => {
 	changeTileWith(`up`);
 });
@@ -236,11 +247,36 @@ const refreshAmount = (id, variable) => {
 	);
 };
 
+class Achievement {
+	constructor(_name, _description, _imageSrc, _parametr, _condition) {
+		this.name = _name;
+		this.description = _description;
+		this.imageSrc = _imageSrc;
+		this.completed = false;
+		this.condition = function () {
+			if (typeof _condition === 'boolean') {
+				if (profile[_parametr] === _condition) {
+					this.completed = true;
+				}
+			} else if (typeof _condition === 'number') {
+				if (profile[_parametr] >= _condition) {
+					this.completed = true;
+				}
+			} else {
+				console.log(`Parametr ${_condition} must be Boolean or Number!`)
+			}
+			return this
+		};
+	}
+}
+
 class Profile {
 	constructor(_name) {
 		this.name = _name;
 		this.points = 0;
 		this.turns = 0;
+		this.achievements = [ ];
+		this.addAchievements();
 	}
 
 	addPoints(howMany = 1) {
@@ -252,6 +288,22 @@ class Profile {
 		this.turns += howMany;
 		return this;
 	}
+
+	addAchievements() {
+		if (this.achievements.length === 0) {
+			this.achievements.push(new Achievement('Nowicjusz','Zdobądź pierwsze 100 punktów!','images/novice.svg','points',100));
+			this.achievements.push(new Achievement('Mistrz','Zdobądź 1000 punktów!','images/master.svg','points',1000));
+			this.achievements.push(new Achievement('Arcymistrz','Zdobądź 10000 punktów!','images/archmaster.svg','points',10000));
+			this.achievements.push(new Achievement('Praktykant','Ukończ 10 rozgrywek!','images/trainee.svg','completedGames',10));
+			this.achievements.push(new Achievement('Doświadczony','Ukończ 30 rozgrywek!','images/experienced.svg','completedGames',30));
+			this.achievements.push(new Achievement('Uczeń z podstawówki','Ukończ 10 zadań!','images/primaryschool.svg','completedTasks',10));
+			this.achievements.push(new Achievement('Uczeń z liceum','Ukończ 50 zadań!','images/highschool.svg','completedTasks',50));
+			this.achievements.push(new Achievement('Szczęściarz','Zrób combosa 4x!','images/lucky.svg','combo',4));
+			this.achievements.push(new Achievement('Dziecko szczęścia!','Zrób combosa 8x!','images/child.svg','combo',8));
+			this.achievements.push(new Achievement('Wciągnięty','Spędź 30 min w grze!','images/sucked.svg','timeSpentInGame',30));
+		}
+	}
+
 }
 
 class Tile {
@@ -535,8 +587,33 @@ const engine = () => {
 
 const createNewBoard = () => {
 	newBoard = new Board(8, `gems`);
-	profile = new Profile(`test`);
 };
+
+const showAchievementsDOM = () => {
+	const achievementsDiv = $(`#achievementsDiv`);
+	achievementsDiv.empty();
+	checkAllAchievements();
+	for (let i = 0; i <= profile.achievements.length - 1; i += 1) {
+		let glyphon;
+		if (profile.achievements[i].completed) {
+			glyphon = '<span class= "glyphicon glyphicon-ok text-success" aria-hidden="true"></span>';
+		} else {
+			glyphon = '<span class= "glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>';
+		}
+		achievementsDiv.append(`<div class="achievement"><span>${glyphon+profile.achievements[i].name+glyphon}</span><img src="${profile.achievements[i].imageSrc}"><span>${profile.achievements[i].description}</span></div>`)
+	}
+}
+
+const checkAllAchievements = () => {
+	for (let i = 0; i <= profile.achievements.length - 1; i += 1) {
+		profile.achievements[i].condition();
+	}
+}
+
+(function (){
+	profile = new Profile(`test`);
+})();
+
 
 
 
