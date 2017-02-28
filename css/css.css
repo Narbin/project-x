@@ -4,6 +4,8 @@ body {
 	-moz-user-select: none;      
 	overflow:hidden;
 	touch-action: none; /* Unable to preventDefault inside passive event listener due to target being treated as passive. See https://www.chromestatus.com/features/5093566007214080 */
+	font-family: 'Patrick Hand SC', cursive;
+	font-size: 18px;
 }
 
 .panel-body{
@@ -95,13 +97,18 @@ body {
 
 .button-menu {
 	margin-top: 10px;
-	padding: 20px;
-	width: 200px
+	width: 200px;
+	font-size: 30px;
+    padding: 10px;
 }
 
 .achievements-div {
 	overflow: auto;
 	max-height: 400px;
+	background-color: #00e2ff
+}
+
+#achievements > .container > .panel-default {
 	background-color: #00e2ff
 }
 
@@ -117,18 +124,17 @@ body {
 }
 
 .achievement img{
-	height: 150px;
+	height: 140px;
 	display: block;
 	margin: auto;
 }
 
 #popup {
-	top: -370px;
-	margin: auto;
+	margin: 15px auto 0 auto;
 	height: 100px;
     width: 300px;
     z-index: 2000;
-    background-color: #CDDC39;
+    background-color: #75e81e;
     border-radius: 15px;
     box-shadow: black 0px 2px 10px 1px;
 }
@@ -147,5 +153,20 @@ body {
 .popup-achievement span{
 	display: block;
 }
+
+#board > .container > .panel > .panel-footer {
+	padding: 5px 5px;
+}
+
+#board > .container > .panel > .panel-heading {
+	padding: 5px 5px;
+}
+
+#board > .container > .panel > .panel-body {
+	padding: 6px;
+}
+
+
+
 
     
