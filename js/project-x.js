@@ -581,6 +581,7 @@ const engine = () => {
 			engine();
 		}, 550);
 	} else {
+		checkAllAchievements();
 		newBoard.ableToSelect = true;
 	}
 };
@@ -592,7 +593,6 @@ const createNewBoard = () => {
 const showAchievementsDOM = () => {
 	const achievementsDiv = $(`#achievementsDiv`);
 	achievementsDiv.empty();
-	checkAllAchievements();
 	for (let i = 0; i <= profile.achievements.length - 1; i += 1) {
 		let glyphon;
 		if (profile.achievements[i].completed) {
@@ -606,7 +606,33 @@ const showAchievementsDOM = () => {
 
 const checkAllAchievements = () => {
 	for (let i = 0; i <= profile.achievements.length - 1; i += 1) {
-		profile.achievements[i].condition();
+		if (!profile.achievements[i].completed) {
+			profile.achievements[i].condition();
+			if (profile.achievements[i].completed) {
+				showPopupDOM(`<div class="popup-achievement"><img src="${profile.achievements[i].imageSrc}">Gratulacje! otrzymałeś:<span>${profile.achievements[i].name}</span>\n<span>${profile.achievements[i].description}</span></div>`);
+			}
+		}
+	}
+}
+
+const showPopupDOM = (content) => {
+	const popup = $(`#popup`);
+	if (popup.hasClass('in')) {
+		setTimeout(() => {
+			popup.append(content);
+			popup.modal(`toggle`);
+		}, 3000);
+		setTimeout(() => {
+			popup.modal(`toggle`);
+			popup.empty();
+		}, 5500);
+	} else {
+		popup.append(content);
+		popup.modal(`toggle`);
+		setTimeout(() => {
+			popup.modal(`toggle`);
+			popup.empty();
+		}, 2500);
 	}
 }
 

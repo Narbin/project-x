@@ -121,3 +121,31 @@ body {
 	display: block;
 	margin: auto;
 }
+
+#popup {
+	top: -370px;
+	margin: auto;
+	height: 100px;
+    width: 300px;
+    z-index: 2000;
+    background-color: #CDDC39;
+    border-radius: 15px;
+    box-shadow: black 0px 2px 10px 1px;
+}
+
+.popup-achievement {
+	text-align: center;
+	max-height: 100%;
+}
+
+.popup-achievement img{
+    height: 90px;
+    margin: 5px;
+    float: left;
+}
+
+.popup-achievement span{
+	display: block;
+}
+
+    
