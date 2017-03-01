@@ -1,6 +1,5 @@
 /* global document:true $:true event:true*/
 
-$(`#menu`).modal(`toggle`);
 $(`#play`).bind(`click`, () => {
 	$(`#menu`).modal(`toggle`);
 	if (typeof newBoard === 'undefined') {
@@ -18,6 +17,13 @@ $(`#achievementsButton`).bind(`click`, () => {
 $(`#goBackAchievements`).bind(`click`, () => {
 	$(`#achievements`).modal(`toggle`);
 	$(`#menu`).modal(`toggle`);
+});
+
+$(`#createProfileButton`).bind(`click`, () => {
+	$(`#menu`).modal(`toggle`);
+	const name = document.querySelector('input[name="name"]').value;
+	profile = new Profile(name);
+	$(`#createProfile`).modal(`toggle`);
 });
 
 $(`.panel-body`).bind(`swipeup`, () => {
@@ -636,10 +642,11 @@ const showPopupDOM = (content) => {
 	}
 }
 
-(function (){
-	profile = new Profile(`test`);
+(() => {
+	if (typeof profile !== 'undefined') {
+		$(`#menu`).modal(`toggle`);
+	} else {
+		$(`#createProfile`).modal(`toggle`);
+	}
 })();
-
-
-
 
