@@ -23,6 +23,7 @@ $(`#createProfileButton`).bind(`click`, () => {
 	$(`#menu`).modal(`toggle`);
 	const name = document.querySelector('input[name="name"]').value;
 	profile = new Profile(name);
+	saveProfile();
 	$(`#createProfile`).modal(`toggle`);
 });
 
@@ -588,8 +589,10 @@ const engine = () => {
 		}, 550);
 	} else {
 		checkAllAchievements();
+		saveProfile();
 		newBoard.ableToSelect = true;
 	}
+
 };
 
 const createNewBoard = () => {
@@ -642,8 +645,30 @@ const showPopupDOM = (content) => {
 	}
 }
 
+const saveProfile= () => {
+	if (window.localStorage) {
+		localStorage.setItem(`profile`, JSON.stringify({
+			name: profile.name,
+			achievements: profile.achievements
+		}));
+	}
+}
+const loadProfile = () => {
+	if (window.localStorage && localStorage.getItem(`profile`)) {
+		let loadedData = JSON.parse(localStorage.getItem(`profile`));
+		profile = new Profile(loadedData.name);
+		for (let i = 0; i < loadedData.achievements.length; i += 1) {
+			if (loadedData.achievements[i].completed) {
+				profile.achievements[i].completed = true;
+			}
+		}
+	}
+}
+
 (() => {
-	if (typeof profile !== 'undefined') {
+	loadProfile();
+
+	if (typeof profile.name !== 'undefined') {
 		$(`#menu`).modal(`toggle`);
 	} else {
 		$(`#createProfile`).modal(`toggle`);
