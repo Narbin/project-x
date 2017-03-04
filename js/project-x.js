@@ -676,7 +676,7 @@ const loadProfile = () => {
 (() => {
 	loadProfile();
 
-	if (typeof profile.name !== 'undefined') {
+	if (typeof profile !== 'undefined') {
 		$(`#menu`).modal(`toggle`);
 	} else {
 		$(`#createProfile`).modal(`toggle`);
