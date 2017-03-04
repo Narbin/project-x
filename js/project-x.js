@@ -115,7 +115,7 @@ const moveDownTile = (firstTileY, firstTileX) => {
 		distanseX = fromTop - toTop;
 		distanseY = fromLeft - toLeft;
 
-		/*$(secondTile).velocity({
+		$(secondTile).velocity({
 			//left: `-=` + distanseY, // powinna być animacja
 			//top: `-=` + distanseX
 		}, 200, () => {
@@ -127,14 +127,14 @@ const moveDownTile = (firstTileY, firstTileX) => {
 			parentSecondTile.appendChild(childParentFirstTile);
 			
 			newBoard.alreadyTileSelected = ``;
-		});*/
+		});
 			
-    	$(firstTile).attr(`y`, secondY);
-		$(secondTile).attr(`y`, firstY);
-		parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-		parentSecondTile.appendChild(childParentFirstTile);
+    	//$(firstTile).attr(`y`, secondY);
+		//$(secondTile).attr(`y`, firstY);
+		//parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
+		//parentSecondTile.appendChild(childParentFirstTile);
 			
-		newBoard.alreadyTileSelected = ``;
+		//newBoard.alreadyTileSelected = ``;
 
 		i += 1;
 	}
