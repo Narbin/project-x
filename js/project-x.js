@@ -201,21 +201,26 @@ const changeTilesPosition = (tile) => {
 			$(tile).velocity({
 				left: `+=` + distanseY,
 				top: `+=` + distanseX
-			}, 200);
+			}, {
+				duration:200 
+			});
 
 			$(newBoard.alreadyTileSelected).velocity({
 				left: `-=` + distanseY,
 				top: `-=` + distanseX
-			}, 200, () => {
-				$(tile).css({'top':'0px', 'left':'0px'});
-				$(newBoard.alreadyTileSelected).css({'top':'0px', 'left':'0px'});
+			}, {
+				duration:200,
+				complete: () => {
+					$(tile).css({'top':'0px', 'left':'0px'});
+					$(newBoard.alreadyTileSelected).css({'top':'0px', 'left':'0px'});
 
-				parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-				parentSecondTile.appendChild(childParentFirstTile);
+					parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
+					parentSecondTile.appendChild(childParentFirstTile);
 
-				newBoard.alreadyTileSelected = ``;
+					newBoard.alreadyTileSelected = ``;
 
-				engine();
+					engine();
+				}
 			});
 			profile.addTurns();
 			refreshAmount(`turns`, profile.turns);
@@ -507,10 +512,13 @@ class Board {
 							const tile = $(`.tile`)[k];
 							$(tile).velocity({
 								opacity: 0
-							}, 200, () => {
-								tile.src = ``;
-								tile.className = `col-xs-2 no-padding`;
-								tile.remove();
+							}, {
+								duration: 200,
+								complete: () => {
+									tile.src = ``;
+									tile.className = `col-xs-2 no-padding`;
+									tile.remove();
+								}
 							});
 						}
 					}
@@ -564,7 +572,9 @@ class Board {
 					creatingImg.appendTo($(".col-xs-2")[k]);
 					$(creatingImg).velocity({
 						opacity: '1'
-					}, 200);
+					}, {
+						duration: 200
+					});
 					i += 1;
 				}
 			}
@@ -594,7 +604,7 @@ const engine = () => {
 
 		setTimeout(() => {
 			engine();
-		}, 550);
+		}, 1000);
 	} else {
 		checkAllAchievements();
 		saveProfile();
