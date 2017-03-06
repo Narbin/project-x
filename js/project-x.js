@@ -198,12 +198,12 @@ const changeTilesPosition = (tile) => {
 			distanseX = fromTop - toTop;
 			distanseY = fromLeft - toLeft;
 
-			$(tile).animate({
+			$(tile).velocity({
 				left: `+=` + distanseY,
 				top: `+=` + distanseX
 			}, 200);
 
-			$(newBoard.alreadyTileSelected).animate({
+			$(newBoard.alreadyTileSelected).velocity({
 				left: `-=` + distanseY,
 				top: `-=` + distanseX
 			}, 200, () => {
@@ -505,7 +505,7 @@ class Board {
 					for (let k = 0; k < $(`.tile`).length; k += 1) {
 						if (parseInt($(`.tile`)[k].getAttribute(`x`), 10) === j && parseInt($(`.tile`)[k].getAttribute(`y`), 10) === i) {
 							const tile = $(`.tile`)[k];
-							$(tile).animate({
+							$(tile).velocity({
 								opacity: 0
 							}, 200, () => {
 								tile.src = ``;
@@ -562,7 +562,7 @@ class Board {
 					$(creatingImg).attr(`y`, `${this.clearTilesObj[i][0]}`);
 					$(creatingImg).css(`opacity`, `0`);
 					creatingImg.appendTo($(".col-xs-2")[k]);
-					$(creatingImg).animate({
+					$(creatingImg).velocity({
 						opacity: '1'
 					}, 200);
 					i += 1;
