@@ -115,7 +115,7 @@ const moveDownTile = (firstTileY, firstTileX) => {
 		distanseX = fromTop - toTop;
 		distanseY = fromLeft - toLeft;
 
-		/*$(secondTile).animate({
+		$(secondTile).animate({
 			//left: `-=` + distanseY, // powinna być animacja
 			//top: `-=` + distanseX
 		}, 200, () => {
@@ -127,14 +127,7 @@ const moveDownTile = (firstTileY, firstTileX) => {
 			parentSecondTile.appendChild(childParentFirstTile);
 			
 			newBoard.alreadyTileSelected = ``;
-		});*/
-			
-    	$(firstTile).attr(`y`, secondY);
-		$(secondTile).attr(`y`, firstY);
-		parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-		parentSecondTile.appendChild(childParentFirstTile);
-			
-		newBoard.alreadyTileSelected = ``;
+		});
 
 		i += 1;
 	}
@@ -198,28 +191,21 @@ const changeTilesPosition = (tile) => {
 			distanseX = fromTop - toTop;
 			distanseY = fromLeft - toLeft;
 
-			$(tile).velocity({
+			$(tile).animate({
 				left: `+=` + distanseY,
 				top: `+=` + distanseX
-			}, {
-				duration:200 
-			});
+			}, 200);
 
-			$(newBoard.alreadyTileSelected).velocity({
+			$(newBoard.alreadyTileSelected).animate({
 				left: `-=` + distanseY,
 				top: `-=` + distanseX
-			}, {
-				duration:200,
-				complete: () => {
-					$(tile).css({'top':'0px', 'left':'0px'});
-					$(newBoard.alreadyTileSelected).css({'top':'0px', 'left':'0px'});
+			}, 200, () => {
+				$(tile).css({'top':'0px', 'left':'0px'});
+				$(newBoard.alreadyTileSelected).css({'top':'0px', 'left':'0px'});
+				parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
+				parentSecondTile.appendChild(childParentFirstTile);
 
-					parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-					parentSecondTile.appendChild(childParentFirstTile);
-
-					newBoard.alreadyTileSelected = ``;
-
-					engine();
+				engine();
 				}
 			});
 			profile.addTurns();
@@ -510,15 +496,12 @@ class Board {
 					for (let k = 0; k < $(`.tile`).length; k += 1) {
 						if (parseInt($(`.tile`)[k].getAttribute(`x`), 10) === j && parseInt($(`.tile`)[k].getAttribute(`y`), 10) === i) {
 							const tile = $(`.tile`)[k];
-							$(tile).velocity({
+							$(tile).animate({
 								opacity: 0
-							}, {
-								duration: 200,
-								complete: () => {
-									tile.src = ``;
-									tile.className = `col-xs-2 no-padding`;
-									tile.remove();
-								}
+							}, 200, () => {
+								tile.src = ``;
+								tile.className = `col-xs-2 no-padding`;
+								tile.remove();
 							});
 						}
 					}
@@ -570,11 +553,9 @@ class Board {
 					$(creatingImg).attr(`y`, `${this.clearTilesObj[i][0]}`);
 					$(creatingImg).css(`opacity`, `0`);
 					creatingImg.appendTo($(".col-xs-2")[k]);
-					$(creatingImg).velocity({
+					$(creatingImg).animate({
 						opacity: '1'
-					}, {
-						duration: 200
-					});
+					}, 200);
 					i += 1;
 				}
 			}
@@ -604,7 +585,7 @@ const engine = () => {
 
 		setTimeout(() => {
 			engine();
-		}, 1000);
+		}, 550);
 	} else {
 		checkAllAchievements();
 		saveProfile();
