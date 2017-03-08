@@ -1,31 +1,27 @@
 /* global document:true $:true event:true*/
 
 $(`#play`).bind(`click`, () => {
-	$(`#menu`).modal(`toggle`);
 	if (typeof newBoard === 'undefined') {
 		createNewBoard();
 	}
-	$(`#board`).modal(`toggle`);
 	launchIntoFullscreen(document.documentElement);
+	toggleModal(`#board`);
 });
 
 $(`#achievementsButton`).bind(`click`, () => {
-	$(`#menu`).modal(`toggle`);
 	showAchievementsDOM();
-	$(`#achievements`).modal(`toggle`);
+	toggleModal(`#achievements`);
 });
 
 $(`#goBackAchievements`).bind(`click`, () => {
-	$(`#achievements`).modal(`toggle`);
-	$(`#menu`).modal(`toggle`);
+	toggleModal(`#menu`);
 });
 
 $(`#createProfileButton`).bind(`click`, () => {
-	$(`#menu`).modal(`toggle`);
 	const name = document.querySelector('input[name="name"]').value;
 	profile = new Profile(name);
 	saveProfile();
-	$(`#createProfile`).modal(`toggle`);
+	toggleModal(`#menu`);
 });
 
 $(`.panel-body`).bind(`swipeup`, () => {
@@ -54,9 +50,8 @@ $(`#resetBoard`).bind(`click`, () => {
 });
 
 $(`#goBack`).bind(`click`, () => {
-	$(`#board`).modal(`toggle`);
+	toggleModal(`#menu`);
 	exitFullscreen();
-	$(`#menu`).modal(`toggle`);
 });
 
 const changeTileWith = (direction) => {
@@ -685,6 +680,11 @@ const exitFullscreen = () => {
   } else if(document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
   }
+}
+
+const toggleModal = (id) => {
+	$(`.modal.fade.in`).modal(`toggle`);
+	$(id).modal(`toggle`);
 }
 
 (() => {
