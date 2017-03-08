@@ -6,6 +6,7 @@ $(`#play`).bind(`click`, () => {
 		createNewBoard();
 	}
 	$(`#board`).modal(`toggle`);
+	launchIntoFullscreen(document.documentElement);
 });
 
 $(`#achievementsButton`).bind(`click`, () => {
@@ -54,6 +55,7 @@ $(`#resetBoard`).bind(`click`, () => {
 
 $(`#goBack`).bind(`click`, () => {
 	$(`#board`).modal(`toggle`);
+	exitFullscreen();
 	$(`#menu`).modal(`toggle`);
 });
 
@@ -206,7 +208,6 @@ const changeTilesPosition = (tile) => {
 				parentSecondTile.appendChild(childParentFirstTile);
 
 				engine();
-				}
 			});
 			profile.addTurns();
 			refreshAmount(`turns`, profile.turns);
@@ -662,6 +663,28 @@ const loadProfile = () => {
 			}
 		}
 	}
+}
+
+const launchIntoFullscreen = (element) => {
+  if(element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if(element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if(element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+  } else if(element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  }
+}
+
+const exitFullscreen = () => {
+  if(document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if(document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if(document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
 }
 
 (() => {
