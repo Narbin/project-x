@@ -86,7 +86,7 @@ body {
 }
 
 #icon {
-	 animation: iconRotate 20s linear infinite;
+	 /*animation: iconRotate 20s linear infinite;*/
 }
 
 @keyframes iconRotate { 
