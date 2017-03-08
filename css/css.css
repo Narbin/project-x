@@ -31,8 +31,8 @@ body {
 	max-width: 320px;
 	padding: 0px;
 	background: linear-gradient(138deg, #6882a8, #b6fbff, #70e1f5, #ffd194);
-	background-size: 800% 800%;
-	animation: grafientAnimation 15s ease infinite;
+	/*background-size: 800% 800%;*/
+	/*animation: grafientAnimation 15s ease infinite;*/
 	height: 480px;
 }
 .container > .panel {
