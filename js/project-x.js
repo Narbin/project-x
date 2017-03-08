@@ -1,11 +1,11 @@
 /* global document:true $:true event:true*/
 
 $(`#play`).bind(`click`, () => {
-	if (typeof newBoard === 'undefined') {
-		createNewBoard();
-	}
-	launchIntoFullscreen(document.documentElement);
-	toggleModal(`#board`);
+	//if (typeof newBoard === 'undefined') {
+	//	createNewBoard();
+	//}
+	//launchIntoFullscreen(document.documentElement);
+	toggleModal(`#modeMenu`);
 });
 
 $(`#achievementsButton`).bind(`click`, () => {

@@ -215,7 +215,12 @@ body {
 	border-color: rgba(255, 255, 255, 0);
 }
 
+#modeMenu > .container > .panel {
+	text-align: center;
+	overflow: auto;
+}
 
+.div-label {
+	font-size: 25px;
+}
 
-
-    
