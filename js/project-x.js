@@ -14,6 +14,11 @@ $('.btn').bind(`click`, () => {
 	} else if (event.target.getAttribute('data-resetBoard')) {
 		newBoard.clearBoardDOM();
 		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
+	} else if (event.target.getAttribute('data-createProfile')) {
+		const name = document.querySelector('input[name="name"]').value;
+		profile = new Profile(name);
+		saveProfile();
+		toggleModal(`${event.target.getAttribute('data-createProfile')}`);
 	}
 	event.stopPropagation();
 });
