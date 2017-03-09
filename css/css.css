@@ -224,3 +224,25 @@ body {
 	font-size: 25px;
 }
 
+#campaignModal > .container > .panel {
+	text-align: center;
+}
+
+.button-mission {
+	font-size: 40px;
+    display: inline-block;
+    height: 70px;
+    width: 70px;
+    line-height: 66px;
+    margin: 10px;
+}
+
+#levelCompleted > .container > .panel {
+	text-align: center;
+}
+
+#levelCompleted > .container > .panel > span {
+	display: block;
+    font-size: 25px;
+    color: #3c763d;
+}

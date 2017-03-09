@@ -1,20 +1,21 @@
 /* global document:true $:true event:true*/
 
-$(`#play`).bind(`click`, () => {
-	//if (typeof newBoard === 'undefined') {
-	//	createNewBoard();
-	//}
-	//launchIntoFullscreen(document.documentElement);
-	toggleModal(`#modeMenu`);
-});
-
-$(`#achievementsButton`).bind(`click`, () => {
-	showAchievementsDOM();
-	toggleModal(`#achievements`);
-});
-
-$(`#goBackAchievements`).bind(`click`, () => {
-	toggleModal(`#menu`);
+$('.btn').bind(`click`, () => {
+	if (event.target.getAttribute('data-modal')) {
+		if (event.target.getAttribute('data-modal') == '#achievements') {
+			showAchievementsDOM();
+			toggleModal(`${event.target.getAttribute('data-modal')}`);
+		} else {
+			toggleModal(`${event.target.getAttribute('data-modal')}`);
+			exitFullscreen();
+		}
+	} else if (event.target.getAttribute('data-mission')) {
+		startMission(event.target.getAttribute('data-mission'));
+	} else if (event.target.getAttribute('data-resetBoard')) {
+		newBoard.clearBoardDOM();
+		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
+	}
+	event.stopPropagation();
 });
 
 $(`#createProfileButton`).bind(`click`, () => {
@@ -42,16 +43,6 @@ $(`.panel-body`).bind(`swiperight`, () => {
 
 $(`.panel-body`).on(`vmousedown`, () => {
 	whatTileWasClicked(event);
-});
-
-$(`#resetBoard`).bind(`click`, () => {
-	newBoard.clearBoardDOM();
-	newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
-});
-
-$(`#goBack`).bind(`click`, () => {
-	toggleModal(`#menu`);
-	exitFullscreen();
 });
 
 const changeTileWith = (direction) => {
@@ -202,10 +193,14 @@ const changeTilesPosition = (tile) => {
 				parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
 				parentSecondTile.appendChild(childParentFirstTile);
 
+				newBoard.alreadyTileSelected = '';
+
 				engine();
 			});
-			profile.addTurns();
-			refreshAmount(`turns`, profile.turns);
+			profile.actualStatistics.turns += 1;
+			profile.totalStatistics.turns += 1;
+			refreshAmount(`turns`, profile.actualStatistics.turns);
+
 			return true;
 		} else {
 			return false;
@@ -237,7 +232,7 @@ const selectTileDOM = () => {
 	}
 };
 
-const refreshAmount = (id, variable) => {
+const refreshAmount = (id, variable, time = 200, callback = function() {}) => {
 	const oldNumber = parseInt($(`#${id}`).text(), 10);
 	$(`#${id}`)
 	.prop(`number`, oldNumber)
@@ -245,7 +240,8 @@ const refreshAmount = (id, variable) => {
 		{
 			number: variable
 		},
-	200
+	time,
+	callback
 	);
 };
 
@@ -278,17 +274,16 @@ class Profile {
 		this.points = 0;
 		this.turns = 0;
 		this.achievements = [ ];
+		this.actualStatistics = {
+			points: 0,
+			turns: 0,
+			typesOfTiles: [0, 0, 0, 0, 0, 0]
+		};
+		this.totalStatistics = {
+			points: 0,
+			turns: 0
+		};
 		this.addAchievements();
-	}
-
-	addPoints(howMany = 1) {
-		this.points += howMany;
-		return this;
-	}
-
-	addTurns(howMany = 1) {
-		this.turns += howMany;
-		return this;
 	}
 
 	addAchievements() {
@@ -329,6 +324,7 @@ class Board {
 		this.alreadyTileSelected = ``;
 		this.typesOfTiles = [0, 0, 0, 0, 0, 0];
 		this.ableToSelect = true;
+		this.tasks = [ ];
 		this.createTiles();
 		this.shuffleBoard();
 		this.setImageSrc();
@@ -465,16 +461,24 @@ class Board {
 		for (let i = 0; i <= len; i += 1) {
 			switch (this.typesOfTiles[i]) {
 				case (3 || 6 || 9):
-					profile.addPoints(this.typesOfTiles[i]);
+					profile.actualStatistics.points += this.typesOfTiles[i];
+					profile.totalStatistics.points += this.typesOfTiles[i];
+					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				case (4 || 8):
-					profile.addPoints(this.typesOfTiles[i] * 2);
+					profile.actualStatistics.points += this.typesOfTiles[i] * 2;
+					profile.totalStatistics.points += this.typesOfTiles[i] * 2;
+					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				case (5 || 10):
-					profile.addPoints(this.typesOfTiles[i] * 3);
+					profile.actualStatistics.points += this.typesOfTiles[i] * 3;
+					profile.totalStatistics.points += this.typesOfTiles[i] * 3;
+					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				case 7:
-					profile.addPoints(this.typesOfTiles[i] + 4);
+					profile.actualStatistics.points += this.typesOfTiles[i] + 4;
+					profile.totalStatistics.points += this.typesOfTiles[i] + 4;
+					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				default:
 					break;
@@ -564,6 +568,21 @@ class Board {
 	}
 }
 
+class Task {
+	constructor(_type, _amount) {
+		this.type = _type;
+		this.amount = _amount;
+		this.imageSrc = `images/${newBoard.bundleObj[this.type]}.svg`;
+		this.completed = false;
+		this.checkTask = () => {
+			if (profile.actualStatistics.typesOfTiles[this.type] >= this.amount) {
+				this.completed = true;
+			}
+			return this;
+		}
+	}
+}
+
 
 const engine = () => {
 	newBoard.ableToSelect = false;
@@ -576,14 +595,14 @@ const engine = () => {
 			.deleteTiles()
 			.findClearTiles()
 			.setClearTiles();
-
-		refreshAmount(`points`, profile.points);
+		refreshAmount(`points`, profile.actualStatistics.points);
 
 		setTimeout(() => {
 			engine();
 		}, 550);
 	} else {
 		checkAllAchievements();
+		checkAllTasks();
 		saveProfile();
 		newBoard.ableToSelect = true;
 	}
@@ -685,6 +704,133 @@ const exitFullscreen = () => {
 const toggleModal = (id) => {
 	$(`.modal.fade.in`).modal(`toggle`);
 	$(id).modal(`toggle`);
+}
+
+const startMission = (id) => {
+	if (typeof newBoard === 'undefined') {
+		newBoard = new Board(8, `gems`);
+		createTasksForCampaign(id);
+		generateTasksDOM();
+	} else {
+		resetActualGame();
+		newBoard = new Board(8, `gems`);
+		createTasksForCampaign(id);
+		generateTasksDOM();
+	}
+	toggleModal(`#board`);
+	launchIntoFullscreen(document.documentElement);
+}
+
+const createTasksForCampaign = (id) => {
+	newBoard.tasks = [ ];
+	switch (id) {
+		case '1':
+			newBoard.tasks.push(new Task(0, 10));
+			newBoard.tasks.push(new Task(1, 10));
+		break;
+		case '2':
+			newBoard.tasks.push(new Task(0, 20));
+			newBoard.tasks.push(new Task(1, 20));
+			newBoard.tasks.push(new Task(2, 20));
+		break;
+		case '3':
+			newBoard.tasks.push(new Task(0, 40));
+			newBoard.tasks.push(new Task(1, 40));
+			newBoard.tasks.push(new Task(2, 40));
+		break;
+		case '4':
+			newBoard.tasks.push(new Task(0, 30));
+			newBoard.tasks.push(new Task(1, 30));
+			newBoard.tasks.push(new Task(2, 30));
+			newBoard.tasks.push(new Task(3, 30));
+		break;
+		case '5':
+			newBoard.tasks.push(new Task(0, 30));
+			newBoard.tasks.push(new Task(1, 30));
+			newBoard.tasks.push(new Task(2, 30));
+			newBoard.tasks.push(new Task(3, 30));
+			newBoard.tasks.push(new Task(4, 30));
+		break;
+		case '6':
+			newBoard.tasks.push(new Task(0, 35));
+			newBoard.tasks.push(new Task(1, 35));
+			newBoard.tasks.push(new Task(2, 35));
+			newBoard.tasks.push(new Task(3, 35));
+			newBoard.tasks.push(new Task(4, 35));
+			newBoard.tasks.push(new Task(5, 35));
+		break;
+		default:
+			newBoard.tasks.push(new Task(0, 10));
+		break;
+	}
+}
+
+const generateTasksDOM = () => {
+	const divForTasks = document.querySelector(`#divForTasks`);
+
+	for (let i = 0; i <= newBoard.tasks.length - 1; i += 1) {
+		const creatingTask = $(`<div>`, { 'class': `no-padding text-center pull-left`}),
+			creatingImg = $(`<img>`, { 'class': `img-responsive no-padding`, 'src': newBoard.tasks[i].imageSrc, 'alt': `...`}),
+			creatingAmountSpan = $(`<span>`).html(`${newBoard.tasks[i].amount}x`),
+			creatingActualSpan = $(`<span>`, { 'id': `task-${i}`}).html(`0`);
+		$(creatingTask).css({
+			'width': `${100/newBoard.tasks.length}%`,
+			'border-radius': '40px'
+		});
+		$(creatingImg).css({
+			'height': `28px`,
+			'margin': `auto`
+		});
+		creatingTask.appendTo(divForTasks);
+		creatingAmountSpan.appendTo(creatingTask);
+		creatingImg.appendTo(creatingTask);
+		creatingActualSpan.appendTo(creatingTask);
+	}
+}
+
+const checkAllTasks = () => {
+
+	if (typeof newBoard !== 'undefined') {
+		const length = newBoard.tasks.length - 1;
+		let tasksCompleted = 0;
+		for (let i = 0; i <= length; i += 1) {
+			if (!newBoard.tasks[i].completed) {
+				newBoard.tasks[i].checkTask();
+				if (newBoard.tasks[i].completed) {
+					$(`#task-${i}`).parent().css('background-color', 'rgba(0, 255, 0, 0.5)');
+				}
+			} 
+			refreshAmount(`task-${i}`, profile.actualStatistics.typesOfTiles[i]);
+			if (newBoard.tasks[i].completed) {
+				tasksCompleted += 1;
+			} 
+		}
+
+		if (tasksCompleted === length + 1) {
+			document.querySelector('#gainedPoints').innerHTML = '0';
+			toggleModal(`#levelCompleted`);
+			refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, () => {
+				resetActualGame();
+			});
+		}
+	}
+}
+
+const resetActualGame = () => {
+	document.querySelector('#turns').innerHTML = '0';
+	document.querySelector('#points').innerHTML = '0';
+	for (let i = 0; i < Object.keys(profile.actualStatistics).length; i += 1) {
+		if (typeof profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] === 'number') {
+			profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] = 0;
+		} else if (typeof profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] === 'object') {
+			for (let j = 0; j < profile.actualStatistics[Object.keys(profile.actualStatistics)[i]].length; j += 1) {
+				profile.actualStatistics[Object.keys(profile.actualStatistics)[i]][j] = 0;
+			}
+		}
+	}
+	newBoard.clearBoardDOM();
+	$(`#divForTasks`)[0].innerHTML = ``;
+	delete newBoard
 }
 
 (() => {
