@@ -486,6 +486,9 @@ class Board {
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				default:
+					profile.actualStatistics.points += this.typesOfTiles[i] + 1;
+					profile.totalStatistics.points += this.typesOfTiles[i] + 1;
+					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i] + 1;
 					break;
 			}
 		}
