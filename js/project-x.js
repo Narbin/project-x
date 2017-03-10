@@ -13,7 +13,10 @@ $('.btn').bind(`click`, () => {
 		startMission(event.target.getAttribute('data-mission'));
 	} else if (event.target.getAttribute('data-resetBoard')) {
 		newBoard.clearBoardDOM();
-		newBoard = new Board(newBoard.size, newBoard.typeOfBundle);
+		newBoard.createTiles();
+		newBoard.shuffleBoard();
+		newBoard.setImageSrc();
+		newBoard.drawTiles();
 	} else if (event.target.getAttribute('data-createProfile')) {
 		const name = document.querySelector('input[name="name"]').value;
 		profile = new Profile(name);
@@ -412,6 +415,11 @@ class Board {
 				}
 			}
 		}
+		this.findFit();
+		if (this.foundedFit) {
+			this.foundedFit = false;
+			this.shuffleBoard();
+		}
 		return this;
 	}
 
@@ -486,9 +494,6 @@ class Board {
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				default:
-					profile.actualStatistics.points += this.typesOfTiles[i] + 1;
-					profile.totalStatistics.points += this.typesOfTiles[i] + 1;
-					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i] + 1;
 					break;
 			}
 		}
