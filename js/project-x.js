@@ -5,6 +5,9 @@ $('.btn').bind(`click`, () => {
 		if (event.target.getAttribute('data-modal') == '#achievements') {
 			showAchievementsDOM();
 			toggleModal(`${event.target.getAttribute('data-modal')}`);
+		} else if (event.target.getAttribute('data-modal') == `#statistics`){
+			showStatisticsDOM();
+			toggleModal(`${event.target.getAttribute('data-modal')}`);
 		} else {
 			toggleModal(`${event.target.getAttribute('data-modal')}`);
 			exitFullscreen();
@@ -206,7 +209,7 @@ const changeTilesPosition = (tile) => {
 				engine();
 			});
 			profile.actualStatistics.turns += 1;
-			profile.totalStatistics.turns += 1;
+			profile.totalStatistics.turns[0] += 1;
 			refreshAmount(`turns`, profile.actualStatistics.turns);
 
 			return true;
@@ -260,12 +263,18 @@ class Achievement {
 		this.imageSrc = _imageSrc;
 		this.completed = false;
 		this.condition = function () {
+			let profileParametr;
+			if (typeof profile.totalStatistics[_parametr] === 'undefined') {
+				profileParametr = profile[_parametr];
+			} else {
+				profileParametr = profile.totalStatistics[_parametr][0];
+			}
 			if (typeof _condition === 'boolean') {
-				if (profile[_parametr] === _condition) {
+				if (profileParametr === _condition) {
 					this.completed = true;
 				}
 			} else if (typeof _condition === 'number') {
-				if (profile[_parametr] >= _condition) {
+				if (profileParametr >= _condition) {
 					this.completed = true;
 				}
 			} else {
@@ -279,19 +288,52 @@ class Achievement {
 class Profile {
 	constructor(_name) {
 		this.name = _name;
-		this.points = 0;
-		this.turns = 0;
 		this.achievements = [ ];
 		this.actualStatistics = {
 			points: 0,
 			turns: 0,
-			typesOfTiles: [0, 0, 0, 0, 0, 0]
-		};
+			typesOfTiles: [0, 0, 0, 0, 0, 0],
+		},
+		this.milliseconds = 0,
+		this.minutesInGame = 0,
 		this.totalStatistics = {
-			points: 0,
-			turns: 0
+			points: [0, 'Zdobyte punkty:'],
+			turns: [0, 'Ilość wykonanych ruchów:'],
+			completedTasks: [0, 'Ilość wykonanych zadań:'],
+			completedGames: [0, 'Ilość zakończonych misji:'],
+			maxCombo: [0, 'Największy combos:'],
+			timeInGame: [()=>{return this.timeInGame()}, 'Czas w grze:'],
 		};
+
 		this.addAchievements();
+		this.timeInGame();
+		this.checkTime();
+	}
+
+	timeInGame() {
+		const duration = this.milliseconds;
+		let milliseconds = parseInt((duration%1000)/100),
+		seconds = parseInt((duration/1000)%60),
+		minutes = parseInt((duration/(1000*60))%60),
+		hours = parseInt((duration/(1000*60*60))%24);
+
+		hours = (hours < 10) ? "0" + hours : hours;
+		minutes = (minutes < 10) ? "0" + minutes : minutes;
+		seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+		this.minutesInGame = parseInt(duration/(1000*60));
+
+		return hours + ":" + minutes + ":" + seconds;
+	}
+
+	checkTime() {
+		setTimeout(() => {
+			this.milliseconds += 1000;
+			this.timeInGame();
+			checkAllAchievements();
+			saveProfile();
+			this.checkTime();
+		}, 1000);
 	}
 
 	addAchievements() {
@@ -303,9 +345,9 @@ class Profile {
 			this.achievements.push(new Achievement('Doświadczony','Ukończ 30 rozgrywek!','images/experienced.svg','completedGames',30));
 			this.achievements.push(new Achievement('Uczeń z podstawówki','Ukończ 10 zadań!','images/primaryschool.svg','completedTasks',10));
 			this.achievements.push(new Achievement('Uczeń z liceum','Ukończ 50 zadań!','images/highschool.svg','completedTasks',50));
-			this.achievements.push(new Achievement('Szczęściarz','Zrób combosa 4x!','images/lucky.svg','combo',4));
-			this.achievements.push(new Achievement('Dziecko szczęścia!','Zrób combosa 8x!','images/child.svg','combo',8));
-			this.achievements.push(new Achievement('Wciągnięty','Spędź 30 min w grze!','images/sucked.svg','timeSpentInGame',30));
+			this.achievements.push(new Achievement('Szczęściarz','Zrób combosa 4x!','images/lucky.svg','maxCombo',4));
+			this.achievements.push(new Achievement('Dziecko szczęścia!','Zrób combosa 8x!','images/child.svg','maxCombo',8));
+			this.achievements.push(new Achievement('Wciągnięty','Spędź 30 min w grze!','images/sucked.svg','minutesInGame',30));
 		}
 	}
 
@@ -475,22 +517,22 @@ class Board {
 			switch (this.typesOfTiles[i]) {
 				case (3 || 6 || 9):
 					profile.actualStatistics.points += this.typesOfTiles[i];
-					profile.totalStatistics.points += this.typesOfTiles[i];
+					profile.totalStatistics.points[0] += this.typesOfTiles[i];
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				case (4 || 8):
 					profile.actualStatistics.points += this.typesOfTiles[i] * 2;
-					profile.totalStatistics.points += this.typesOfTiles[i] * 2;
+					profile.totalStatistics.points[0] += this.typesOfTiles[i] * 2;
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				case (5 || 10):
 					profile.actualStatistics.points += this.typesOfTiles[i] * 3;
-					profile.totalStatistics.points += this.typesOfTiles[i] * 3;
+					profile.totalStatistics.points[0] += this.typesOfTiles[i] * 3;
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				case 7:
 					profile.actualStatistics.points += this.typesOfTiles[i] + 4;
-					profile.totalStatistics.points += this.typesOfTiles[i] + 4;
+					profile.totalStatistics.points[0] += this.typesOfTiles[i] + 4;
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				default:
@@ -614,9 +656,7 @@ const engine = () => {
 			engine();
 		}, 550);
 	} else {
-		checkAllAchievements();
 		checkAllTasks();
-		saveProfile();
 		newBoard.ableToSelect = true;
 	}
 
@@ -676,7 +716,10 @@ const saveProfile= () => {
 	if (window.localStorage) {
 		localStorage.setItem(`profile`, JSON.stringify({
 			name: profile.name,
-			achievements: profile.achievements
+			achievements: profile.achievements,
+			totalStatistics: profile.totalStatistics,
+			milliseconds: profile.milliseconds,
+			minutesInGame: profile.minutesInGame
 		}));
 	}
 }
@@ -684,9 +727,16 @@ const loadProfile = () => {
 	if (window.localStorage && localStorage.getItem(`profile`)) {
 		let loadedData = JSON.parse(localStorage.getItem(`profile`));
 		profile = new Profile(loadedData.name);
+		profile.milliseconds = loadedData.milliseconds;
+		profile.minutesInGame = loadedData.minutesInGame;
 		for (let i = 0; i < loadedData.achievements.length; i += 1) {
 			if (loadedData.achievements[i].completed) {
 				profile.achievements[i].completed = true;
+			}
+		}
+		for (let i = 0; i < Object.keys(loadedData.totalStatistics).length; i += 1) {
+			if (typeof profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0] !== 'function') {
+				profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0] = loadedData.totalStatistics[Object.keys(loadedData.totalStatistics)[i]][0];
 			}
 		}
 	}
@@ -811,6 +861,7 @@ const checkAllTasks = () => {
 				newBoard.tasks[i].checkTask();
 				if (newBoard.tasks[i].completed) {
 					$(`#task-${i}`).parent().css('background-color', 'rgba(0, 255, 0, 0.5)');
+					profile.totalStatistics.completedTasks[0] += 1;
 				}
 			} 
 			refreshAmount(`task-${i}`, profile.actualStatistics.typesOfTiles[i]);
@@ -820,6 +871,7 @@ const checkAllTasks = () => {
 		}
 
 		if (tasksCompleted === length + 1) {
+			profile.totalStatistics.completedGames[0] += 1;
 			document.querySelector('#gainedPoints').innerHTML = '0';
 			toggleModal(`#levelCompleted`);
 			refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, () => {
@@ -844,6 +896,26 @@ const resetActualGame = () => {
 	newBoard.clearBoardDOM();
 	$(`#divForTasks`)[0].innerHTML = ``;
 	delete newBoard
+}
+
+const showStatisticsDOM = () => {
+	const table = document.querySelector(`#tableForStatistics`);
+	table.innerHTML = '';
+	for (let i = 0; i < Object.keys(profile.totalStatistics).length; i += 1) {
+		
+		const creatingTr = $(`<tr>`),
+			creatingTdName = $(`<td>`).html(`${profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][1]}`);
+		let creatingTdData = '';
+		if (typeof profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0] === 'function') {
+			creatingTdData = $(`<td>`).html(`${profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0]()}`);
+		} else {
+			creatingTdData = $(`<td>`).html(`${profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0]}`);
+		}
+		
+		creatingTr.appendTo(table);
+		creatingTdName.appendTo(creatingTr);
+		creatingTdData.appendTo(creatingTr);
+	}
 }
 
 (() => {
