@@ -106,21 +106,19 @@ const moveDownTile = (firstTileY, firstTileX) => {
 
 		distanseX = fromTop - toTop;
 		distanseY = fromLeft - toLeft;
+		
+		//left: `-=` + distanseY, // powinna być animacja
+		//top: `-=` + distanseX
 
-		$(secondTile).animate({
-			//left: `-=` + distanseY, // powinna być animacja
-			//top: `-=` + distanseX
-		}, 200, () => {
-
-			firstTile.setAttribute('y', secondY);
-			secondTile.setAttribute('y', firstY);
-			//$(firstTile).css({'top' : '0px', 'left' : '0px'});
-			//$(secondTile).css({'top' : '0px', 'left' : '0px'});
-			parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-			parentSecondTile.appendChild(childParentFirstTile);
+		firstTile.setAttribute('y', secondY);
+		secondTile.setAttribute('y', firstY);
+		//$(firstTile).css({'top' : '0px', 'left' : '0px'});
+		//$(secondTile).css({'top' : '0px', 'left' : '0px'});
+		parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
+		parentSecondTile.appendChild(childParentFirstTile);
 			
-			newBoard.alreadyTileSelected = ``;
-		});
+		newBoard.alreadyTileSelected = ``;
+
 
 		i += 1;
 	}
@@ -186,17 +184,9 @@ const changeTilesPosition = (tile) => {
 			distanseX = fromTop - toTop;
 			distanseY = fromLeft - toLeft;
 
-			$(tile).animate({
-				left: `+=` + distanseY,
-				top: `+=` + distanseX
-			}, 200);
+			TweenLite.to(tile, 0.2, {left:`+=${distanseY}`, top:`+=${distanseX}`, onComplete:() => {tile.style.top = '0px'; tile.style.left = '0px';}});
 
-			$(newBoard.alreadyTileSelected).animate({
-				left: `-=` + distanseY,
-				top: `-=` + distanseX
-			}, 200, () => {
-				tile.style.top = '0px';
-				tile.style.left = '0px';
+			TweenLite.to(newBoard.alreadyTileSelected, 0.2, {left:`-=${distanseY}`, top:`-=${distanseX}`, onComplete:() => {
 				newBoard.alreadyTileSelected.style.top = '0px';
 				newBoard.alreadyTileSelected.style.left = '0px';
 				parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
@@ -205,7 +195,8 @@ const changeTilesPosition = (tile) => {
 				newBoard.alreadyTileSelected = '';
 
 				engine();
-			});
+			}});
+
 			profile.actualStatistics.turns += 1;
 			profile.totalStatistics.turns[0] += 1;
 			refreshAmount(`turns`, profile.actualStatistics.turns);
@@ -553,13 +544,11 @@ class Board {
 				if (array[i][j].toDelete) {
 					for (let k = 0; k < tile.length; k += 1) {
 						if (parseInt(tile[k].getAttribute(`x`), 10) === j && parseInt(tile[k].getAttribute(`y`), 10) === i) {
-							$(tile[k]).animate({
-								opacity: 0
-							}, 200, () => {
+							TweenLite.to(tile[k], 0.2, {opacity:`0`, onComplete:() => {
 								tile[k].src = ``;
 								tile[k].className = `col-xs-2 no-padding`;
 								tile[k].parentNode.removeChild(tile[k]);
-							});
+							}});
 						}
 					}
 					array[i][j].toDelete = false;
@@ -614,10 +603,7 @@ class Board {
 					creatingImg.style.opacity = '0';
 					parentOfTile[k].appendChild(creatingImg);
 
-					$(creatingImg).animate({
-						opacity: '1'
-					}, 200);
-
+					TweenLite.to(creatingImg, 0.2, {opacity:`1`});
 
 					i += 1;
 				}
