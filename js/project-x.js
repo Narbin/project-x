@@ -30,23 +30,22 @@ for (let i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1 ) {
 	});
 }
 
-$(`.panel-body`).on(`swipeup`, () => {
-	changeTileWith(`up`);
+ontouch(document.querySelectorAll(`.panel-body`)[0], function(evt, dir, phase, swipetype, distance){
+	if (dir === 'none' && phase === 'start') {
+		whatTileWasClicked(event);
+	}
+	if (swipetype === 'left') {
+		changeTileWith(`left`);
+	}else if (swipetype === 'right') {
+		changeTileWith(`right`);
+	}else if (swipetype === 'top') {
+		changeTileWith(`up`);
+	}else if (swipetype === 'down') {
+		changeTileWith(`down`);
+	}
 });
 
-$(`.panel-body`).on(`swipedown`, () => {
-	changeTileWith(`down`);
-});
-
-$(`.panel-body`).on(`swipeleft`, () => {
-	changeTileWith(`left`);
-});
-
-$(`.panel-body`).on(`swiperight`, () => {
-	changeTileWith(`right`);
-});
-
-$(`.panel-body`).on(`vmousedown`, () => {
+document.querySelectorAll(`.panel-body`)[0].addEventListener('click', () => {
 	whatTileWasClicked(event);
 });
 
