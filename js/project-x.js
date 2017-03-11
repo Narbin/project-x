@@ -242,17 +242,17 @@ const selectTileDOM = () => {
 	}
 };
 
-const refreshAmount = (id, variable, time = 200, callback = function() {}) => {
-	const oldNumber = parseInt($(`#${id}`).text(), 10);
-	$(`#${id}`)
-	.prop(`number`, oldNumber)
-	.animateNumber(
-		{
-			number: variable
-		},
-	time,
-	callback
-	);
+const refreshAmount = (id, variable, time = 2500, callback = function() {}) => {
+	const options = {
+	  useEasing : true, 
+	  useGrouping : true, 
+	  separator : ',', 
+	  decimal : '.', 
+	  prefix : '', 
+	  suffix : '' 
+	},
+	animate = new CountUp(document.querySelector(`#${id}`), parseInt(document.querySelector(`#${id}`).innerHTML, 10), variable, 0, time/1000, options);
+	animate.start();
 };
 
 class Achievement {
