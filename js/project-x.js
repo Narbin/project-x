@@ -242,7 +242,10 @@ function selectTileDOM() {
 	}
 }
 
-function refreshAmount(id, variable, time = 1000) {
+function refreshAmount(id, variable, time) {
+	if (time === undefined) {
+		time = 1000;
+	}
 	const options = {
 		useEasing: true,
 		useGrouping: true,
@@ -388,7 +391,10 @@ class Board {
 		return this;
 	}
 
-	createBundleObj(nameOfBundle = `gems`) {
+	createBundleObj(nameOfBundle) {
+		if (nameOfBundle === undefined) {
+			nameOfBundle = `gems`;
+		}
 		var bundle = [ ];
 		switch (nameOfBundle) {
 			case `fruits`:
