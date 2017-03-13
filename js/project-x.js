@@ -1,6 +1,7 @@
 /* global document:true $:true event:true*/
+
 for (let i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1 ) {
-	document.querySelectorAll('.btn')[i].addEventListener('click', () => {
+	document.querySelectorAll('.btn')[i].addEventListener('click', function(){
 		if (event.target.getAttribute('data-modal')) {
 			if (event.target.getAttribute('data-modal') == '#achievements') {
 				showAchievementsDOM();
@@ -45,11 +46,11 @@ ontouch(document.querySelectorAll(`.panel-body`)[0], function(evt, dir, phase, s
 	}
 });
 
-document.querySelectorAll(`.panel-body`)[0].addEventListener('click', () => {
+document.querySelectorAll(`.panel-body`)[0].addEventListener('click', function(){
 	whatTileWasClicked(event);
 });
 
-const changeTileWith = (direction) => {
+function changeTileWith(direction) {
 	if (newBoard.alreadyTileSelected) {
 		const x = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
 			y = parseInt(newBoard.alreadyTileSelected.getAttribute(`y`), 10);
@@ -77,7 +78,7 @@ const changeTileWith = (direction) => {
 	}
 } 
 
-const moveDownTile = (firstTileY, firstTileX) => {
+function moveDownTile(firstTileY, firstTileX) {
 	let i = 0;
 
 	while (firstTileY - i > 0) {
@@ -122,12 +123,12 @@ const moveDownTile = (firstTileY, firstTileX) => {
 
 		i += 1;
 	}
-	setTimeout(() => {
+	setTimeout(function() {
 		newBoard.generateNewTiles();
 	}, 300);
 };
 
-const setMinHeight = () => {
+function setMinHeight(){
 	if (!newBoard.minHeight) {
 		const getActualHeight = document.querySelector('.panel-body').childNodes[1].clientHeight,
 			boardSize = newBoard.size * newBoard.size;
@@ -138,14 +139,14 @@ const setMinHeight = () => {
 	}
 };
 
-const whatTileWasClicked = (event) => {
+function whatTileWasClicked(event) {
 	if (event.target !== event.currentTarget) {
 		selectTileDOM(event.target);
 	}
 	event.stopPropagation();
 };
 
-const changeTilesPosition = (tile) => {
+function changeTilesPosition(tile) {
 	if (tile) {
 		const x1 = parseInt(tile.getAttribute(`x`), 10),
 			y1 = parseInt(tile.getAttribute(`y`), 10),
@@ -184,18 +185,29 @@ const changeTilesPosition = (tile) => {
 			distanseX = fromTop - toTop;
 			distanseY = fromLeft - toLeft;
 
-			TweenLite.to(tile, 0.2, {left:`+=${distanseY}`, top:`+=${distanseX}`, onComplete:() => {tile.style.top = '0px'; tile.style.left = '0px';}});
+			TweenLite.to(tile, 0.2, {
+				left:`+=${distanseY}`,
+				top:`+=${distanseX}`,
+				onComplete: function(){ 
+					tile.style.top = '0px'; 
+					tile.style.left = '0px';
+				}
+			});
 
-			TweenLite.to(newBoard.alreadyTileSelected, 0.2, {left:`-=${distanseY}`, top:`-=${distanseX}`, onComplete:() => {
-				newBoard.alreadyTileSelected.style.top = '0px';
-				newBoard.alreadyTileSelected.style.left = '0px';
-				parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-				parentSecondTile.appendChild(childParentFirstTile);
+			TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
+				left:`-=${distanseY}`,
+				top:`-=${distanseX}`,
+				onComplete: function(){
+					newBoard.alreadyTileSelected.style.top = '0px';
+					newBoard.alreadyTileSelected.style.left = '0px';
+					parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
+					parentSecondTile.appendChild(childParentFirstTile);
 
-				newBoard.alreadyTileSelected = '';
+					newBoard.alreadyTileSelected = '';
 
-				engine();
-			}});
+					engine();
+				}
+			});
 
 			profile.actualStatistics.turns += 1;
 			profile.totalStatistics.turns[0] += 1;
@@ -208,7 +220,7 @@ const changeTilesPosition = (tile) => {
 	}
 };
 
-const selectTileDOM = () => {
+function selectTileDOM() {
 	setMinHeight();
 
 	if (newBoard.ableToSelect) {
@@ -232,7 +244,7 @@ const selectTileDOM = () => {
 	}
 };
 
-const refreshAmount = (id, variable, time = 2500, callback = function() {}) => {
+function refreshAmount(id, variable, time = 2500, callback = function() {}) {
 	const options = {
 	  useEasing : true, 
 	  useGrouping : true, 
@@ -291,7 +303,7 @@ class Profile {
 			completedTasks: [0, 'Ilość wykonanych zadań:'],
 			completedGames: [0, 'Ilość zakończonych misji:'],
 			maxCombo: [0, 'Największy combos:'],
-			timeInGame: [()=>{return this.timeInGame()}, 'Czas w grze:'],
+			timeInGame: [0, 'Czas w grze:'],
 		};
 
 		this.addAchievements();
@@ -312,16 +324,16 @@ class Profile {
 
 		this.minutesInGame = parseInt(duration/(1000*60));
 
-		return hours + ":" + minutes + ":" + seconds;
+		this.totalStatistics.timeInGame[0] = hours + ":" + minutes + ":" + seconds;
 	}
 
 	checkTime() {
-		setTimeout(() => {
-			this.milliseconds += 1000;
-			this.timeInGame();
+		setTimeout(function(){
+			profile.milliseconds += 1000;
+			profile.timeInGame();
 			checkAllAchievements();
 			saveProfile();
-			this.checkTime();
+			profile.checkTime();
 		}, 1000);
 	}
 
@@ -544,11 +556,14 @@ class Board {
 				if (array[i][j].toDelete) {
 					for (let k = 0; k < tile.length; k += 1) {
 						if (parseInt(tile[k].getAttribute(`x`), 10) === j && parseInt(tile[k].getAttribute(`y`), 10) === i) {
-							TweenLite.to(tile[k], 0.2, {opacity:`0`, onComplete:() => {
-								tile[k].src = ``;
-								tile[k].className = `col-xs-2 no-padding`;
-								tile[k].parentNode.removeChild(tile[k]);
-							}});
+							TweenLite.to(tile[k], 0.2, {
+								opacity:`0`,
+								onComplete: function(){
+									tile[k].src = ``;
+									tile[k].className = `col-xs-2 no-padding`;
+									tile[k].parentNode.removeChild(tile[k]);
+								}
+							});
 						}
 					}
 					array[i][j].toDelete = false;
@@ -623,7 +638,7 @@ class Task {
 		this.amount = _amount;
 		this.imageSrc = `images/${newBoard.bundleObj[this.type]}.svg`;
 		this.completed = false;
-		this.checkTask = () => {
+		this.checkTask = function(){
 			if (profile.actualStatistics.typesOfTiles[this.type] >= this.amount) {
 				this.completed = true;
 			}
@@ -633,7 +648,7 @@ class Task {
 }
 
 
-const engine = () => {
+function engine() {
 	newBoard.ableToSelect = false;
 	newBoard.findFit();
 
@@ -646,7 +661,7 @@ const engine = () => {
 			.setClearTiles();
 		refreshAmount(`points`, profile.actualStatistics.points);
 
-		setTimeout(() => {
+		setTimeout(function(){
 			engine();
 		}, 550);
 	} else {
@@ -656,11 +671,11 @@ const engine = () => {
 
 };
 
-const createNewBoard = () => {
+function createNewBoard() {
 	newBoard = new Board(8, `gems`);
 };
 
-const showAchievementsDOM = () => {
+function showAchievementsDOM() {
 	const achievementsDiv = document.querySelector('#achievementsDiv');
 	achievementsDiv.innerHTML = '';
 	for (let i = 0; i <= profile.achievements.length - 1; i += 1) {
@@ -674,7 +689,7 @@ const showAchievementsDOM = () => {
 	}
 }
 
-const checkAllAchievements = () => {
+function checkAllAchievements() {
 	for (let i = 0; i <= profile.achievements.length - 1; i += 1) {
 		if (!profile.achievements[i].completed) {
 			profile.achievements[i].condition();
@@ -685,15 +700,15 @@ const checkAllAchievements = () => {
 	}
 }
 
-const showPopupDOM = (content) => {
+function showPopupDOM(content) {
 	const popup = document.querySelector(`#popup`); 
 	if (popup.classList.contains('in')) {
-		setTimeout(() => {
+		setTimeout(function(){
 			popup.innerHTML = content;
 			popup.classList.toggle('in');
 			popup.style.display = 'block';
 		}, 3000);
-		setTimeout(() => {
+		setTimeout(function(){
 			popup.classList.toggle('in');
 			popup.innerHTML = '';
 			popup.style.display = 'none';
@@ -702,7 +717,7 @@ const showPopupDOM = (content) => {
 		popup.innerHTML = content;
 		popup.classList.toggle('in');
 		popup.style.display = 'block';
-		setTimeout(() => {
+		setTimeout(function(){
 			popup.classList.toggle('in');
 			popup.innerHTML = '';
 			popup.style.display = 'none';
@@ -710,7 +725,7 @@ const showPopupDOM = (content) => {
 	}
 }
 
-const saveProfile= () => {
+function saveProfile() {
 	if (window.localStorage) {
 		localStorage.setItem(`profile`, JSON.stringify({
 			name: profile.name,
@@ -721,7 +736,7 @@ const saveProfile= () => {
 		}));
 	}
 }
-const loadProfile = () => {
+function loadProfile() {
 	if (window.localStorage && localStorage.getItem(`profile`)) {
 		let loadedData = JSON.parse(localStorage.getItem(`profile`));
 		profile = new Profile(loadedData.name);
@@ -740,7 +755,7 @@ const loadProfile = () => {
 	}
 }
 
-const launchIntoFullscreen = (element) => {
+function launchIntoFullscreen(element) {
   if(element.requestFullscreen) {
     element.requestFullscreen();
   } else if(element.mozRequestFullScreen) {
@@ -752,7 +767,7 @@ const launchIntoFullscreen = (element) => {
   }
 }
 
-const exitFullscreen = () => {
+function exitFullscreen() {
   if(document.exitFullscreen) {
     document.exitFullscreen();
   } else if(document.mozCancelFullScreen) {
@@ -762,7 +777,7 @@ const exitFullscreen = () => {
   }
 }
 
-const toggleModal = (id) => {
+function toggleModal(id) {
 	const firstModal = document.querySelector(`.modal.fade.in`),
 		secondModal = document.querySelector(`${id}`);
 	if (firstModal) {
@@ -774,7 +789,7 @@ const toggleModal = (id) => {
 	
 }
 
-const startMission = (id) => {
+function startMission(id) {
 	if (typeof newBoard === 'undefined') {
 		newBoard = new Board(8, `gems`);
 		createTasksForCampaign(id);
@@ -789,7 +804,7 @@ const startMission = (id) => {
 	launchIntoFullscreen(document.documentElement);
 }
 
-const createTasksForCampaign = (id) => {
+function createTasksForCampaign(id) {
 	newBoard.tasks = [ ];
 	switch (id) {
 		case '1':
@@ -833,7 +848,7 @@ const createTasksForCampaign = (id) => {
 	}
 }
 
-const generateTasksDOM = () => {
+function generateTasksDOM() {
 	const divForTasks = document.querySelector(`#divForTasks`);
 
 	for (let i = 0; i <= newBoard.tasks.length - 1; i += 1) {
@@ -859,7 +874,7 @@ const generateTasksDOM = () => {
 	}
 }
 
-const checkAllTasks = () => {
+function checkAllTasks() {
 
 	if (typeof newBoard !== 'undefined') {
 		const length = newBoard.tasks.length - 1;
@@ -882,14 +897,14 @@ const checkAllTasks = () => {
 			profile.totalStatistics.completedGames[0] += 1;
 			document.querySelector('#gainedPoints').innerHTML = '0';
 			toggleModal(`#levelCompleted`);
-			refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, () => {
+			refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function(){
 				resetActualGame();
 			});
 		}
 	}
 }
 
-const resetActualGame = () => {
+function resetActualGame() {
 	document.querySelector('#turns').innerHTML = '0';
 	document.querySelector('#points').innerHTML = '0';
 	for (let i = 0; i < Object.keys(profile.actualStatistics).length; i += 1) {
@@ -906,11 +921,11 @@ const resetActualGame = () => {
 	delete newBoard
 }
 
-const showStatisticsDOM = () => {
+function showStatisticsDOM() {
 	const table = document.querySelector(`#tableForStatistics`);
 	table.innerHTML = '';
 	for (let i = 0; i < Object.keys(profile.totalStatistics).length; i += 1) {
-		
+
 		const creatingTr = document.createElement("tr"),
 			creatingTdName = document.createElement("td"),
 			creatingTdData = document.createElement("td");
@@ -921,14 +936,15 @@ const showStatisticsDOM = () => {
 		} else {
 			creatingTdData.innerHTML = `${profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0]}`;
 		}
-		
+			
 		table.appendChild(creatingTr);
 		creatingTr.appendChild(creatingTdName);
 		creatingTr.appendChild(creatingTdData);
 	}
 }
 
-(() => {
+
+(function(){
 	loadProfile();
 
 	if (typeof profile !== 'undefined') {
@@ -936,5 +952,6 @@ const showStatisticsDOM = () => {
 	} else {
 		toggleModal(`#createProfile`);
 	}
-})();
+}());
+
 
