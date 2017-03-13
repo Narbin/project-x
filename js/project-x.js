@@ -551,16 +551,17 @@ class Board {
 	deleteTiles() {
 		var array = this.arrayOfTiles,
 			tile = document.querySelectorAll('.tile');
+		function deleteT(k) {
+			tile[k].src = ``;
+			tile[k].className = `col-xs-2 no-padding`;
+			tile[k].parentNode.removeChild(tile[k]);
+		}
 		for (var i = 0; i < this.size; i += 1) {
 			for (var j = 0; j < this.size; j += 1) {
 				if (array[i][j].toDelete) {
 					for (var k = 0; k < tile.length; k += 1) {
 						if (parseInt(tile[k].getAttribute(`x`), 10) === j && parseInt(tile[k].getAttribute(`y`), 10) === i) {
-							function deleteT(k) {
-									tile[k].src = ``;
-									tile[k].className = `col-xs-2 no-padding`;
-									tile[k].parentNode.removeChild(tile[k]);
-								}
+
 							TweenLite.to(tile[k], 0.2, {
 								opacity: `0`,
 								onComplete: deleteT,
