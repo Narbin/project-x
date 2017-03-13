@@ -1,5 +1,7 @@
 /* global document:true event:true window:true localStorage: true*/
-
+'use strict';
+var profile,
+	newBoard;
 for (var i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
 	document.querySelectorAll('.btn')[i].addEventListener('click', function () {
 		if (event.target.getAttribute('data-modal')) {
@@ -251,7 +253,7 @@ function refreshAmount(id, variable, time) {
 		prefix: '',
 		suffix: ''
 	};
-	animate = new CountUp(document.querySelector(`#${id}`), parseInt(document.querySelector(`#${id}`).innerHTML, 10), variable, 0, time / 1000, options);
+	var animate = new CountUp(document.querySelector(`#${id}`), parseInt(document.querySelector(`#${id}`).innerHTML, 10), variable, 0, time / 1000, options);
 	animate.start();
 }
 
@@ -917,7 +919,7 @@ function resetActualGame() {
 	}
 	newBoard.clearBoardDOM();
 	document.querySelector('#divForTasks').innerHTML = '';
-	delete newBoard;
+	newBoard = undefined;
 }
 
 function showStatisticsDOM() {
