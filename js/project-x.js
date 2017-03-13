@@ -1,12 +1,12 @@
-/* global document:true $:true event:true*/
+/* global document:true event:true window:true localStorage: true*/
 
-for (let i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1 ) {
-	document.querySelectorAll('.btn')[i].addEventListener('click', function(){
+for (let i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
+	document.querySelectorAll('.btn')[i].addEventListener('click', function () {
 		if (event.target.getAttribute('data-modal')) {
-			if (event.target.getAttribute('data-modal') == '#achievements') {
+			if (event.target.getAttribute('data-modal') === '#achievements') {
 				showAchievementsDOM();
 				toggleModal(`${event.target.getAttribute('data-modal')}`);
-			} else if (event.target.getAttribute('data-modal') == `#statistics`){
+			} else if (event.target.getAttribute('data-modal') === `#statistics`) {
 				showStatisticsDOM();
 				toggleModal(`${event.target.getAttribute('data-modal')}`);
 			} else {
@@ -31,22 +31,22 @@ for (let i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1 ) {
 	});
 }
 
-ontouch(document.querySelectorAll(`.panel-body`)[0], function(evt, dir, phase, swipetype, distance){
+ontouch(document.querySelectorAll(`.panel-body`)[0], function (evt, dir, phase, swipetype, distance) {
 	if (dir === 'none' && phase === 'start') {
 		whatTileWasClicked(event);
 	}
 	if (swipetype === 'left') {
 		changeTileWith(`left`);
-	}else if (swipetype === 'right') {
+	} else if (swipetype === 'right') {
 		changeTileWith(`right`);
-	}else if (swipetype === 'top') {
+	} else if (swipetype === 'top') {
 		changeTileWith(`up`);
-	}else if (swipetype === 'down') {
+	} else if (swipetype === 'down') {
 		changeTileWith(`down`);
 	}
 });
 
-document.querySelectorAll(`.panel-body`)[0].addEventListener('click', function(){
+document.querySelectorAll(`.panel-body`)[0].addEventListener('click', function () {
 	whatTileWasClicked(event);
 });
 
@@ -58,25 +58,24 @@ function changeTileWith(direction) {
 			case `right`:
 				changeTilesPosition(document.querySelector(`[x="${x + 1}"][y="${y}"]`));
 				newBoard.alreadyTileSelected.classList.toggle('selected');
-			break;
+				break;
 			case `left`:
 				changeTilesPosition(document.querySelector(`[x="${x - 1}"][y="${y}"]`));
 				newBoard.alreadyTileSelected.classList.toggle('selected');
-			break;
+				break;
 			case `up`:
 				changeTilesPosition(document.querySelector(`[x="${x}"][y="${y - 1}"]`));
 				newBoard.alreadyTileSelected.classList.toggle('selected');
-			break;
+				break;
 			case `down`:
 				changeTilesPosition(document.querySelector(`[x="${x}"][y="${y + 1}"]`));
 				newBoard.alreadyTileSelected.classList.toggle('selected');
-			break;
+				break;
 			default:
-				console.log('err')
-			break;
+				break;
 		}
 	}
-} 
+}
 
 function moveDownTile(firstTileY, firstTileX) {
 	let i = 0;
@@ -91,30 +90,16 @@ function moveDownTile(firstTileY, firstTileX) {
 			parentFirstTile = firstTile.parentNode,
 			parentSecondTile = secondTile.parentNode,
 			childParentFirstTile = parentFirstTile.firstChild,
-			childParentSecondTile = parentSecondTile.firstChild,
-			toTop = firstTile.top + document.body.scrollTop,
-			toLeft = firstTile.left + document.body.scrollLeft,
-			fromTop = secondTile.top + document.body.scrollTop,
-			fromLeft = secondTile.left + document.body.scrollLeft;
+			childParentSecondTile = parentSecondTile.firstChild;
 
-		let tempTile,
-			distanseX,
-			distanseY;
+		let tempTile;
 
 		tempTile = newBoard.arrayOfTiles[secondY][firstX];
 		newBoard.arrayOfTiles[secondY][firstX] = newBoard.arrayOfTiles[firstY][firstX];
 		newBoard.arrayOfTiles[firstY][firstX] = tempTile;
 
-		distanseX = fromTop - toTop;
-		distanseY = fromLeft - toLeft;
-		
-		//left: `-=` + distanseY, // powinna być animacja
-		//top: `-=` + distanseX
-
 		firstTile.setAttribute('y', secondY);
 		secondTile.setAttribute('y', firstY);
-		//$(firstTile).css({'top' : '0px', 'left' : '0px'});
-		//$(secondTile).css({'top' : '0px', 'left' : '0px'});
 		parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
 		parentSecondTile.appendChild(childParentFirstTile);
 			
@@ -123,12 +108,12 @@ function moveDownTile(firstTileY, firstTileX) {
 
 		i += 1;
 	}
-	setTimeout(function() {
+	setTimeout(function () {
 		newBoard.generateNewTiles();
 	}, 300);
-};
+}
 
-function setMinHeight(){
+function setMinHeight() {
 	if (!newBoard.minHeight) {
 		const getActualHeight = document.querySelector('.panel-body').childNodes[1].clientHeight,
 			boardSize = newBoard.size * newBoard.size;
@@ -137,14 +122,14 @@ function setMinHeight(){
 		}
 		newBoard.minHeight = true;
 	}
-};
+}
 
 function whatTileWasClicked(event) {
 	if (event.target !== event.currentTarget) {
 		selectTileDOM(event.target);
 	}
 	event.stopPropagation();
-};
+}
 
 function changeTilesPosition(tile) {
 	if (tile) {
@@ -186,18 +171,18 @@ function changeTilesPosition(tile) {
 			distanseY = fromLeft - toLeft;
 
 			TweenLite.to(tile, 0.2, {
-				left:`+=${distanseY}`,
-				top:`+=${distanseX}`,
-				onComplete: function(){ 
-					tile.style.top = '0px'; 
+				left: `+=${distanseY}`,
+				top: `+=${distanseX}`,
+				onComplete: function () {
+					tile.style.top = '0px';
 					tile.style.left = '0px';
 				}
 			});
 
 			TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
-				left:`-=${distanseY}`,
-				top:`-=${distanseX}`,
-				onComplete: function(){
+				left: `-=${distanseY}`,
+				top: `-=${distanseX}`,
+				onComplete: function () {
 					newBoard.alreadyTileSelected.style.top = '0px';
 					newBoard.alreadyTileSelected.style.left = '0px';
 					parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
@@ -218,14 +203,14 @@ function changeTilesPosition(tile) {
 			return false;
 		}
 	}
-};
+}
 
 function selectTileDOM() {
 	setMinHeight();
 
 	if (newBoard.ableToSelect) {
 		if (event.target.classList.contains(`tile`)) {
-			if (newBoard.alreadyTileSelected === event.target) { 
+			if (newBoard.alreadyTileSelected === event.target) {
 				event.target.classList.toggle('selected');
 				newBoard.alreadyTileSelected = ``;
 			} else if (newBoard.alreadyTileSelected === ``) {
@@ -242,20 +227,20 @@ function selectTileDOM() {
 			}
 		}
 	}
-};
+}
 
-function refreshAmount(id, variable, time = 2500, callback = function() {}) {
+function refreshAmount(id, variable, time = 2500) {
 	const options = {
-	  useEasing : true, 
-	  useGrouping : true, 
-	  separator : ',', 
-	  decimal : '.', 
-	  prefix : '', 
-	  suffix : '' 
-	},
-	animate = new CountUp(document.querySelector(`#${id}`), parseInt(document.querySelector(`#${id}`).innerHTML, 10), variable, 0, time/1000, options);
+		useEasing: true,
+		useGrouping: true,
+		separator: ',',
+		decimal: '.',
+		prefix: '',
+		suffix: ''
+	};
+	animate = new CountUp(document.querySelector(`#${id}`), parseInt(document.querySelector(`#${id}`).innerHTML, 10), variable, 0, time / 1000, options);
 	animate.start();
-};
+}
 
 class Achievement {
 	constructor(_name, _description, _imageSrc, _parametr, _condition) {
@@ -278,10 +263,8 @@ class Achievement {
 				if (profileParametr >= _condition) {
 					this.completed = true;
 				}
-			} else {
-				console.log(`Parametr ${_condition} must be Boolean or Number!`)
 			}
-			return this
+			return this;
 		};
 	}
 }
@@ -293,17 +276,17 @@ class Profile {
 		this.actualStatistics = {
 			points: 0,
 			turns: 0,
-			typesOfTiles: [0, 0, 0, 0, 0, 0],
-		},
-		this.milliseconds = 0,
-		this.minutesInGame = 0,
+			typesOfTiles: [0, 0, 0, 0, 0, 0]
+		};
+		this.milliseconds = 0;
+		this.minutesInGame = 0;
 		this.totalStatistics = {
 			points: [0, 'Zdobyte punkty:'],
 			turns: [0, 'Ilość wykonanych ruchów:'],
 			completedTasks: [0, 'Ilość wykonanych zadań:'],
 			completedGames: [0, 'Ilość zakończonych misji:'],
 			maxCombo: [0, 'Największy combos:'],
-			timeInGame: [0, 'Czas w grze:'],
+			timeInGame: [0, 'Czas w grze:']
 		};
 
 		this.addAchievements();
@@ -313,22 +296,21 @@ class Profile {
 
 	timeInGame() {
 		const duration = this.milliseconds;
-		let milliseconds = parseInt((duration%1000)/100),
-		seconds = parseInt((duration/1000)%60),
-		minutes = parseInt((duration/(1000*60))%60),
-		hours = parseInt((duration/(1000*60*60))%24);
+		var seconds = parseInt((duration / 1000) % 60, 10),
+			minutes = parseInt((duration / (1000 * 60)) % 60, 10),
+			hours = parseInt((duration / (1000 * 60 * 60)) % 24, 10);
 
 		hours = (hours < 10) ? "0" + hours : hours;
 		minutes = (minutes < 10) ? "0" + minutes : minutes;
 		seconds = (seconds < 10) ? "0" + seconds : seconds;
 
-		this.minutesInGame = parseInt(duration/(1000*60));
+		this.minutesInGame = parseInt(duration / (1000 * 60), 10);
 
 		this.totalStatistics.timeInGame[0] = hours + ":" + minutes + ":" + seconds;
 	}
 
 	checkTime() {
-		setTimeout(function(){
+		setTimeout(function () {
 			profile.milliseconds += 1000;
 			profile.timeInGame();
 			checkAllAchievements();
@@ -339,16 +321,16 @@ class Profile {
 
 	addAchievements() {
 		if (this.achievements.length === 0) {
-			this.achievements.push(new Achievement('Nowicjusz','Zdobądź pierwsze 100 punktów!','images/novice.svg','points',100));
-			this.achievements.push(new Achievement('Mistrz','Zdobądź 1000 punktów!','images/master.svg','points',1000));
-			this.achievements.push(new Achievement('Arcymistrz','Zdobądź 10000 punktów!','images/archmaster.svg','points',10000));
-			this.achievements.push(new Achievement('Praktykant','Ukończ 10 rozgrywek!','images/trainee.svg','completedGames',10));
-			this.achievements.push(new Achievement('Doświadczony','Ukończ 30 rozgrywek!','images/experienced.svg','completedGames',30));
-			this.achievements.push(new Achievement('Uczeń z podstawówki','Ukończ 10 zadań!','images/primaryschool.svg','completedTasks',10));
-			this.achievements.push(new Achievement('Uczeń z liceum','Ukończ 50 zadań!','images/highschool.svg','completedTasks',50));
-			this.achievements.push(new Achievement('Szczęściarz','Zrób combosa 4x!','images/lucky.svg','maxCombo',4));
-			this.achievements.push(new Achievement('Dziecko szczęścia!','Zrób combosa 8x!','images/child.svg','maxCombo',8));
-			this.achievements.push(new Achievement('Wciągnięty','Spędź 30 min w grze!','images/sucked.svg','minutesInGame',30));
+			this.achievements.push(new Achievement('Nowicjusz', 'Zdobądź pierwsze 100 punktów!', 'images/novice.svg', 'points', 100));
+			this.achievements.push(new Achievement('Mistrz', 'Zdobądź 1000 punktów!', 'images/master.svg', 'points', 1000));
+			this.achievements.push(new Achievement('Arcymistrz', 'Zdobądź 10000 punktów!', 'images/archmaster.svg', 'points', 10000));
+			this.achievements.push(new Achievement('Praktykant', 'Ukończ 10 rozgrywek!', 'images/trainee.svg', 'completedGames', 10));
+			this.achievements.push(new Achievement('Doświadczony', 'Ukończ 30 rozgrywek!', 'images/experienced.svg', 'completedGames', 30));
+			this.achievements.push(new Achievement('Uczeń z podstawówki', 'Ukończ 10 zadań!', 'images/primaryschool.svg', 'completedTasks', 10));
+			this.achievements.push(new Achievement('Uczeń z liceum', 'Ukończ 50 zadań!', 'images/highschool.svg', 'completedTasks', 50));
+			this.achievements.push(new Achievement('Szczęściarz', 'Zrób combosa 4x!', 'images/lucky.svg', 'maxCombo', 4));
+			this.achievements.push(new Achievement('Dziecko szczęścia!', 'Zrób combosa 8x!', 'images/child.svg', 'maxCombo', 8));
+			this.achievements.push(new Achievement('Wciągnięty', 'Spędź 30 min w grze!', 'images/sucked.svg', 'minutesInGame', 30));
 		}
 	}
 
@@ -413,7 +395,7 @@ class Board {
 	}
 
 	drawTiles() {
-		const divForTiles = document.querySelectorAll('.panel-body')[0]
+		const divForTiles = document.querySelectorAll('.panel-body')[0];
 		for (let i = 0; i < this.size; i += 1) {
 			for (let j = 0; j < this.size; j += 1) {
 
@@ -557,8 +539,8 @@ class Board {
 					for (let k = 0; k < tile.length; k += 1) {
 						if (parseInt(tile[k].getAttribute(`x`), 10) === j && parseInt(tile[k].getAttribute(`y`), 10) === i) {
 							TweenLite.to(tile[k], 0.2, {
-								opacity:`0`,
-								onComplete: function(){
+								opacity: `0`,
+								onComplete: function () {
 									tile[k].src = ``;
 									tile[k].className = `col-xs-2 no-padding`;
 									tile[k].parentNode.removeChild(tile[k]);
@@ -618,7 +600,9 @@ class Board {
 					creatingImg.style.opacity = '0';
 					parentOfTile[k].appendChild(creatingImg);
 
-					TweenLite.to(creatingImg, 0.2, {opacity:`1`});
+					TweenLite.to(creatingImg, 0.2, {
+						opacity: `1`
+					});
 
 					i += 1;
 				}
@@ -638,12 +622,12 @@ class Task {
 		this.amount = _amount;
 		this.imageSrc = `images/${newBoard.bundleObj[this.type]}.svg`;
 		this.completed = false;
-		this.checkTask = function(){
+		this.checkTask = function () {
 			if (profile.actualStatistics.typesOfTiles[this.type] >= this.amount) {
 				this.completed = true;
 			}
 			return this;
-		}
+		};
 	}
 }
 
@@ -661,7 +645,7 @@ function engine() {
 			.setClearTiles();
 		refreshAmount(`points`, profile.actualStatistics.points);
 
-		setTimeout(function(){
+		setTimeout(function () {
 			engine();
 		}, 550);
 	} else {
@@ -669,11 +653,7 @@ function engine() {
 		newBoard.ableToSelect = true;
 	}
 
-};
-
-function createNewBoard() {
-	newBoard = new Board(8, `gems`);
-};
+}
 
 function showAchievementsDOM() {
 	const achievementsDiv = document.querySelector('#achievementsDiv');
@@ -685,7 +665,7 @@ function showAchievementsDOM() {
 		} else {
 			glyphon = '<span class= "glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>';
 		}
-		achievementsDiv.innerHTML += `<div class="achievement"><span>${glyphon+profile.achievements[i].name+glyphon}</span><img src="${profile.achievements[i].imageSrc}"><span>${profile.achievements[i].description}</span></div>`;
+		achievementsDiv.innerHTML += `<div class="achievement"><span>${glyphon + profile.achievements[i].name + glyphon}</span><img src="${profile.achievements[i].imageSrc}"><span>${profile.achievements[i].description}</span></div>`;
 	}
 }
 
@@ -701,14 +681,14 @@ function checkAllAchievements() {
 }
 
 function showPopupDOM(content) {
-	const popup = document.querySelector(`#popup`); 
+	const popup = document.querySelector(`#popup`);
 	if (popup.classList.contains('in')) {
-		setTimeout(function(){
+		setTimeout(function () {
 			popup.innerHTML = content;
 			popup.classList.toggle('in');
 			popup.style.display = 'block';
 		}, 3000);
-		setTimeout(function(){
+		setTimeout(function () {
 			popup.classList.toggle('in');
 			popup.innerHTML = '';
 			popup.style.display = 'none';
@@ -717,7 +697,7 @@ function showPopupDOM(content) {
 		popup.innerHTML = content;
 		popup.classList.toggle('in');
 		popup.style.display = 'block';
-		setTimeout(function(){
+		setTimeout(function () {
 			popup.classList.toggle('in');
 			popup.innerHTML = '';
 			popup.style.display = 'none';
@@ -756,25 +736,25 @@ function loadProfile() {
 }
 
 function launchIntoFullscreen(element) {
-  if(element.requestFullscreen) {
-    element.requestFullscreen();
-  } else if(element.mozRequestFullScreen) {
-    element.mozRequestFullScreen();
-  } else if(element.webkitRequestFullscreen) {
-    element.webkitRequestFullscreen();
-  } else if(element.msRequestFullscreen) {
-    element.msRequestFullscreen();
-  }
+	if (element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if (element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if (element.webkitRequestFullscreen) {
+		element.webkitRequestFullscreen();
+	} else if (element.msRequestFullscreen) {
+		element.msRequestFullscreen();
+	}
 }
 
 function exitFullscreen() {
-  if(document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if(document.mozCancelFullScreen) {
-    document.mozCancelFullScreen();
-  } else if(document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
-  }
+	if (document.exitFullscreen) {
+		document.exitFullscreen();
+	} else if (document.mozCancelFullScreen) {
+		document.mozCancelFullScreen();
+	} else if (document.webkitExitFullscreen) {
+		document.webkitExitFullscreen();
+	}
 }
 
 function toggleModal(id) {
@@ -810,30 +790,30 @@ function createTasksForCampaign(id) {
 		case '1':
 			newBoard.tasks.push(new Task(0, 10));
 			newBoard.tasks.push(new Task(1, 10));
-		break;
+			break;
 		case '2':
 			newBoard.tasks.push(new Task(0, 20));
 			newBoard.tasks.push(new Task(1, 20));
 			newBoard.tasks.push(new Task(2, 20));
-		break;
+			break;
 		case '3':
 			newBoard.tasks.push(new Task(0, 40));
 			newBoard.tasks.push(new Task(1, 40));
 			newBoard.tasks.push(new Task(2, 40));
-		break;
+			break;
 		case '4':
 			newBoard.tasks.push(new Task(0, 30));
 			newBoard.tasks.push(new Task(1, 30));
 			newBoard.tasks.push(new Task(2, 30));
 			newBoard.tasks.push(new Task(3, 30));
-		break;
+			break;
 		case '5':
 			newBoard.tasks.push(new Task(0, 30));
 			newBoard.tasks.push(new Task(1, 30));
 			newBoard.tasks.push(new Task(2, 30));
 			newBoard.tasks.push(new Task(3, 30));
 			newBoard.tasks.push(new Task(4, 30));
-		break;
+			break;
 		case '6':
 			newBoard.tasks.push(new Task(0, 35));
 			newBoard.tasks.push(new Task(1, 35));
@@ -841,10 +821,10 @@ function createTasksForCampaign(id) {
 			newBoard.tasks.push(new Task(3, 35));
 			newBoard.tasks.push(new Task(4, 35));
 			newBoard.tasks.push(new Task(5, 35));
-		break;
+			break;
 		default:
 			newBoard.tasks.push(new Task(0, 10));
-		break;
+			break;
 	}
 }
 
@@ -852,25 +832,26 @@ function generateTasksDOM() {
 	const divForTasks = document.querySelector(`#divForTasks`);
 
 	for (let i = 0; i <= newBoard.tasks.length - 1; i += 1) {
-					const creatingImg = document.createElement("img"),
-						creatingTask = document.createElement("div"),
-						creatingAmountSpan = document.createElement("span"),
-						creatingActualSpan = document.createElement("span");
-					creatingImg.className = "img-responsive no-padding";
-					creatingTask.className = "no-padding text-center pull-left";
-					creatingImg.src = newBoard.tasks[i].imageSrc;
-					creatingTask.style.width = `${100/newBoard.tasks.length}%`;
-					creatingTask.style.borderRadius = '40px';
-					creatingImg.style.height = `28px`;
-					creatingImg.style.margin = `auto`;
-					creatingAmountSpan.innerHTML = `${newBoard.tasks[i].amount}x`;
-					creatingActualSpan.innerHTML = '0';
-					creatingActualSpan.id = `task-${i}`;
+		var creatingImg = document.createElement("img"),
+			creatingTask = document.createElement("div"),
+			creatingAmountSpan = document.createElement("span"),
+			creatingActualSpan = document.createElement("span");
 
-					divForTasks.appendChild(creatingTask);
-					creatingTask.appendChild(creatingAmountSpan);
-					creatingTask.appendChild(creatingImg);
-					creatingTask.appendChild(creatingActualSpan);
+		creatingImg.className = "img-responsive no-padding";
+		creatingTask.className = "no-padding text-center pull-left";
+		creatingImg.src = newBoard.tasks[i].imageSrc;
+		creatingTask.style.width = `${100 / newBoard.tasks.length}%`;
+		creatingTask.style.borderRadius = '40px';
+		creatingImg.style.height = `28px`;
+		creatingImg.style.margin = `auto`;
+		creatingAmountSpan.innerHTML = `${newBoard.tasks[i].amount}x`;
+		creatingActualSpan.innerHTML = '0';
+		creatingActualSpan.id = `task-${i}`;
+
+		divForTasks.appendChild(creatingTask);
+		creatingTask.appendChild(creatingAmountSpan);
+		creatingTask.appendChild(creatingImg);
+		creatingTask.appendChild(creatingActualSpan);
 	}
 }
 
@@ -886,18 +867,18 @@ function checkAllTasks() {
 					document.querySelector(`#task-${i}`).parentNode.style.backgroundColor = 'rgba(0, 255, 0, 0.5)';
 					profile.totalStatistics.completedTasks[0] += 1;
 				}
-			} 
+			}
 			refreshAmount(`task-${i}`, profile.actualStatistics.typesOfTiles[i]);
 			if (newBoard.tasks[i].completed) {
 				tasksCompleted += 1;
-			} 
+			}
 		}
 
 		if (tasksCompleted === length + 1) {
 			profile.totalStatistics.completedGames[0] += 1;
 			document.querySelector('#gainedPoints').innerHTML = '0';
 			toggleModal(`#levelCompleted`);
-			refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function(){
+			refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function () {
 				resetActualGame();
 			});
 		}
@@ -918,7 +899,7 @@ function resetActualGame() {
 	}
 	newBoard.clearBoardDOM();
 	document.querySelector('#divForTasks').innerHTML = '';
-	delete newBoard
+	delete newBoard;
 }
 
 function showStatisticsDOM() {
@@ -930,7 +911,7 @@ function showStatisticsDOM() {
 			creatingTdName = document.createElement("td"),
 			creatingTdData = document.createElement("td");
 
-			creatingTdName.innerHTML = `${profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][1]}`;
+		creatingTdName.innerHTML = `${profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][1]}`;
 		if (typeof profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0] === 'function') {
 			creatingTdData.innerHTML = `${profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0]()}`;
 		} else {
@@ -944,7 +925,7 @@ function showStatisticsDOM() {
 }
 
 
-(function(){
+(function () {
 	loadProfile();
 
 	if (typeof profile !== 'undefined') {
