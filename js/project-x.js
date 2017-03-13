@@ -1,6 +1,6 @@
 /* global document:true event:true window:true localStorage: true*/
 
-for (let i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
+for (var i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
 	document.querySelectorAll('.btn')[i].addEventListener('click', function () {
 		if (event.target.getAttribute('data-modal')) {
 			if (event.target.getAttribute('data-modal') === '#achievements') {
@@ -78,7 +78,7 @@ function changeTileWith(direction) {
 }
 
 function moveDownTile(firstTileY, firstTileX) {
-	let i = 0;
+	var i = 0;
 
 	while (firstTileY - i > 0) {
 
@@ -92,7 +92,7 @@ function moveDownTile(firstTileY, firstTileX) {
 			childParentFirstTile = parentFirstTile.firstChild,
 			childParentSecondTile = parentSecondTile.firstChild;
 
-		let tempTile;
+		var tempTile;
 
 		tempTile = newBoard.arrayOfTiles[secondY][firstX];
 		newBoard.arrayOfTiles[secondY][firstX] = newBoard.arrayOfTiles[firstY][firstX];
@@ -117,7 +117,7 @@ function setMinHeight() {
 	if (!newBoard.minHeight) {
 		const getActualHeight = document.querySelector('.panel-body').childNodes[1].clientHeight,
 			boardSize = newBoard.size * newBoard.size;
-		for (let i = 1; i < boardSize; i += 1) {
+		for (var i = 1; i < boardSize; i += 1) {
 			document.querySelector('.panel-body').childNodes[i].style.minHeight = getActualHeight + `px`;
 		}
 		newBoard.minHeight = true;
@@ -142,7 +142,7 @@ function changeTilesPosition(tile) {
 			childParentFirstTile = parentFirstTile.firstChild,
 			childParentSecondTile = parentSecondTile.firstChild;
 
-		let tempTile;
+		var tempTile;
 
 		if (x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1) {
 
@@ -155,7 +155,7 @@ function changeTilesPosition(tile) {
 				fromTop = selectedPosition.top + document.body.scrollTop,
 				fromLeft = selectedPosition.left + document.body.scrollLeft;
 						
-			let distanseX,
+			var distanseX,
 				distanseY;
 
 			tempTile = newBoard.arrayOfTiles[y2][x2];
@@ -229,7 +229,7 @@ function selectTileDOM() {
 	}
 }
 
-function refreshAmount(id, variable, time = 2500) {
+function refreshAmount(id, variable, time = 1000) {
 	const options = {
 		useEasing: true,
 		useGrouping: true,
@@ -249,7 +249,7 @@ class Achievement {
 		this.imageSrc = _imageSrc;
 		this.completed = false;
 		this.condition = function () {
-			let profileParametr;
+			var profileParametr;
 			if (typeof profile.totalStatistics[_parametr] === 'undefined') {
 				profileParametr = profile[_parametr];
 			} else {
@@ -366,9 +366,9 @@ class Board {
 
 	createTiles() {
 		this.arrayOfTiles = new Array(this.size);
-		for (let i = 0; i < this.size; i += 1) {
+		for (var i = 0; i < this.size; i += 1) {
 			this.arrayOfTiles[i] = new Array(this.size);
-			for (let j = 0; j < this.size; j += 1) {
+			for (var j = 0; j < this.size; j += 1) {
 				this.arrayOfTiles[i][j] = new Tile(this.randomTypeOfTile(this.bundleObj));
 			}
 		}
@@ -376,7 +376,7 @@ class Board {
 	}
 
 	createBundleObj(nameOfBundle = `gems`) {
-		let bundle = [ ];
+		var bundle = [ ];
 		switch (nameOfBundle) {
 			case `fruits`:
 				bundle = [`banana`, `cherry`, `pear`, `pineapple`, `raspberry`, `strawberry`];
@@ -396,8 +396,8 @@ class Board {
 
 	drawTiles() {
 		const divForTiles = document.querySelectorAll('.panel-body')[0];
-		for (let i = 0; i < this.size; i += 1) {
-			for (let j = 0; j < this.size; j += 1) {
+		for (var i = 0; i < this.size; i += 1) {
+			for (var j = 0; j < this.size; j += 1) {
 
 				const creatingDiv = document.createElement("div"),
 					creatingImg = document.createElement("img");
@@ -414,8 +414,8 @@ class Board {
 	}
 
 	setImageSrc() {
-		for (let i = 0; i < this.size; i += 1) {
-			for (let j = 0; j < this.size; j += 1) {
+		for (var i = 0; i < this.size; i += 1) {
+			for (var j = 0; j < this.size; j += 1) {
 				this.arrayOfTiles[i][j].imageSrc = `images/${this.arrayOfTiles[i][j].type}.svg`;
 			}
 		}
@@ -423,9 +423,9 @@ class Board {
 	}
 
 	shuffleBoard() {
-		let oldType;
-		for (let i = 0; i < this.size; i += 1) {
-			for (let j = 0; j < this.size; j += 1) {
+		var oldType;
+		for (var i = 0; i < this.size; i += 1) {
+			for (var j = 0; j < this.size; j += 1) {
 				if (i > 1) {
 					if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 1][j].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 2][j].type) {
 						oldType = this.arrayOfTiles[i][j].type;
@@ -456,8 +456,8 @@ class Board {
 		const array = this.arrayOfTiles;
 		this.foundedFit = false;
 
-		for (let i = 0; i < this.size; i += 1) {
-			for (let j = 0; j < this.size - 2; j += 1) {
+		for (var i = 0; i < this.size; i += 1) {
+			for (var j = 0; j < this.size - 2; j += 1) {
 				if (array[i][j].type === array[i][j + 1].type && array[i][j].type === array[i][j + 2].type) {
 					array[i][j].toDelete = true;
 					array[i][j + 1].toDelete = true;
@@ -467,8 +467,8 @@ class Board {
 			}
 		}
 
-		for (let i = 0; i < this.size - 2; i += 1) {
-			for (let j = 0; j < this.size; j += 1) {
+		for (var i = 0; i < this.size - 2; i += 1) {
+			for (var j = 0; j < this.size; j += 1) {
 				if (array[i][j].type === array[i + 1][j].type && array[i][j].type === array[i + 2][j].type) {
 					array[i][j].toDelete = true;
 					array[i + 1][j].toDelete = true;
@@ -484,10 +484,10 @@ class Board {
 		const array = this.arrayOfTiles,
 			bundleLength = this.bundleObj.length;
 
-		for (let i = 0; i < this.size; i += 1) {
-			for (let j = 0; j < this.size; j += 1) {
+		for (var i = 0; i < this.size; i += 1) {
+			for (var j = 0; j < this.size; j += 1) {
 				if (array[i][j].toDelete) {
-					for (let k = 0; k < bundleLength; k += 1) {
+					for (var k = 0; k < bundleLength; k += 1) {
 						if (array[i][j].type === this.bundleObj[k]) {
 							this.typesOfTiles[k] += 1;
 						}
@@ -500,7 +500,7 @@ class Board {
 
 	addPointsToProfile() {
 		const len = this.typesOfTiles.length - 1;
-		for (let i = 0; i <= len; i += 1) {
+		for (var i = 0; i <= len; i += 1) {
 			switch (this.typesOfTiles[i]) {
 				case (3 || 6 || 9):
 					profile.actualStatistics.points += this.typesOfTiles[i];
@@ -531,20 +531,22 @@ class Board {
 	}
 
 	deleteTiles() {
-		const array = this.arrayOfTiles;
-		const tile = document.querySelectorAll('.tile');
-		for (let i = 0; i < this.size; i += 1) {
-			for (let j = 0; j < this.size; j += 1) {
+		const array = this.arrayOfTiles,
+			tile = document.querySelectorAll('.tile');
+		for (var i = 0; i < this.size; i += 1) {
+			for (var j = 0; j < this.size; j += 1) {
 				if (array[i][j].toDelete) {
-					for (let k = 0; k < tile.length; k += 1) {
+					for (var k = 0; k < tile.length; k += 1) {
 						if (parseInt(tile[k].getAttribute(`x`), 10) === j && parseInt(tile[k].getAttribute(`y`), 10) === i) {
-							TweenLite.to(tile[k], 0.2, {
-								opacity: `0`,
-								onComplete: function () {
+							function deleteT(k) {
 									tile[k].src = ``;
 									tile[k].className = `col-xs-2 no-padding`;
 									tile[k].parentNode.removeChild(tile[k]);
 								}
+							TweenLite.to(tile[k], 0.2, {
+								opacity: `0`,
+								onComplete: deleteT,
+								onCompleteParams: [k]
 							});
 						}
 					}
@@ -559,8 +561,8 @@ class Board {
 	findClearTiles() {
 		this.clearTilesObj = [ ];
 		const array = this.arrayOfTiles;
-		for (let i = 0; i < this.size; i += 1) {
-			for (let j = 0; j < this.size; j += 1) {
+		for (var i = 0; i < this.size; i += 1) {
+			for (var j = 0; j < this.size; j += 1) {
 				if (array[i][j].type === `clear`) {
 					this.clearTilesObj.push([i, j]);
 				}
@@ -572,7 +574,7 @@ class Board {
 	setClearTiles() {
 		const objLength = this.clearTilesObj.length;
 
-		for (let i = 0; i < objLength; i += 1) {
+		for (var i = 0; i < objLength; i += 1) {
 			moveDownTile(this.clearTilesObj[i][0], this.clearTilesObj[i][1]);
 		}
 		return this;
@@ -583,14 +585,14 @@ class Board {
 		const objLength = this.clearTilesObj.length,
 			boardSize = this.size * this.size,
 			parentOfTile = document.querySelectorAll(".col-xs-2");
-		let i = 0;
+		var i = 0;
 
 		if (this.clearTilesObj.length) {
-			for (let j = 0; j < objLength; j += 1) {
+			for (var j = 0; j < objLength; j += 1) {
 				this.arrayOfTiles[this.clearTilesObj[j][0]][this.clearTilesObj[j][1]] = new Tile(this.randomTypeOfTile(this.bundleObj));
 			}
 
-			for (let k = 0; k < boardSize; k += 1) {
+			for (var k = 0; k < boardSize; k += 1) {
 				if (parentOfTile[k].children.length === 0) {
 					const creatingImg = document.createElement("img");
 					creatingImg.className = "no-padding tile";
@@ -658,8 +660,8 @@ function engine() {
 function showAchievementsDOM() {
 	const achievementsDiv = document.querySelector('#achievementsDiv');
 	achievementsDiv.innerHTML = '';
-	for (let i = 0; i <= profile.achievements.length - 1; i += 1) {
-		let glyphon;
+	for (var i = 0; i <= profile.achievements.length - 1; i += 1) {
+		var glyphon;
 		if (profile.achievements[i].completed) {
 			glyphon = '<span class= "glyphicon glyphicon-ok text-success" aria-hidden="true"></span>';
 		} else {
@@ -670,7 +672,7 @@ function showAchievementsDOM() {
 }
 
 function checkAllAchievements() {
-	for (let i = 0; i <= profile.achievements.length - 1; i += 1) {
+	for (var i = 0; i <= profile.achievements.length - 1; i += 1) {
 		if (!profile.achievements[i].completed) {
 			profile.achievements[i].condition();
 			if (profile.achievements[i].completed) {
@@ -718,16 +720,16 @@ function saveProfile() {
 }
 function loadProfile() {
 	if (window.localStorage && localStorage.getItem(`profile`)) {
-		let loadedData = JSON.parse(localStorage.getItem(`profile`));
+		var loadedData = JSON.parse(localStorage.getItem(`profile`));
 		profile = new Profile(loadedData.name);
 		profile.milliseconds = loadedData.milliseconds;
 		profile.minutesInGame = loadedData.minutesInGame;
-		for (let i = 0; i < loadedData.achievements.length; i += 1) {
+		for (var i = 0; i < loadedData.achievements.length; i += 1) {
 			if (loadedData.achievements[i].completed) {
 				profile.achievements[i].completed = true;
 			}
 		}
-		for (let i = 0; i < Object.keys(loadedData.totalStatistics).length; i += 1) {
+		for (var i = 0; i < Object.keys(loadedData.totalStatistics).length; i += 1) {
 			if (typeof profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0] !== 'function') {
 				profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0] = loadedData.totalStatistics[Object.keys(loadedData.totalStatistics)[i]][0];
 			}
@@ -831,7 +833,7 @@ function createTasksForCampaign(id) {
 function generateTasksDOM() {
 	const divForTasks = document.querySelector(`#divForTasks`);
 
-	for (let i = 0; i <= newBoard.tasks.length - 1; i += 1) {
+	for (var i = 0; i <= newBoard.tasks.length - 1; i += 1) {
 		var creatingImg = document.createElement("img"),
 			creatingTask = document.createElement("div"),
 			creatingAmountSpan = document.createElement("span"),
@@ -859,8 +861,8 @@ function checkAllTasks() {
 
 	if (typeof newBoard !== 'undefined') {
 		const length = newBoard.tasks.length - 1;
-		let tasksCompleted = 0;
-		for (let i = 0; i <= length; i += 1) {
+		var tasksCompleted = 0;
+		for (var i = 0; i <= length; i += 1) {
 			if (!newBoard.tasks[i].completed) {
 				newBoard.tasks[i].checkTask();
 				if (newBoard.tasks[i].completed) {
@@ -888,11 +890,11 @@ function checkAllTasks() {
 function resetActualGame() {
 	document.querySelector('#turns').innerHTML = '0';
 	document.querySelector('#points').innerHTML = '0';
-	for (let i = 0; i < Object.keys(profile.actualStatistics).length; i += 1) {
+	for (var i = 0; i < Object.keys(profile.actualStatistics).length; i += 1) {
 		if (typeof profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] === 'number') {
 			profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] = 0;
 		} else if (typeof profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] === 'object') {
-			for (let j = 0; j < profile.actualStatistics[Object.keys(profile.actualStatistics)[i]].length; j += 1) {
+			for (var j = 0; j < profile.actualStatistics[Object.keys(profile.actualStatistics)[i]].length; j += 1) {
 				profile.actualStatistics[Object.keys(profile.actualStatistics)[i]][j] = 0;
 			}
 		}
@@ -905,7 +907,7 @@ function resetActualGame() {
 function showStatisticsDOM() {
 	const table = document.querySelector(`#tableForStatistics`);
 	table.innerHTML = '';
-	for (let i = 0; i < Object.keys(profile.totalStatistics).length; i += 1) {
+	for (var i = 0; i < Object.keys(profile.totalStatistics).length; i += 1) {
 
 		const creatingTr = document.createElement("tr"),
 			creatingTdName = document.createElement("td"),
