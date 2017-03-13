@@ -22,7 +22,7 @@ for (var i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
 			newBoard.setImageSrc();
 			newBoard.drawTiles();
 		} else if (event.target.getAttribute('data-createProfile')) {
-			const name = document.querySelector('input[name="name"]').value;
+			var name = document.querySelector('input[name="name"]').value;
 			profile = new Profile(name);
 			saveProfile();
 			toggleModal(`${event.target.getAttribute('data-createProfile')}`);
@@ -65,7 +65,7 @@ document.querySelectorAll(`.panel-body`)[0].addEventListener('click', function (
 
 function changeTileWith(direction) {
 	if (newBoard.alreadyTileSelected) {
-		const x = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
+		var x = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
 			y = parseInt(newBoard.alreadyTileSelected.getAttribute(`y`), 10);
 		switch (direction) {
 			case `right`:
@@ -95,7 +95,7 @@ function moveDownTile(firstTileY, firstTileX) {
 
 	while (firstTileY - i > 0) {
 
-		const firstTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i}"]`),
+		var firstTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i}"]`),
 			secondTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i - 1}"]`),
 			firstX = parseInt(firstTile.getAttribute(`x`), 10),
 			firstY = parseInt(firstTile.getAttribute(`y`), 10),
@@ -103,9 +103,8 @@ function moveDownTile(firstTileY, firstTileX) {
 			parentFirstTile = firstTile.parentNode,
 			parentSecondTile = secondTile.parentNode,
 			childParentFirstTile = parentFirstTile.firstChild,
-			childParentSecondTile = parentSecondTile.firstChild;
-
-		var tempTile;
+			childParentSecondTile = parentSecondTile.firstChild,
+			tempTile;
 
 		tempTile = newBoard.arrayOfTiles[secondY][firstX];
 		newBoard.arrayOfTiles[secondY][firstX] = newBoard.arrayOfTiles[firstY][firstX];
@@ -128,7 +127,7 @@ function moveDownTile(firstTileY, firstTileX) {
 
 function setMinHeight() {
 	if (!newBoard.minHeight) {
-		const getActualHeight = document.querySelector('.panel-body').childNodes[1].clientHeight,
+		var getActualHeight = document.querySelector('.panel-body').childNodes[1].clientHeight,
 			boardSize = newBoard.size * newBoard.size;
 		for (var i = 1; i < boardSize; i += 1) {
 			document.querySelector('.panel-body').childNodes[i].style.minHeight = getActualHeight + `px`;
@@ -146,29 +145,27 @@ function whatTileWasClicked(event) {
 
 function changeTilesPosition(tile) {
 	if (tile) {
-		const x1 = parseInt(tile.getAttribute(`x`), 10),
+		var x1 = parseInt(tile.getAttribute(`x`), 10),
 			y1 = parseInt(tile.getAttribute(`y`), 10),
 			x2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
 			y2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`y`), 10),
 			parentFirstTile = tile.parentNode,
 			parentSecondTile = newBoard.alreadyTileSelected.parentNode,
 			childParentFirstTile = parentFirstTile.firstChild,
-			childParentSecondTile = parentSecondTile.firstChild;
-
-		var tempTile;
+			childParentSecondTile = parentSecondTile.firstChild,
+			tempTile;
 
 		if (x1 === x2 + 1 && y1 === y2 || x1 === x2 - 1 && y1 === y2 || x1 === x2 && y1 === y2 + 1 || x1 === x2 && y1 === y2 - 1) {
 
 			newBoard.ableToSelect = false;
 
-			const tilePosition = tile.getBoundingClientRect(),
+			var tilePosition = tile.getBoundingClientRect(),
 				selectedPosition = newBoard.alreadyTileSelected.getBoundingClientRect(),
 				toTop = tilePosition.top + document.body.scrollTop,
 				toLeft = tilePosition.left + document.body.scrollLeft,
 				fromTop = selectedPosition.top + document.body.scrollTop,
-				fromLeft = selectedPosition.left + document.body.scrollLeft;
-						
-			var distanseX,
+				fromLeft = selectedPosition.left + document.body.scrollLeft,
+				distanseX,
 				distanseY;
 
 			tempTile = newBoard.arrayOfTiles[y2][x2];
@@ -246,7 +243,7 @@ function refreshAmount(id, variable, time) {
 	if (time === undefined) {
 		time = 1000;
 	}
-	const options = {
+	var options = {
 		useEasing: true,
 		useGrouping: true,
 		separator: ',',
@@ -311,8 +308,8 @@ class Profile {
 	}
 
 	timeInGame() {
-		const duration = this.milliseconds;
-		var seconds = parseInt((duration / 1000) % 60, 10),
+		var duration = this.milliseconds,
+			seconds = parseInt((duration / 1000) % 60, 10),
 			minutes = parseInt((duration / (1000 * 60)) % 60, 10),
 			hours = parseInt((duration / (1000 * 60 * 60)) % 24, 10);
 
@@ -414,11 +411,11 @@ class Board {
 	}
 
 	drawTiles() {
-		const divForTiles = document.querySelectorAll('.panel-body')[0];
+		var divForTiles = document.querySelectorAll('.panel-body')[0];
 		for (var i = 0; i < this.size; i += 1) {
 			for (var j = 0; j < this.size; j += 1) {
 
-				const creatingDiv = document.createElement("div"),
+				var creatingDiv = document.createElement("div"),
 					creatingImg = document.createElement("img");
 				creatingDiv.className = "col-xs-2 no-padding";
 				creatingImg.className = "no-padding tile";
@@ -472,7 +469,7 @@ class Board {
 	}
 
 	findFit() {
-		const array = this.arrayOfTiles;
+		var array = this.arrayOfTiles;
 		this.foundedFit = false;
 
 		for (var i = 0; i < this.size; i += 1) {
@@ -500,7 +497,7 @@ class Board {
 	}
 
 	countFoundedTiles() {
-		const array = this.arrayOfTiles,
+		var array = this.arrayOfTiles,
 			bundleLength = this.bundleObj.length;
 
 		for (var i = 0; i < this.size; i += 1) {
@@ -518,7 +515,7 @@ class Board {
 	}
 
 	addPointsToProfile() {
-		const len = this.typesOfTiles.length - 1;
+		var len = this.typesOfTiles.length - 1;
 		for (var i = 0; i <= len; i += 1) {
 			switch (this.typesOfTiles[i]) {
 				case (3 || 6 || 9):
@@ -550,7 +547,7 @@ class Board {
 	}
 
 	deleteTiles() {
-		const array = this.arrayOfTiles,
+		var array = this.arrayOfTiles,
 			tile = document.querySelectorAll('.tile');
 		for (var i = 0; i < this.size; i += 1) {
 			for (var j = 0; j < this.size; j += 1) {
@@ -579,7 +576,7 @@ class Board {
 
 	findClearTiles() {
 		this.clearTilesObj = [ ];
-		const array = this.arrayOfTiles;
+		var array = this.arrayOfTiles;
 		for (var i = 0; i < this.size; i += 1) {
 			for (var j = 0; j < this.size; j += 1) {
 				if (array[i][j].type === `clear`) {
@@ -591,7 +588,7 @@ class Board {
 	}
 
 	setClearTiles() {
-		const objLength = this.clearTilesObj.length;
+		var objLength = this.clearTilesObj.length;
 
 		for (var i = 0; i < objLength; i += 1) {
 			moveDownTile(this.clearTilesObj[i][0], this.clearTilesObj[i][1]);
@@ -601,10 +598,10 @@ class Board {
 
 	generateNewTiles() {
 		this.findClearTiles();
-		const objLength = this.clearTilesObj.length,
+		var objLength = this.clearTilesObj.length,
 			boardSize = this.size * this.size,
-			parentOfTile = document.querySelectorAll(".col-xs-2");
-		var i = 0;
+			parentOfTile = document.querySelectorAll(".col-xs-2"),
+			i = 0;
 
 		if (this.clearTilesObj.length) {
 			for (var j = 0; j < objLength; j += 1) {
@@ -613,7 +610,7 @@ class Board {
 
 			for (var k = 0; k < boardSize; k += 1) {
 				if (parentOfTile[k].children.length === 0) {
-					const creatingImg = document.createElement("img");
+					var creatingImg = document.createElement("img");
 					creatingImg.className = "no-padding tile";
 					creatingImg.src = `images/${this.arrayOfTiles[this.clearTilesObj[i][0]][this.clearTilesObj[i][1]].type}.svg`;
 					creatingImg.setAttribute(`x`, `${this.clearTilesObj[i][1]}`);
@@ -677,7 +674,7 @@ function engine() {
 }
 
 function showAchievementsDOM() {
-	const achievementsDiv = document.querySelector('#achievementsDiv');
+	var achievementsDiv = document.querySelector('#achievementsDiv');
 	achievementsDiv.innerHTML = '';
 	for (var i = 0; i <= profile.achievements.length - 1; i += 1) {
 		var glyphon;
@@ -702,7 +699,7 @@ function checkAllAchievements() {
 }
 
 function showPopupDOM(content) {
-	const popup = document.querySelector(`#popup`);
+	var popup = document.querySelector(`#popup`);
 	if (popup.classList.contains('in')) {
 		setTimeout(function () {
 			popup.innerHTML = content;
@@ -779,7 +776,7 @@ function exitFullscreen() {
 }
 
 function toggleModal(id) {
-	const firstModal = document.querySelector(`.modal.fade.in`),
+	var firstModal = document.querySelector(`.modal.fade.in`),
 		secondModal = document.querySelector(`${id}`);
 	if (firstModal) {
 		firstModal.style.display = 'none';
@@ -850,7 +847,7 @@ function createTasksForCampaign(id) {
 }
 
 function generateTasksDOM() {
-	const divForTasks = document.querySelector(`#divForTasks`);
+	var divForTasks = document.querySelector(`#divForTasks`);
 
 	for (var i = 0; i <= newBoard.tasks.length - 1; i += 1) {
 		var creatingImg = document.createElement("img"),
@@ -879,7 +876,7 @@ function generateTasksDOM() {
 function checkAllTasks() {
 
 	if (typeof newBoard !== 'undefined') {
-		const length = newBoard.tasks.length - 1;
+		var length = newBoard.tasks.length - 1;
 		var tasksCompleted = 0;
 		for (var i = 0; i <= length; i += 1) {
 			if (!newBoard.tasks[i].completed) {
@@ -924,11 +921,11 @@ function resetActualGame() {
 }
 
 function showStatisticsDOM() {
-	const table = document.querySelector(`#tableForStatistics`);
+	var table = document.querySelector(`#tableForStatistics`);
 	table.innerHTML = '';
 	for (var i = 0; i < Object.keys(profile.totalStatistics).length; i += 1) {
 
-		const creatingTr = document.createElement("tr"),
+		var creatingTr = document.createElement("tr"),
 			creatingTdName = document.createElement("td"),
 			creatingTdData = document.createElement("td");
 
