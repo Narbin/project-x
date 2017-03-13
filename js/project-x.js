@@ -26,6 +26,19 @@ for (var i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
 			profile = new Profile(name);
 			saveProfile();
 			toggleModal(`${event.target.getAttribute('data-createProfile')}`);
+		} else if (event.target.getAttribute('data-difficulty')) {
+			if (typeof newBoard === 'undefined') {
+				newBoard = new Board(8, `gems`);
+				generateRandomTasks(event.target.getAttribute('data-difficulty'));
+				generateTasksDOM();
+			} else {
+				resetActualGame();
+				newBoard = new Board(8, `gems`);
+				generateRandomTasks(event.target.getAttribute('data-difficulty'));
+				generateTasksDOM();
+			}
+			toggleModal(`#board`);
+			launchIntoFullscreen(document.documentElement);
 		}
 		event.stopPropagation();
 	});
@@ -923,6 +936,57 @@ function showStatisticsDOM() {
 		table.appendChild(creatingTr);
 		creatingTr.appendChild(creatingTdName);
 		creatingTr.appendChild(creatingTdData);
+	}
+}
+
+function generateRandomTasks(difficulty) {
+	function shuffle(a) {
+		var j, x, i;
+		for (i = a.length; i; i--) {
+			j = Math.floor(Math.random() * i);
+			x = a[i - 1];
+			a[i - 1] = a[j];
+			a[j] = x;
+		}
+	}
+	var randomArr = newBoard.bundleObj,
+		k = 0,
+		randomAmountOfTasks;
+	shuffle(randomArr);
+	switch (difficulty) {
+		case 'easy':
+			randomAmountOfTasks = Math.floor(Math.random() * 2 + 1);
+			for (k = 0; k < randomAmountOfTasks; k += 1) {
+				newBoard.tasks.push(new Task(newBoard.bundleObj.indexOf(randomArr[k]), Math.floor(Math.random() * 10) + 10));
+			}
+			break;
+		case 'average':
+			randomAmountOfTasks = Math.floor(Math.random() * 3 + 2);
+			for (k = 0; k < randomAmountOfTasks; k += 1) {
+				newBoard.tasks.push(new Task(newBoard.bundleObj.indexOf(randomArr[k]), Math.floor(Math.random() * 20) + 15));
+			}
+			break;
+		case 'hard':
+			randomAmountOfTasks = Math.floor(Math.random() * 3 + 3);
+			for (k = 0; k < randomAmountOfTasks; k += 1) {
+				newBoard.tasks.push(new Task(newBoard.bundleObj.indexOf(randomArr[k]), Math.floor(Math.random() * 30) + 25));
+			}
+			break;
+		case 'veryHard':
+			randomAmountOfTasks = Math.floor(Math.random() * 2 + 4);
+			for (k = 0; k < randomAmountOfTasks; k += 1) {
+				newBoard.tasks.push(new Task(newBoard.bundleObj.indexOf(randomArr[k]), Math.floor(Math.random() * 50) + 50));
+			}
+			break;
+		case 'god':
+			randomAmountOfTasks = 6;
+			for (k = 0; k < randomAmountOfTasks; k += 1) {
+				newBoard.tasks.push(new Task(newBoard.bundleObj.indexOf(randomArr[k]), Math.floor(Math.random() * 100) + 100));
+			}
+			break;
+		default:
+
+			break;
 	}
 }
 
