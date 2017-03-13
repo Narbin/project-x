@@ -199,6 +199,7 @@ body {
 .panel {
 	background-color: rgba(255, 255, 255, 0);
 	height: 100%;
+	text-align: center;
 }
 
 .panel-default {
@@ -216,16 +217,11 @@ body {
 }
 
 #modeMenu > .container > .panel {
-	text-align: center;
 	overflow: auto;
 }
 
 .div-label {
 	font-size: 25px;
-}
-
-#campaignModal > .container > .panel {
-	text-align: center;
 }
 
 .button-mission {
@@ -235,10 +231,6 @@ body {
     width: 70px;
     line-height: 66px;
     margin: 10px;
-}
-
-#levelCompleted > .container > .panel {
-	text-align: center;
 }
 
 #levelCompleted > .container > .panel > span {
