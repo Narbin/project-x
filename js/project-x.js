@@ -352,9 +352,9 @@ class Profile {
 
 	addAchievements() {
 		if (this.achievements.length === 0) {
-			this.achievements.push(new Achievement('Nowicjusz', 'Zdobądź pierwsze 100 punktów!', 'images/novice.svg', 'points', 100));
-			this.achievements.push(new Achievement('Mistrz', 'Zdobądź 1000 punktów!', 'images/master.svg', 'points', 1000));
-			this.achievements.push(new Achievement('Arcymistrz', 'Zdobądź 10000 punktów!', 'images/archmaster.svg', 'points', 10000));
+			this.achievements.push(new Achievement('Nowicjusz', 'Zdobądź pierwsze 5000 punktów!', 'images/novice.svg', 'points', 5000));
+			this.achievements.push(new Achievement('Mistrz', 'Zdobądź 20000 punktów!', 'images/master.svg', 'points', 20000));
+			this.achievements.push(new Achievement('Arcymistrz', 'Zdobądź 50000 punktów!', 'images/archmaster.svg', 'points', 50000));
 			this.achievements.push(new Achievement('Praktykant', 'Ukończ 10 rozgrywek!', 'images/trainee.svg', 'completedGames', 10));
 			this.achievements.push(new Achievement('Doświadczony', 'Ukończ 30 rozgrywek!', 'images/experienced.svg', 'completedGames', 30));
 			this.achievements.push(new Achievement('Uczeń z podstawówki', 'Ukończ 10 zadań!', 'images/primaryschool.svg', 'completedTasks', 10));
