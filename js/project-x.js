@@ -259,7 +259,7 @@ function refreshAmount(id, variable, time) {
 	var options = {
 		useEasing: true,
 		useGrouping: true,
-		separator: ',',
+		separator: '',
 		decimal: '.',
 		prefix: '',
 		suffix: ''
