@@ -238,3 +238,8 @@ body {
     font-size: 25px;
     color: #3c763d;
 }
+
+#turns, #maxTurns {
+	display: inline-flex;
+}
+

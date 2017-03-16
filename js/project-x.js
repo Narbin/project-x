@@ -41,6 +41,17 @@ for (var i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
 			}
 			toggleModal(`#board`);
 			launchIntoFullscreen(document.documentElement);
+		} else if (event.target.getAttribute('data-arcade')) {
+			if (typeof newBoard === 'undefined') {
+				newBoard = new Board(8, `gems`);
+			} else {
+				resetActualGame();
+				newBoard = new Board(8, `gems`);
+			}
+			newBoard.arcadeMode.type = event.target.getAttribute('data-arcade');
+			newBoard.arcadeMode.condition = profile.totalStatistics[newBoard.arcadeMode.type][2];
+			generateArcadeInfoDOM(event.target.getAttribute('data-arcade'));
+			toggleModal(`#arcadeInfo`);
 		}
 		event.stopPropagation();
 	});
@@ -301,7 +312,11 @@ class Profile {
 			completedTasks: [0, 'Ilość wykonanych zadań:'],
 			completedGames: [0, 'Ilość zakończonych misji:'],
 			maxCombo: [0, 'Największy combos:'],
-			timeInGame: [0, 'Czas w grze:']
+			timeInGame: [0, 'Czas w grze:'],
+			arcadeFirst: [0, 'Najwięcej punktów w 10 turach:', 10],
+			arcadeSecond: [0, 'Najwięcej punktów w 20 turach:', 20],
+			arcadeThird: [0, 'Najwięcej punktów w 50 turach:', 50],
+			arcadeFourth: [0, 'Najwięcej punktów w 100 turach:', 100]
 		};
 
 		this.addAchievements();
@@ -372,7 +387,11 @@ class Board {
 		this.alreadyTileSelected = ``;
 		this.typesOfTiles = [0, 0, 0, 0, 0, 0];
 		this.ableToSelect = true;
-		this.tasks = [ ];
+		this.arcadeMode = {
+			condition: 0,
+			type: ''
+		};
+		this.maxTurns = 0;
 		this.createTiles();
 		this.shuffleBoard();
 		this.setImageSrc();
@@ -670,7 +689,11 @@ function engine() {
 			engine();
 		}, 550);
 	} else {
-		checkAllTasks();
+		if (newBoard.arcadeMode.condition) {
+			checkArcadeCondition();
+		} else {
+			checkAllTasks();
+		}
 		newBoard.ableToSelect = true;
 	}
 
@@ -909,6 +932,7 @@ function checkAllTasks() {
 function resetActualGame() {
 	document.querySelector('#turns').innerHTML = '0';
 	document.querySelector('#points').innerHTML = '0';
+	document.querySelector('#maxTurns').innerHTML = '';
 	for (var i = 0; i < Object.keys(profile.actualStatistics).length; i += 1) {
 		if (typeof profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] === 'number') {
 			profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] = 0;
@@ -993,6 +1017,31 @@ function generateRandomTasks(difficulty) {
 		default:
 
 			break;
+	}
+}
+
+function generateArcadeInfoDOM(difficulty) {
+	var arcadeMovesInfo = document.querySelector('#arcadeMovesInfo'),
+		arcadeMovesGained = document.querySelector('#arcadeMovesGained'),
+		maxTurnsDiv = document.querySelector('#maxTurns');
+
+	arcadeMovesInfo.innerHTML = profile.totalStatistics[difficulty][2];
+	arcadeMovesGained.innerHTML = profile.totalStatistics[difficulty][0];
+	maxTurns.innerHTML = `/${profile.totalStatistics[difficulty][2]}`;
+}
+
+function checkArcadeCondition() {
+	if (newBoard.arcadeMode.condition <= profile.actualStatistics.turns) {
+		if (profile.actualStatistics.points > profile.totalStatistics[newBoard.arcadeMode.type][0]) {
+			profile.totalStatistics[newBoard.arcadeMode.type][0] = profile.actualStatistics.points;
+		}
+		document.querySelector('#gainedPoints').innerHTML = '0';
+		toggleModal(`#levelCompleted`);
+		refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function () {
+			resetActualGame();
+		});
+		newBoard.arcadeMode.condition = 0;
+		newBoard.arcadeMode.type = '';
 	}
 }
 

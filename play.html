@@ -61,8 +61,12 @@
 						</div>
 						<span class="glyphicon glyphicon-share-alt"></span>
 						Tury
-						<div class="text-right" id="turns">
-							0
+						<div class="text-right">
+							<div id="turns">
+								0
+							</div>
+							<div id="maxTurns">
+							</div>
 						</div>
 					</div>
 				</div>
@@ -119,7 +123,7 @@
 				<span class="div-label text-info">
 					Kampania to zbiór uporządkowanych misji.
 				</span>
-				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-modal="">
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-modal="#arcade">
 					Arcade
 				</div>
 				<span class="div-label text-info">
@@ -217,6 +221,48 @@
 				</div>
 				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-difficulty="god">
 					Boski
+				</div>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-modal="#menu">
+					Powrót
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="arcade" tabindex="-1" role="dialog" aria-labelledby="arcade" data-backdrop="static">
+		<div class="container">
+			<div class="panel panel-default" >
+				<span class="div-label text-info"> 
+				Wybierz poziom trudności:
+				</span>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-arcade="arcadeFirst">
+					10
+				</div>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-arcade="arcadeSecond">
+					20
+				</div>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-arcade="arcadeThird">
+					50
+				</div>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-arcade="arcadeFourth">
+					100
+				</div>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-modal="#menu">
+					Powrót
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="arcadeInfo" tabindex="-1" role="dialog" aria-labelledby="arcadeInfo" data-backdrop="static">
+		<div class="container">
+			<div class="panel panel-default" >
+				<span class="div-label text-info"> 
+					Uzyskaj w <span id="arcadeMovesInfo"></span> ruchach jak najwięcej punktów!
+				</span>
+				<span class="div-label text-info"> 
+					Twój najlepszy wynik to: <span id="arcadeMovesGained"></span>
+				</span>
+				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-modal="#board">
+					Graj
 				</div>
 				<div type="button" class="btn btn-rounded btn-success center-block btn-lg button-menu" data-modal="#menu">
 					Powrót
