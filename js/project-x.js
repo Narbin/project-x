@@ -1051,6 +1051,7 @@ function checkArcadeCondition() {
 		refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function () {
 			resetActualGame();
 		});
+		profile.totalStatistics.completedGames[0] += 1;
 		newBoard.arcadeMode.condition = 0;
 		newBoard.arcadeMode.type = '';
 	}
