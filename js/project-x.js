@@ -543,7 +543,6 @@ class Board {
 				case 3:
 				case 6:
 				case 9:
-					console.log(this.typesOfTiles[i],this.arrayOfTiles[0][0].points)
 					profile.actualStatistics.points += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * profile.actualStatistics.combo);
 					profile.totalStatistics.points[0] += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * profile.actualStatistics.combo);
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
@@ -1038,7 +1037,7 @@ function generateArcadeInfoDOM(difficulty) {
 
 	arcadeMovesInfo.innerHTML = profile.totalStatistics[difficulty][2];
 	arcadeMovesGained.innerHTML = profile.totalStatistics[difficulty][0];
-	maxTurns.innerHTML = `/${profile.totalStatistics[difficulty][2]}`;
+	maxTurnsDiv.innerHTML = `/${profile.totalStatistics[difficulty][2]}`;
 }
 
 function checkArcadeCondition() {
