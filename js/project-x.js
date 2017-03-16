@@ -302,7 +302,8 @@ class Profile {
 		this.actualStatistics = {
 			points: 0,
 			turns: 0,
-			typesOfTiles: [0, 0, 0, 0, 0, 0]
+			typesOfTiles: [0, 0, 0, 0, 0, 0],
+			combo: 0
 		};
 		this.milliseconds = 0;
 		this.minutesInGame = 0;
@@ -370,7 +371,7 @@ class Tile {
 	constructor(_typeOfBundle) {
 		this.type = _typeOfBundle;
 		this.imageSrc = null;
-		this.points = 1;
+		this.points = 4;
 		this.isSelected = false;
 		this.toDelete = false;
 	}
@@ -539,24 +540,29 @@ class Board {
 		var len = this.typesOfTiles.length - 1;
 		for (var i = 0; i <= len; i += 1) {
 			switch (this.typesOfTiles[i]) {
-				case (3 || 6 || 9):
-					profile.actualStatistics.points += this.typesOfTiles[i];
-					profile.totalStatistics.points[0] += this.typesOfTiles[i];
+				case 3:
+				case 6:
+				case 9:
+					console.log(this.typesOfTiles[i],this.arrayOfTiles[0][0].points)
+					profile.actualStatistics.points += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * profile.actualStatistics.combo);
+					profile.totalStatistics.points[0] += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * profile.actualStatistics.combo);
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
-				case (4 || 8):
-					profile.actualStatistics.points += this.typesOfTiles[i] * 2;
-					profile.totalStatistics.points[0] += this.typesOfTiles[i] * 2;
+				case 4:
+				case 8:
+					profile.actualStatistics.points += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2 + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) * profile.actualStatistics.combo);
+					profile.totalStatistics.points[0] += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2 + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) * profile.actualStatistics.combo);
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
-				case (5 || 10):
-					profile.actualStatistics.points += this.typesOfTiles[i] * 3;
-					profile.totalStatistics.points[0] += this.typesOfTiles[i] * 3;
+				case 5:
+				case 10:
+					profile.actualStatistics.points += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 3 + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 3) * profile.actualStatistics.combo);
+					profile.totalStatistics.points[0] += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 3 + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 3) * profile.actualStatistics.combo);
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				case 7:
-					profile.actualStatistics.points += this.typesOfTiles[i] + 4;
-					profile.totalStatistics.points[0] += this.typesOfTiles[i] + 4;
+					profile.actualStatistics.points += ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) * profile.actualStatistics.combo);
+					profile.totalStatistics.points[0] += ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) * profile.actualStatistics.combo);
 					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 					break;
 				default:
@@ -677,13 +683,17 @@ function engine() {
 	newBoard.findFit();
 
 	if (newBoard.foundedFit) {
-			
+
+		checkCombo();
+		
 		newBoard.countFoundedTiles()
 			.addPointsToProfile()
 			.deleteTiles()
 			.findClearTiles()
 			.setClearTiles();
 		refreshAmount(`points`, profile.actualStatistics.points);
+
+		profile.actualStatistics.combo += 1;
 
 		setTimeout(function () {
 			engine();
@@ -694,6 +704,7 @@ function engine() {
 		} else {
 			checkAllTasks();
 		}
+		profile.actualStatistics.combo = 0;
 		newBoard.ableToSelect = true;
 	}
 
@@ -1042,6 +1053,12 @@ function checkArcadeCondition() {
 		});
 		newBoard.arcadeMode.condition = 0;
 		newBoard.arcadeMode.type = '';
+	}
+}
+
+function checkCombo() {
+	if (profile.actualStatistics.combo > profile.totalStatistics.maxCombo[0]) {
+		profile.totalStatistics.maxCombo[0] = profile.actualStatistics.combo;
 	}
 }
 
