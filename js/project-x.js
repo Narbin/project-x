@@ -2,13 +2,13 @@
 'use strict';
 var profile,
 	newBoard;
-for (var i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
-	document.querySelectorAll('.btn')[i].addEventListener('click', function () {
+for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) {
+	document.getElementsByClassName('btn')[i].addEventListener('click', function () {
 		if (event.target.getAttribute('data-modal')) {
-			if (event.target.getAttribute('data-modal') === '#achievements') {
+			if (event.target.getAttribute('data-modal') === 'achievements') {
 				showAchievementsDOM();
 				toggleModal(`${event.target.getAttribute('data-modal')}`);
-			} else if (event.target.getAttribute('data-modal') === `#statistics`) {
+			} else if (event.target.getAttribute('data-modal') === `statistics`) {
 				showStatisticsDOM();
 				toggleModal(`${event.target.getAttribute('data-modal')}`);
 			} else {
@@ -39,7 +39,7 @@ for (var i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
 				generateRandomTasks(event.target.getAttribute('data-difficulty'));
 				generateTasksDOM();
 			}
-			toggleModal(`#board`);
+			toggleModal(`board`);
 			launchIntoFullscreen(document.documentElement);
 		} else if (event.target.getAttribute('data-arcade')) {
 			if (typeof newBoard === 'undefined') {
@@ -51,13 +51,13 @@ for (var i = 0; i <= document.querySelectorAll('.btn').length - 1; i += 1) {
 			newBoard.arcadeMode.type = event.target.getAttribute('data-arcade');
 			newBoard.arcadeMode.condition = profile.totalStatistics[newBoard.arcadeMode.type][2];
 			generateArcadeInfoDOM(event.target.getAttribute('data-arcade'));
-			toggleModal(`#arcadeInfo`);
+			toggleModal(`arcadeInfo`);
 		}
 		event.stopPropagation();
 	});
 }
 
-ontouch(document.querySelectorAll(`.panel-body`)[0], function (evt, dir, phase, swipetype, distance) {
+ontouch(document.getElementsByClassName(`panel-body`)[0], function (evt, dir, phase, swipetype, distance) {
 	if (dir === 'none' && phase === 'start') {
 		whatTileWasClicked(event);
 	}
@@ -72,7 +72,7 @@ ontouch(document.querySelectorAll(`.panel-body`)[0], function (evt, dir, phase, 
 	}
 });
 
-document.querySelectorAll(`.panel-body`)[0].addEventListener('click', function () {
+document.getElementsByClassName(`panel-body`)[0].addEventListener('click', function () {
 	whatTileWasClicked(event);
 });
 
@@ -140,10 +140,10 @@ function moveDownTile(firstTileY, firstTileX) {
 
 function setMinHeight() {
 	if (!newBoard.minHeight) {
-		var getActualHeight = document.querySelector('.panel-body').childNodes[1].clientHeight,
+		var getActualHeight = document.getElementsByClassName('panel-body')[0].childNodes[1].clientHeight,
 			boardSize = newBoard.size * newBoard.size;
 		for (var i = 1; i < boardSize; i += 1) {
-			document.querySelector('.panel-body').childNodes[i].style.minHeight = getActualHeight + `px`;
+			document.getElementsByClassName('panel-body')[0].childNodes[i].style.minHeight = getActualHeight + `px`;
 		}
 		newBoard.minHeight = true;
 	}
@@ -264,7 +264,7 @@ function refreshAmount(id, variable, time) {
 		prefix: '',
 		suffix: ''
 	};
-	var animate = new CountUp(document.querySelector(`#${id}`), parseInt(document.querySelector(`#${id}`).innerHTML, 10), variable, 0, time / 1000, options);
+	var animate = new CountUp(document.getElementById(`${id}`), parseInt(document.getElementById(`${id}`).innerHTML, 10), variable, 0, time / 1000, options);
 	animate.start();
 }
 
@@ -388,6 +388,7 @@ class Board {
 		this.alreadyTileSelected = ``;
 		this.typesOfTiles = [0, 0, 0, 0, 0, 0];
 		this.ableToSelect = true;
+		this.tasks = [ ];
 		this.arcadeMode = {
 			condition: 0,
 			type: ''
@@ -433,7 +434,7 @@ class Board {
 	}
 
 	drawTiles() {
-		var divForTiles = document.querySelectorAll('.panel-body')[0];
+		var divForTiles = document.getElementsByClassName('panel-body')[0];
 		for (var i = 0; i < this.size; i += 1) {
 			for (var j = 0; j < this.size; j += 1) {
 
@@ -627,7 +628,7 @@ class Board {
 		this.findClearTiles();
 		var objLength = this.clearTilesObj.length,
 			boardSize = this.size * this.size,
-			parentOfTile = document.querySelectorAll(".col-xs-2"),
+			parentOfTile = document.getElementsByClassName("col-xs-2"),
 			i = 0;
 
 		if (this.clearTilesObj.length) {
@@ -657,7 +658,7 @@ class Board {
 	}
 
 	clearBoardDOM() {
-		document.querySelectorAll(`.panel-body`)[0].innerHTML = ``;
+		document.getElementsByClassName(`panel-body`)[0].innerHTML = ``;
 	}
 }
 
@@ -710,7 +711,7 @@ function engine() {
 }
 
 function showAchievementsDOM() {
-	var achievementsDiv = document.querySelector('#achievementsDiv');
+	var achievementsDiv = document.getElementById('achievementsDiv');
 	achievementsDiv.innerHTML = '';
 	for (var i = 0; i <= profile.achievements.length - 1; i += 1) {
 		var glyphon;
@@ -735,7 +736,7 @@ function checkAllAchievements() {
 }
 
 function showPopupDOM(content) {
-	var popup = document.querySelector(`#popup`);
+	var popup = document.getElementById(`popup`);
 	if (popup.classList.contains('in')) {
 		setTimeout(function () {
 			popup.innerHTML = content;
@@ -812,8 +813,8 @@ function exitFullscreen() {
 }
 
 function toggleModal(id) {
-	var firstModal = document.querySelector(`.modal.fade.in`),
-		secondModal = document.querySelector(`${id}`);
+	var firstModal = document.getElementsByClassName(`modal fade in`)[0],
+		secondModal = document.getElementById(`${id}`);
 	if (firstModal) {
 		firstModal.style.display = 'none';
 		firstModal.classList.toggle('in');
@@ -834,7 +835,7 @@ function startMission(id) {
 		createTasksForCampaign(id);
 		generateTasksDOM();
 	}
-	toggleModal(`#board`);
+	toggleModal(`board`);
 	launchIntoFullscreen(document.documentElement);
 }
 
@@ -883,7 +884,7 @@ function createTasksForCampaign(id) {
 }
 
 function generateTasksDOM() {
-	var divForTasks = document.querySelector(`#divForTasks`);
+	var divForTasks = document.getElementById(`divForTasks`);
 
 	for (var i = 0; i <= newBoard.tasks.length - 1; i += 1) {
 		var creatingImg = document.createElement("img"),
@@ -918,7 +919,7 @@ function checkAllTasks() {
 			if (!newBoard.tasks[i].completed) {
 				newBoard.tasks[i].checkTask();
 				if (newBoard.tasks[i].completed) {
-					document.querySelector(`#task-${i}`).parentNode.style.backgroundColor = 'rgba(0, 255, 0, 0.5)';
+					document.getElementById(`task-${i}`).parentNode.style.backgroundColor = 'rgba(0, 255, 0, 0.5)';
 					profile.totalStatistics.completedTasks[0] += 1;
 				}
 			}
@@ -930,8 +931,8 @@ function checkAllTasks() {
 
 		if (tasksCompleted === length + 1) {
 			profile.totalStatistics.completedGames[0] += 1;
-			document.querySelector('#gainedPoints').innerHTML = '0';
-			toggleModal(`#levelCompleted`);
+			document.getElementById('gainedPoints').innerHTML = '0';
+			toggleModal(`levelCompleted`);
 			refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function () {
 				resetActualGame();
 			});
@@ -940,9 +941,9 @@ function checkAllTasks() {
 }
 
 function resetActualGame() {
-	document.querySelector('#turns').innerHTML = '0';
-	document.querySelector('#points').innerHTML = '0';
-	document.querySelector('#maxTurns').innerHTML = '';
+	document.getElementById('turns').innerHTML = '0';
+	document.getElementById('points').innerHTML = '0';
+	document.getElementById('maxTurns').innerHTML = '';
 	for (var i = 0; i < Object.keys(profile.actualStatistics).length; i += 1) {
 		if (typeof profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] === 'number') {
 			profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] = 0;
@@ -953,12 +954,12 @@ function resetActualGame() {
 		}
 	}
 	newBoard.clearBoardDOM();
-	document.querySelector('#divForTasks').innerHTML = '';
+	document.getElementById('divForTasks').innerHTML = '';
 	newBoard = undefined;
 }
 
 function showStatisticsDOM() {
-	var table = document.querySelector(`#tableForStatistics`);
+	var table = document.getElementById(`tableForStatistics`);
 	table.innerHTML = '';
 	for (var i = 0; i < Object.keys(profile.totalStatistics).length; i += 1) {
 
@@ -980,6 +981,7 @@ function showStatisticsDOM() {
 }
 
 function generateRandomTasks(difficulty) {
+	console.log(newBoard)
 	function shuffle(a) {
 		var j, x, i;
 		for (i = a.length; i; i--) {
@@ -1031,9 +1033,9 @@ function generateRandomTasks(difficulty) {
 }
 
 function generateArcadeInfoDOM(difficulty) {
-	var arcadeMovesInfo = document.querySelector('#arcadeMovesInfo'),
-		arcadeMovesGained = document.querySelector('#arcadeMovesGained'),
-		maxTurnsDiv = document.querySelector('#maxTurns');
+	var arcadeMovesInfo = document.getElementById('arcadeMovesInfo'),
+		arcadeMovesGained = document.getElementById('arcadeMovesGained'),
+		maxTurnsDiv = document.getElementById('maxTurns');
 
 	arcadeMovesInfo.innerHTML = profile.totalStatistics[difficulty][2];
 	arcadeMovesGained.innerHTML = profile.totalStatistics[difficulty][0];
@@ -1045,8 +1047,8 @@ function checkArcadeCondition() {
 		if (profile.actualStatistics.points > profile.totalStatistics[newBoard.arcadeMode.type][0]) {
 			profile.totalStatistics[newBoard.arcadeMode.type][0] = profile.actualStatistics.points;
 		}
-		document.querySelector('#gainedPoints').innerHTML = '0';
-		toggleModal(`#levelCompleted`);
+		document.getElementById('gainedPoints').innerHTML = '0';
+		toggleModal(`levelCompleted`);
 		refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function () {
 			resetActualGame();
 		});
@@ -1067,9 +1069,9 @@ function checkCombo() {
 	loadProfile();
 
 	if (typeof profile !== 'undefined') {
-		toggleModal(`#menu`);
+		toggleModal(`menu`);
 	} else {
-		toggleModal(`#createProfile`);
+		toggleModal(`createProfile`);
 	}
 }());
 
