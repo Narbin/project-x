@@ -749,6 +749,7 @@ function showAchievementsDOM() {
 	for (var i = 0; i <= profile.achievements.length - 1; i += 1) {
 		var achievementImg = document.createElement("img"),
 			achievementDiv = document.createElement("div"),
+			spanDiv = document.createElement("div"),
 			nameSpan = document.createElement("span"),
 			descriptionSpan = document.createElement("span");
 
@@ -759,18 +760,26 @@ function showAchievementsDOM() {
 
 		nameSpan.className = "achievement-span";
 		descriptionSpan.className = "achievement-span";
+		spanDiv.className = "achievement-div-span"
 
 		if (profile.achievements[i].completed) {
 			achievementImg.className = "img-completed achievement-img";
 			achievementDiv.className = "achievement-completed achievement";
+			spanDiv.style.borderTop = "green solid 2px";
+			spanDiv.style.borderBottom = "green solid 2px";
+			spanDiv.style.borderRight = "green solid 2px";
 		} else {
 			achievementImg.className = "img-not-completed achievement-img";
 			achievementDiv.className = "achievement-not-completed achievement";
+			spanDiv.style.borderTop = "red solid 2px";
+			spanDiv.style.borderBottom = "red solid 2px";
+			spanDiv.style.borderRight = "red solid 2px";
 		}
 		achievementsDiv.appendChild(achievementDiv);
 		achievementDiv.appendChild(achievementImg);
-		achievementDiv.appendChild(nameSpan);
-		achievementDiv.appendChild(descriptionSpan);
+		achievementDiv.appendChild(spanDiv);
+		spanDiv.appendChild(nameSpan);
+		spanDiv.appendChild(descriptionSpan);
 	}
 }
 

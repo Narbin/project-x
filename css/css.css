@@ -102,6 +102,7 @@ body {
 	text-align: center;
     margin-bottom: 2px;
     border-radius: 50px;
+    position: relative;
 }
 
 .achievement-img {
@@ -109,11 +110,16 @@ body {
 	display: block;
 	float: left;
 	border-radius: 40px;
+	padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
 }
 
 .achievement-completed {
 	border: #03C111 2px solid;
-    background-color: rgba(0, 255, 31, 0.3);
+    background-color: rgba(0, 255, 31, 0.5);
 }
 
 .achievement-not-completed {
@@ -122,15 +128,29 @@ body {
 }
 
 .img-completed {
-	border: green solid 2px;
+    border-right: green solid 2px;
 }
 
 .img-not-completed {
-	border: red solid 2px;
+	border-right: red solid 2px;
 }
 
 .achievement-span{
 	text-align: center;
+}
+
+.achievement-div-span {
+	position: absolute;
+    border-radius: 40px;
+    width: 80%;
+    height: 80px;
+    float: right;
+    left: 53px;
+    padding-left: 25px;
+    padding-right: 5px;
+    border-left: 10px solid transparent;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
 }
 
 #popup {
