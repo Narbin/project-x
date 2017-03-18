@@ -105,7 +105,7 @@ body {
     padding: 10px;
 }
 
-.achievements-div {
+.achievements-div, .campaigns-div {
 	overflow: auto;
 	max-height: 400px;
 }
@@ -239,7 +239,7 @@ body {
     color: #3c763d;
 }
 
-#turns, #maxTurns {
+#turns, #maxTurns, #points, #maxPoints {
 	display: inline-flex;
 }
 

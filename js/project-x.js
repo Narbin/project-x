@@ -11,6 +11,9 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 			} else if (event.target.getAttribute('data-modal') === `statistics`) {
 				showStatisticsDOM();
 				toggleModal(`${event.target.getAttribute('data-modal')}`);
+			} else if (event.target.getAttribute('data-modal') === `campaignModal`) {
+				showCampaignDOM();
+				toggleModal(`${event.target.getAttribute('data-modal')}`);
 			} else {
 				toggleModal(`${event.target.getAttribute('data-modal')}`);
 				exitFullscreen();
@@ -317,9 +320,12 @@ class Profile {
 			arcadeFirst: [0, 'Najwięcej punktów w 10 turach:', 10],
 			arcadeSecond: [0, 'Najwięcej punktów w 20 turach:', 20],
 			arcadeThird: [0, 'Najwięcej punktów w 50 turach:', 50],
-			arcadeFourth: [0, 'Najwięcej punktów w 100 turach:', 100]
+			arcadeFourth: [0, 'Najwięcej punktów w 100 turach:', 100],
+			completedMissions: [0, 'Ilość wykonanych misji kampanii']
 		};
+		this.campaign = [ ];
 
+		this.createCampaign();
 		this.addAchievements();
 		this.timeInGame();
 		this.checkTime();
@@ -365,6 +371,31 @@ class Profile {
 		}
 	}
 
+	createCampaign() {
+		if (this.campaign.length === 0) {
+			this.campaign.push(new CampaignMisson(500, [[0, 10], [1, 10]]));
+			this.campaign.push(new CampaignMisson(800, [[2, 20], [3, 20]]));
+			this.campaign.push(new CampaignMisson(1200, [[1, 33], [3, 33], [5, 33]]));
+			this.campaign.push(new CampaignMisson(1200, [[2, 33], [4, 33], [0, 33]]));
+			this.campaign.push(new CampaignMisson(1500, [[0, 30], [1, 30], [2, 30], [3, 30]]));
+			this.campaign.push(new CampaignMisson(2500, [[0, 35], [1, 35], [2, 35], [3, 35], [4, 35]]));
+			this.campaign.push(new CampaignMisson(5000, [[0, 50], [1, 50], [2, 50], [3, 50], [4, 50], [5, 50]]));
+			this.campaign.push(new CampaignMisson(5500, [[0, 51], [1, 52], [2, 53], [3, 54], [4, 55], [5, 56]]));
+			this.campaign.push(new CampaignMisson(6666, [[0, 66], [1, 66], [2, 66], [3, 66], [4, 66], [5, 66]]));
+			this.campaign.push(new CampaignMisson(9999, [[0, 99], [1, 99], [2, 99], [3, 99], [4, 99], [5, 99]]));
+			this.campaign.push(new CampaignMisson(1, [[5, 200]]));
+			this.campaign.push(new CampaignMisson(2, [[2, 200], [4, 200]]));
+			this.campaign.push(new CampaignMisson(12345, [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]]));
+			this.campaign.push(new CampaignMisson(14141, [[5, 14], [4, 14], [3, 14], [2, 14], [1, 14], [0, 14]]));
+			this.campaign.push(new CampaignMisson(16000, [[3, 111], [2, 111], [1, 111], [5, 111], [4, 111], [0, 111]]));
+			this.campaign.push(new CampaignMisson(16500, [[2, 350]]));
+			this.campaign.push(new CampaignMisson(17000, [[4, 350]]));
+			this.campaign.push(new CampaignMisson(25000, [[0, 250], [1, 250], [2, 250], [3, 250], [4, 250], [5, 250]]));
+
+
+		}
+		this.campaign[0].available = true;
+	}
 }
 
 class Tile {
@@ -393,6 +424,7 @@ class Board {
 			condition: 0,
 			type: ''
 		};
+		this.mission = null;
 		this.maxTurns = 0;
 		this.createTiles();
 		this.shuffleBoard();
@@ -787,6 +819,12 @@ function loadProfile() {
 				profile.totalStatistics[Object.keys(profile.totalStatistics)[i]][0] = loadedData.totalStatistics[Object.keys(loadedData.totalStatistics)[i]][0];
 			}
 		}
+		for (var k = 0; k < profile.totalStatistics.completedMissions[0]; k += 1) {
+			profile.campaign[k].completed = true;
+			if ( (k + 1) <= profile.campaign.length) {
+				profile.campaign[k + 1].available = true;
+			}
+		}
 	}
 }
 
@@ -825,62 +863,20 @@ function toggleModal(id) {
 }
 
 function startMission(id) {
+	id = parseInt(id, 10);
 	if (typeof newBoard === 'undefined') {
 		newBoard = new Board(8, `gems`);
-		createTasksForCampaign(id);
+		profile.campaign[id].createTasks();
 		generateTasksDOM();
 	} else {
 		resetActualGame();
 		newBoard = new Board(8, `gems`);
-		createTasksForCampaign(id);
+		profile.campaign[id].createTasks();
 		generateTasksDOM();
 	}
+	newBoard.mission = id;
 	toggleModal(`board`);
 	launchIntoFullscreen(document.documentElement);
-}
-
-function createTasksForCampaign(id) {
-	newBoard.tasks = [ ];
-	switch (id) {
-		case '1':
-			newBoard.tasks.push(new Task(0, 10));
-			newBoard.tasks.push(new Task(1, 10));
-			break;
-		case '2':
-			newBoard.tasks.push(new Task(0, 20));
-			newBoard.tasks.push(new Task(1, 20));
-			newBoard.tasks.push(new Task(2, 20));
-			break;
-		case '3':
-			newBoard.tasks.push(new Task(0, 40));
-			newBoard.tasks.push(new Task(1, 40));
-			newBoard.tasks.push(new Task(2, 40));
-			break;
-		case '4':
-			newBoard.tasks.push(new Task(0, 30));
-			newBoard.tasks.push(new Task(1, 30));
-			newBoard.tasks.push(new Task(2, 30));
-			newBoard.tasks.push(new Task(3, 30));
-			break;
-		case '5':
-			newBoard.tasks.push(new Task(0, 30));
-			newBoard.tasks.push(new Task(1, 30));
-			newBoard.tasks.push(new Task(2, 30));
-			newBoard.tasks.push(new Task(3, 30));
-			newBoard.tasks.push(new Task(4, 30));
-			break;
-		case '6':
-			newBoard.tasks.push(new Task(0, 35));
-			newBoard.tasks.push(new Task(1, 35));
-			newBoard.tasks.push(new Task(2, 35));
-			newBoard.tasks.push(new Task(3, 35));
-			newBoard.tasks.push(new Task(4, 35));
-			newBoard.tasks.push(new Task(5, 35));
-			break;
-		default:
-			newBoard.tasks.push(new Task(0, 10));
-			break;
-	}
 }
 
 function generateTasksDOM() {
@@ -923,27 +919,42 @@ function checkAllTasks() {
 					profile.totalStatistics.completedTasks[0] += 1;
 				}
 			}
-			refreshAmount(`task-${i}`, profile.actualStatistics.typesOfTiles[i]);
+			refreshAmount(`task-${i}`, profile.actualStatistics.typesOfTiles[newBoard.tasks[i].type]);
 			if (newBoard.tasks[i].completed) {
 				tasksCompleted += 1;
 			}
 		}
 
 		if (tasksCompleted === length + 1) {
-			profile.totalStatistics.completedGames[0] += 1;
-			document.getElementById('gainedPoints').innerHTML = '0';
-			toggleModal(`levelCompleted`);
-			refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function () {
-				resetActualGame();
-			});
+			if (newBoard.mission === null) {
+				profile.totalStatistics.completedGames[0] += 1;
+				document.getElementById('gainedPoints').innerHTML = '0';
+				toggleModal(`levelCompleted`);
+				refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function () {
+					resetActualGame();
+				});
+			} else {
+				if (profile.campaign[newBoard.mission].condition <= profile.actualStatistics.points) {
+					profile.totalStatistics.completedGames[0] += 1;
+					profile.campaign[newBoard.mission].completed = true;
+					profile.campaign[newBoard.mission + 1].available = true;
+					profile.totalStatistics.completedMissions[0] += 1;
+					newBoard.mission = null;
+					document.getElementById('gainedPoints').innerHTML = '0';
+					toggleModal(`levelCompleted`);
+					refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function () {
+						resetActualGame();
+					});
+				}
+			}
 		}
 	}
 }
-
 function resetActualGame() {
 	document.getElementById('turns').innerHTML = '0';
 	document.getElementById('points').innerHTML = '0';
 	document.getElementById('maxTurns').innerHTML = '';
+	document.getElementById('maxPoints').innerHTML = '';
 	for (var i = 0; i < Object.keys(profile.actualStatistics).length; i += 1) {
 		if (typeof profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] === 'number') {
 			profile.actualStatistics[Object.keys(profile.actualStatistics)[i]] = 0;
@@ -981,7 +992,6 @@ function showStatisticsDOM() {
 }
 
 function generateRandomTasks(difficulty) {
-	console.log(newBoard)
 	function shuffle(a) {
 		var j, x, i;
 		for (i = a.length; i; i--) {
@@ -1064,6 +1074,51 @@ function checkCombo() {
 	}
 }
 
+class CampaignMisson {
+	constructor(_condition, _dataTasks) {
+		this.available = false;
+		this.completed = false;
+		this.condition = _condition;
+		this.dataTasks = _dataTasks;
+	}
+
+	createTasks() {
+		newBoard.tasks = [ ];
+		for (var i = 0; i <= this.dataTasks.length - 1; i += 1) {
+			newBoard.tasks.push(new Task(this.dataTasks[i][0], this.dataTasks[i][1]));
+		}
+		document.getElementById('maxPoints').innerHTML = `/${this.condition}`;
+	}
+}
+
+function showCampaignDOM() {
+	var missionsDiv = document.getElementById(`missionsDiv`);
+	missionsDiv.innerHTML = '';
+	profile.campaign[0].available
+	for (var i = 0; i < profile.campaign.length; i += 1) {
+
+		var missionButton = document.createElement("div");
+		missionButton.className = "btn btn-rounded center-block btn-lg button-mission";
+		missionButton.innerHTML = i + 1;
+		missionButton.setAttribute('data-mission', i);
+		
+		if (profile.campaign[i].available && profile.campaign[i].completed) {
+			missionButton.className += " btn-success";
+			missionButton.addEventListener('click', function () {
+				startMission(event.target.getAttribute('data-mission'));
+			});
+		} else if (!profile.campaign[i].completed && profile.campaign[i].available){
+			missionButton.addEventListener('click', function () {
+				startMission(event.target.getAttribute('data-mission'));
+			});
+			missionButton.className += " btn-info";
+		} else {
+			missionButton.className += " btn-warning";
+		}
+		missionsDiv.appendChild(missionButton);
+		
+	}
+}
 
 (function () {
 	loadProfile();
