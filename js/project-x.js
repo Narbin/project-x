@@ -1045,11 +1045,13 @@ function generateRandomTasks(difficulty) {
 function generateArcadeInfoDOM(difficulty) {
 	var arcadeMovesInfo = document.getElementById('arcadeMovesInfo'),
 		arcadeMovesGained = document.getElementById('arcadeMovesGained'),
-		maxTurnsDiv = document.getElementById('maxTurns');
+		maxTurnsDiv = document.getElementById('maxTurns'),
+		maxPointsDiv = document.getElementById('maxPoints');
 
 	arcadeMovesInfo.innerHTML = profile.totalStatistics[difficulty][2];
 	arcadeMovesGained.innerHTML = profile.totalStatistics[difficulty][0];
 	maxTurnsDiv.innerHTML = `/${profile.totalStatistics[difficulty][2]}`;
+	maxPointsDiv.innerHTML = `/${profile.totalStatistics[difficulty][0]}`;
 }
 
 function checkArcadeCondition() {
