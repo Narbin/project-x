@@ -8,19 +8,25 @@ body {
 	font-size: 18px;
 }
 
-.panel-body{
+#board > .container > .panel > .panel-footer {
+	padding: 5px 5px;
+	background-color: rgba(255, 255, 255, 0);
+	border-color: rgba(255, 255, 255, 0);
+}
+
+#board > .container > .panel > .panel-heading {
+	padding: 5px 5px;
+	background-color: rgba(255, 255, 255, 0);
+	border-color: rgba(255, 255, 255, 0);
+}
+
+#board > .container > .panel > .panel-body {
+	padding: 6px;
 	position: relative;
 }
 
-.tile {
-	border-radius: 40px;
-	cursor: pointer;
-	position: relative;
-	z-index:10;
-	-moz-user-drag: none;
-	-khtml-user-drag: none;
-	-webkit-user-drag: none;
-	user-drag: none;
+#board > .container > .panel {
+	overflow: hidden;
 }
 
 .no-padding {
@@ -31,11 +37,14 @@ body {
 	max-width: 320px;
 	padding: 0px;
 	background: linear-gradient(138deg, #6882a8, #b6fbff, #70e1f5, #ffd194);
-	/*background-size: 800% 800%;*/
-	/*animation: grafientAnimation 15s ease infinite;*/
 	height: 480px;
 }
-.container > .panel {
+
+.panel {
+	background-color: rgba(255, 255, 255, 0);
+	height: 100%;
+	text-align: center;
+	overflow: auto;
 	margin-bottom: 0px;
 }
 
@@ -49,10 +58,129 @@ body {
     padding: 0px;
 }
 
+.button-menu {
+	margin-top: 10px;
+	width: 200px;
+	font-size: 30px;
+    padding: 10px;
+}
+
+.button-mission {
+	font-size: 40px;
+    display: inline-block;
+    height: 70px;
+    width: 70px;
+    line-height: 66px;
+    margin: 10px;
+}
+
+.tile {
+	border-radius: 40px;
+	cursor: pointer;
+	position: relative;
+	z-index:10;
+	-moz-user-drag: none;
+	-khtml-user-drag: none;
+	-webkit-user-drag: none;
+	user-drag: none;
+}
+
 .selected {
 	z-index:100;
-    animation: selectedDiv 2s ease infinite;
-    
+    animation: selectedDiv 2s ease infinite; 
+}
+
+.achievements-div, .campaigns-div {
+	overflow: auto;
+	max-height: 400px;
+}
+
+.achievement {
+	height: 100px;
+	width: 100%;
+	padding: 8px;
+	text-align: center;
+    margin-bottom: 2px;
+    border-radius: 50px;
+}
+
+.achievement-img {
+	height: 80px;
+	display: block;
+	float: left;
+	border-radius: 40px;
+}
+
+.achievement-completed {
+	border: #03C111 2px solid;
+    background-color: rgba(0, 255, 31, 0.3);
+}
+
+.achievement-not-completed {
+	border: #ff5a5a 2px solid;
+    background-color: rgba(255, 0, 0, 0.5);
+}
+
+.img-completed {
+	border: green solid 2px;
+}
+
+.img-not-completed {
+	border: red solid 2px;
+}
+
+.achievement-span{
+	text-align: center;
+}
+
+#popup {
+	margin: 15px auto 0 auto;
+	height: 100px;
+    width: 300px;
+    z-index: 2000;
+    border-radius: 15px;
+    box-shadow: black 0px 2px 10px 1px;
+    background: linear-gradient(180deg, #AAFFA9,#11FFBD,#AAFFA9);
+}
+
+.popup-achievement {
+	text-align: center;
+	max-height: 100%;
+}
+
+.popup-achievement img{
+    height: 90px;
+    margin: 5px;
+    float: left;
+}
+
+.popup-achievement span{
+	display: block;
+}
+
+#profileForm {
+    text-align: center;
+    font-size: 25px;
+}
+
+#profileForm > input{
+    text-align: center;
+    border-radius: 20px;
+    outline: none;
+}
+
+.div-label {
+	font-size: 25px;
+}
+
+#levelCompleted > .container > .panel > span {
+	display: block;
+    font-size: 25px;
+    color: #3c763d;
+}
+
+#turns, #maxTurns, #points, #maxPoints {
+	display: inline-flex;
 }
 
 @keyframes selectedDiv { 
@@ -81,165 +209,4 @@ body {
     	cyan 0px 3px 3px -1px,
     	red 0px -3px 3px -1px;
     }
-
-
 }
-
-#icon {
-	 /*animation: iconRotate 20s linear infinite;*/
-}
-
-@keyframes iconRotate { 
-    from {transform: rotate(0deg) ;}
-    to {transform: rotate(360deg) ;}
-}
-
-#play {
-	margin-top: 50px;
-}
-
-.button-menu {
-	margin-top: 10px;
-	width: 200px;
-	font-size: 30px;
-    padding: 10px;
-}
-
-.achievements-div, .campaigns-div {
-	overflow: auto;
-	max-height: 400px;
-}
-
-.achievement{
-	height: 200px;
-	width: 100%;
-	padding: 5px;
-	text-align: center;
-	border: #03A9F4 2px solid;
-    margin-bottom: 2px;
-    border-radius: 50px;
-    background-color: rgba(3, 169, 244, 0.2);
-}
-
-.achievement img{
-	height: 140px;
-	display: block;
-	margin: auto;
-}
-
-#popup {
-	margin: 15px auto 0 auto;
-	height: 100px;
-    width: 300px;
-    z-index: 2000;
-    border-radius: 15px;
-    box-shadow: black 0px 2px 10px 1px;
-    background: linear-gradient(180deg, #AAFFA9,#11FFBD,#AAFFA9);
-}
-
-.popup-achievement {
-	text-align: center;
-	max-height: 100%;
-}
-
-.popup-achievement img{
-    height: 90px;
-    margin: 5px;
-    float: left;
-}
-
-.popup-achievement span{
-	display: block;
-}
-
-#board > .container > .panel > .panel-footer {
-	padding: 5px 5px;
-}
-
-#board > .container > .panel > .panel-heading {
-	padding: 5px 5px;
-}
-
-#board > .container > .panel > .panel-body {
-	padding: 6px;
-}
-
-#profileForm {
-    text-align: center;
-    font-size: 25px;
-}
-
-#profileForm > input{
-    text-align: center;
-    border-radius: 20px;
-    outline: none;
-}
-
-@-webkit-keyframes grafientAnimation {
-    0%{background-position:9% 0%}
-    50%{background-position:92% 100%}
-    100%{background-position:9% 0%}
-}
-@-moz-keyframes grafientAnimation {
-    0%{background-position:9% 0%}
-    50%{background-position:92% 100%}
-    100%{background-position:9% 0%}
-}
-@-o-keyframes grafientAnimation {
-    0%{background-position:9% 0%}
-    50%{background-position:92% 100%}
-    100%{background-position:9% 0%}
-}
-@keyframes grafientAnimation { 
-    0%{background-position:9% 0%}
-    50%{background-position:92% 100%}
-    100%{background-position:9% 0%}
-}
-
-.panel {
-	background-color: rgba(255, 255, 255, 0);
-	height: 100%;
-	text-align: center;
-}
-
-.panel-default {
-	border-color: rgba(255, 255, 255, 0);
-}
-
-.panel-footer {
-	background-color: rgba(255, 255, 255, 0);
-	border-color: rgba(255, 255, 255, 0);
-}
-
-.panel-default > .panel-heading {
-	background-color: rgba(255, 255, 255, 0);
-	border-color: rgba(255, 255, 255, 0);
-}
-
-#modeMenu > .container > .panel {
-	overflow: auto;
-}
-
-.div-label {
-	font-size: 25px;
-}
-
-.button-mission {
-	font-size: 40px;
-    display: inline-block;
-    height: 70px;
-    width: 70px;
-    line-height: 66px;
-    margin: 10px;
-}
-
-#levelCompleted > .container > .panel > span {
-	display: block;
-    font-size: 25px;
-    color: #3c763d;
-}
-
-#turns, #maxTurns, #points, #maxPoints {
-	display: inline-flex;
-}
-

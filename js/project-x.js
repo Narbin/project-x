@@ -745,14 +745,32 @@ function engine() {
 function showAchievementsDOM() {
 	var achievementsDiv = document.getElementById('achievementsDiv');
 	achievementsDiv.innerHTML = '';
+
 	for (var i = 0; i <= profile.achievements.length - 1; i += 1) {
-		var glyphon;
+		var achievementImg = document.createElement("img"),
+			achievementDiv = document.createElement("div"),
+			nameSpan = document.createElement("span"),
+			descriptionSpan = document.createElement("span");
+
+		nameSpan.innerHTML = profile.achievements[i].name + '<br>';
+		descriptionSpan.innerHTML = profile.achievements[i].description;
+
+		achievementImg.src = profile.achievements[i].imageSrc;
+
+		nameSpan.className = "achievement-span";
+		descriptionSpan.className = "achievement-span";
+
 		if (profile.achievements[i].completed) {
-			glyphon = '<span class= "glyphicon glyphicon-ok text-success" aria-hidden="true"></span>';
+			achievementImg.className = "img-completed achievement-img";
+			achievementDiv.className = "achievement-completed achievement";
 		} else {
-			glyphon = '<span class= "glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>';
+			achievementImg.className = "img-not-completed achievement-img";
+			achievementDiv.className = "achievement-not-completed achievement";
 		}
-		achievementsDiv.innerHTML += `<div class="achievement"><span>${glyphon + profile.achievements[i].name + glyphon}</span><img src="${profile.achievements[i].imageSrc}"><span>${profile.achievements[i].description}</span></div>`;
+		achievementsDiv.appendChild(achievementDiv);
+		achievementDiv.appendChild(achievementImg);
+		achievementDiv.appendChild(nameSpan);
+		achievementDiv.appendChild(descriptionSpan);
 	}
 }
 
@@ -1115,7 +1133,7 @@ function showCampaignDOM() {
 			});
 			missionButton.className += " btn-info";
 		} else {
-			missionButton.className += " btn-warning";
+			missionButton.className += " btn-danger";
 		}
 		missionsDiv.appendChild(missionButton);
 		
