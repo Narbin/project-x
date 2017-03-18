@@ -230,3 +230,11 @@ body {
     	red 0px -3px 3px -1px;
     }
 }
+
+.table > tr:nth-child(odd) {
+	background-color: rgba(136, 255, 250, 0.5);
+}
+
+.table > tr:nth-child(even) {
+	background-color: rgba(0, 243, 255, 0.5);
+}
