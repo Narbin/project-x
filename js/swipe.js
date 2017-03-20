@@ -7,9 +7,9 @@ function ontouch(el, callback){
     startY,
     distX,
     distY,
-    threshold = 40, //required min distance traveled to be considered swipe
+    threshold = 20, //required min distance traveled to be considered swipe
     restraint = 60, // maximum distance allowed at the same time in perpendicular direction
-    allowedTime = 400, // maximum time allowed to travel that distance
+    allowedTime = 500, // maximum time allowed to travel that distance
     elapsedTime,
     startTime,
     handletouch = callback || function(evt, dir, phase, swipetype, distance){}
