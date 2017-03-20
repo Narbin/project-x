@@ -26,6 +26,8 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 			newBoard.shuffleBoard();
 			newBoard.setImageSrc();
 			newBoard.drawTiles();
+			newBoard.minHeight = false;
+			setMinHeight();
 		} else if (event.target.getAttribute('data-createProfile')) {
 			var name = document.querySelector('input[name="name"]').value;
 			profile = new Profile(name);
