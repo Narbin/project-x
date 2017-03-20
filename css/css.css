@@ -249,3 +249,36 @@ body {
 .table > tr:nth-child(even) {
 	background-color: rgba(0, 243, 255, 0.5);
 }
+
+.hint {
+	background: linear-gradient(270deg, #ff0000, #0600ff);
+	background-size: 400% 400%;
+	border-radius: 15px;
+
+	-webkit-animation: hintAnim 3s ease infinite;
+	-moz-animation: hintAnim 3s ease infinite;
+	animation: hintAnim 3s ease infinite;
+}
+
+@-webkit-keyframes hintAnim {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes hintAnim {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes hintAnim { 
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.noMove {
+	display: block;
+	width: 100%;
+	font-size: 40px;
+	text-align: center;
+}

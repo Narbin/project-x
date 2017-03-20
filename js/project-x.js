@@ -261,7 +261,11 @@ function changeTilesPosition(tile) {
 
 function selectTileDOM() {
 	setMinHeight();
-
+	var hintDiv = document.getElementsByClassName('hint')[0];
+	if (hintDiv) {
+		hintDiv.classList.toggle('hint');
+	}
+	newBoard.hintTimer(true);
 	if (newBoard.ableToSelect) {
 		if (event.target.classList.contains(`tile`)) {
 			if (newBoard.alreadyTileSelected === event.target) {
@@ -454,10 +458,12 @@ class Board {
 		};
 		this.mission = null;
 		this.maxTurns = 0;
+		this.hintTimerId = 0;
 		this.createTiles();
 		this.shuffleBoard();
 		this.setImageSrc();
 		this.drawTiles();
+		this.hintTimer();
 	}
 
 	createTiles() {
@@ -719,6 +725,125 @@ class Board {
 
 	clearBoardDOM() {
 		document.getElementsByClassName(`panel-body`)[0].innerHTML = ``;
+	}
+
+	findMove() {
+		var objLength = this.arrayOfTiles.length,
+			doBreak = false;
+		for (var i = 0; i < this.size - 2 && !doBreak; i += 1) {
+			for (var j = 0; j < this.size - 1; j += 1) {
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j + 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 2][j + 1].type) {
+					showHint([i, j]);
+					doBreak = true;
+					break;
+				}
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j + 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 2][j].type) {
+					showHint([i + 1, j + 1]);
+					doBreak = true;
+					break;
+				}
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 2][j + 1].type) {
+					showHint([i + 2, j + 1]);
+					doBreak = true;
+					break;
+				}
+			}
+		}
+		for (var i = 0; i < this.size - 2 && !doBreak; i += 1) {
+			for (var j = 1; j < this.size; j += 1) {
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j - 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 2][j - 1].type) {
+					showHint([i, j]);
+					doBreak = true;
+					break;
+				}
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j - 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 2][j].type) {
+					showHint([i + 1, j - 1]);
+					doBreak = true;
+					break;
+				}
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 2][j - 1].type) {
+					showHint([i + 2, j - 1]);
+					doBreak = true;
+					break;
+				}
+			}
+		}
+		for (var i = 0; i < this.size - 1 && !doBreak; i += 1) {
+			for (var j = 0; j < this.size - 2; j += 1) {
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j + 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j + 2].type) {
+					showHint([i, j]);
+					doBreak = true;
+					break;
+				}
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j + 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j + 2].type) {
+					showHint([i + 1, j + 1]);
+					doBreak = true;
+					break;
+				}
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j + 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 1][j + 2].type) {
+					showHint([i + 1, j + 2]);
+					doBreak = true;
+					break;
+				}
+			}
+		}
+		for (var i = 1; i < this.size && !doBreak; i += 1) {
+			for (var j = 0; j < this.size - 2; j += 1) {
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 1][j + 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 1][j + 2].type) {
+					showHint([i, j]);
+					doBreak = true;
+					break;
+				}
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 1][j + 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j + 2].type) {
+					showHint([i - 1, j + 1]);
+					doBreak = true;
+					break;
+				}
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j + 1].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i - 1][j + 2].type) {
+					showHint([i - 1, j + 2]);
+					doBreak = true;
+					break;
+				}
+			}
+		}
+		for (var i = 0; i < this.size - 2 && !doBreak; i += 1) {
+			for (var j = 0; j < this.size - 2; j += 1) {
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 2][j].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i + 3][j].type) {
+					showHint([i, j]);
+					doBreak = true;
+					break;
+				}
+				if (this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j + 2].type && this.arrayOfTiles[i][j].type === this.arrayOfTiles[i][j + 3].type) {
+					showHint([i, j]);
+					doBreak = true;
+					break;
+				}
+			}
+		}
+		if (!doBreak) {
+			showPopupDOM(`<div class="noMove">BRAK RUCHU :(</div>`)
+			this.clearBoardDOM();
+			this.createTiles();
+			this.shuffleBoard();
+			this.setImageSrc();
+			this.drawTiles();
+			this.minHeight = false;
+			setMinHeight();
+		}
+	}
+
+	hintTimer(reset) {
+		var that = this;
+		if (typeof reset === undefined) {
+			that.hintTimerId = setTimeout(function () {
+				that.findMove();
+			}, 5000);
+		} else {
+			window.clearTimeout(that.hintTimerId);
+			that.hintTimerId = setTimeout(function () {
+				that.findMove();
+			}, 5000);
+		}
 	}
 }
 
@@ -1175,6 +1300,11 @@ function showCampaignDOM() {
 		missionsDiv.appendChild(missionButton);
 		
 	}
+}
+
+function showHint(arr) {
+	var tileForHint = document.querySelector(`[x="${arr[1]}"][y="${arr[0]}"]`);
+	tileForHint.parentNode.classList.toggle('hint');
 }
 
 (function () {
