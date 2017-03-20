@@ -184,46 +184,72 @@ function changeTilesPosition(tile) {
 				distanseX,
 				distanseY;
 
+			distanseX = fromTop - toTop;
+			distanseY = fromLeft - toLeft;
+
 			tempTile = newBoard.arrayOfTiles[y2][x2];
 			newBoard.arrayOfTiles[y2][x2] = newBoard.arrayOfTiles[y1][x1];
 			newBoard.arrayOfTiles[y1][x1] = tempTile;
 
-			tile.setAttribute('x', `${x2}`);
-			tile.setAttribute('y', `${y2}`);
-			newBoard.alreadyTileSelected.setAttribute('x', `${x1}`);
-			newBoard.alreadyTileSelected.setAttribute('y', `${y1}`);
+			newBoard.findFit();
+			if (!newBoard.foundedFit) {
+				tempTile = newBoard.arrayOfTiles[y1][x1];
+				newBoard.arrayOfTiles[y1][x1] = newBoard.arrayOfTiles[y2][x2];
+				newBoard.arrayOfTiles[y2][x2] = tempTile;
 
-			distanseX = fromTop - toTop;
-			distanseY = fromLeft - toLeft;
+				TweenLite.to(tile, 0.2, {
+					left: `+=${distanseY}`,
+					top: `+=${distanseX}`
+				});
+				TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
+					left: `-=${distanseY}`,
+					top: `-=${distanseX}`,
+					onComplete: function () {
+						TweenLite.to(tile, 0.2, {
+							left: `-=${distanseY}`,
+							top: `-=${distanseX}`,
+						});
+						TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
+							left: `+=${distanseY}`,
+							top: `+=${distanseX}`,
+						});
+						newBoard.alreadyTileSelected = '';
+						newBoard.ableToSelect = true;
+					}
+				});
+			} else {
 
-			TweenLite.to(tile, 0.2, {
-				left: `+=${distanseY}`,
-				top: `+=${distanseX}`,
-				onComplete: function () {
-					tile.style.top = '0px';
-					tile.style.left = '0px';
-				}
-			});
+				tile.setAttribute('x', `${x2}`);
+				tile.setAttribute('y', `${y2}`);
+				newBoard.alreadyTileSelected.setAttribute('x', `${x1}`);
+				newBoard.alreadyTileSelected.setAttribute('y', `${y1}`);
 
-			TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
-				left: `-=${distanseY}`,
-				top: `-=${distanseX}`,
-				onComplete: function () {
-					newBoard.alreadyTileSelected.style.top = '0px';
-					newBoard.alreadyTileSelected.style.left = '0px';
-					parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
-					parentSecondTile.appendChild(childParentFirstTile);
+				TweenLite.to(tile, 0.2, {
+					left: `+=${distanseY}`,
+					top: `+=${distanseX}`,
+					onComplete: function () {
+						tile.style.top = '0px';
+						tile.style.left = '0px';
+					}
+				});
 
-					newBoard.alreadyTileSelected = '';
+				TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
+					left: `-=${distanseY}`,
+					top: `-=${distanseX}`,
+					onComplete: function () {
+						newBoard.alreadyTileSelected.style.top = '0px';
+						newBoard.alreadyTileSelected.style.left = '0px';
+						parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
+						parentSecondTile.appendChild(childParentFirstTile);
+						newBoard.alreadyTileSelected = '';
+						profile.actualStatistics.turns += 1;
+						profile.totalStatistics.turns[0] += 1;
+						refreshAmount(`turns`, profile.actualStatistics.turns);
 
-					engine();
-				}
-			});
-
-			profile.actualStatistics.turns += 1;
-			profile.totalStatistics.turns[0] += 1;
-			refreshAmount(`turns`, profile.actualStatistics.turns);
-
+						engine();
+					}
+				});
+			}
 			return true;
 		} else {
 			return false;
