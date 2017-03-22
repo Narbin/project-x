@@ -29,7 +29,7 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 			newBoard.minHeight = false;
 			setMinHeight();
 		} else if (event.target.getAttribute('data-createProfile')) {
-			var name = document.querySelector('input[name="name"]').value;
+			var name = document.getElementsByName("name")[0].value;
 			profile = new Profile(name);
 			saveProfile();
 			toggleModal(`${event.target.getAttribute('data-createProfile')}`);
@@ -83,23 +83,24 @@ document.getElementsByClassName(`panel-body`)[0].addEventListener('click', funct
 
 function changeTileWith(direction) {
 	if (newBoard.alreadyTileSelected) {
-		var x = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
-			y = parseInt(newBoard.alreadyTileSelected.getAttribute(`y`), 10);
+		var x = parseInt(newBoard.alreadyTileSelected.getAttribute(`data-x`), 10),
+			y = parseInt(newBoard.alreadyTileSelected.getAttribute(`data-y`), 10);
 		switch (direction) {
 			case `right`:
-				changeTilesPosition(document.querySelector(`[x="${x + 1}"][y="${y}"]`));
+				
+				changeTilesPosition(getElementByDataXY("tile", [x + 1, y]));
 				newBoard.alreadyTileSelected.classList.toggle('selected');
 				break;
 			case `left`:
-				changeTilesPosition(document.querySelector(`[x="${x - 1}"][y="${y}"]`));
+				changeTilesPosition(getElementByDataXY("tile", [x - 1, y]));
 				newBoard.alreadyTileSelected.classList.toggle('selected');
 				break;
 			case `up`:
-				changeTilesPosition(document.querySelector(`[x="${x}"][y="${y - 1}"]`));
+				changeTilesPosition(getElementByDataXY("tile", [x, y - 1]));
 				newBoard.alreadyTileSelected.classList.toggle('selected');
 				break;
 			case `down`:
-				changeTilesPosition(document.querySelector(`[x="${x}"][y="${y + 1}"]`));
+				changeTilesPosition(getElementByDataXY("tile", [x, y + 1]));
 				newBoard.alreadyTileSelected.classList.toggle('selected');
 				break;
 			default:
@@ -113,11 +114,11 @@ function moveDownTile(firstTileY, firstTileX) {
 
 	while (firstTileY - i > 0) {
 
-		var firstTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i}"]`),
-			secondTile = document.querySelector(`[x="${firstTileX}"][y="${firstTileY - i - 1}"]`),
-			firstX = parseInt(firstTile.getAttribute(`x`), 10),
-			firstY = parseInt(firstTile.getAttribute(`y`), 10),
-			secondY = parseInt(secondTile.getAttribute(`y`), 10),
+		var firstTile = getElementByDataXY('tile', [firstTileX, firstTileY - i]),
+			secondTile = getElementByDataXY('tile', [firstTileX, firstTileY - i - 1]),
+			firstX = parseInt(firstTile.getAttribute(`data-x`), 10),
+			firstY = parseInt(firstTile.getAttribute(`data-y`), 10),
+			secondY = parseInt(secondTile.getAttribute(`data-y`), 10),
 			parentFirstTile = firstTile.parentNode,
 			parentSecondTile = secondTile.parentNode,
 			childParentFirstTile = parentFirstTile.firstChild,
@@ -128,8 +129,8 @@ function moveDownTile(firstTileY, firstTileX) {
 		newBoard.arrayOfTiles[secondY][firstX] = newBoard.arrayOfTiles[firstY][firstX];
 		newBoard.arrayOfTiles[firstY][firstX] = tempTile;
 
-		firstTile.setAttribute('y', secondY);
-		secondTile.setAttribute('y', firstY);
+		firstTile.setAttribute('data-y', secondY);
+		secondTile.setAttribute('data-y', firstY);
 		parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
 		parentSecondTile.appendChild(childParentFirstTile);
 			
@@ -163,10 +164,10 @@ function whatTileWasClicked(event) {
 
 function changeTilesPosition(tile) {
 	if (tile) {
-		var x1 = parseInt(tile.getAttribute(`x`), 10),
-			y1 = parseInt(tile.getAttribute(`y`), 10),
-			x2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`x`), 10),
-			y2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`y`), 10),
+		var x1 = parseInt(tile.getAttribute(`data-x`), 10),
+			y1 = parseInt(tile.getAttribute(`data-y`), 10),
+			x2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`data-x`), 10),
+			y2 = parseInt(newBoard.alreadyTileSelected.getAttribute(`data-y`), 10),
 			parentFirstTile = tile.parentNode,
 			parentSecondTile = newBoard.alreadyTileSelected.parentNode,
 			childParentFirstTile = parentFirstTile.firstChild,
@@ -221,10 +222,10 @@ function changeTilesPosition(tile) {
 				});
 			} else {
 
-				tile.setAttribute('x', `${x2}`);
-				tile.setAttribute('y', `${y2}`);
-				newBoard.alreadyTileSelected.setAttribute('x', `${x1}`);
-				newBoard.alreadyTileSelected.setAttribute('y', `${y1}`);
+				tile.setAttribute('data-x', `${x2}`);
+				tile.setAttribute('data-y', `${y2}`);
+				newBoard.alreadyTileSelected.setAttribute('data-x', `${x1}`);
+				newBoard.alreadyTileSelected.setAttribute('data-y', `${y1}`);
 
 				TweenLite.to(tile, 0.2, {
 					left: `+=${distanseY}`,
@@ -509,8 +510,8 @@ class Board {
 				creatingDiv.className = "col-xs-2 no-padding";
 				creatingImg.className = "no-padding tile";
 				creatingImg.src = this.arrayOfTiles[i][j].imageSrc;
-				creatingImg.setAttribute(`x`, `${j}`);
-				creatingImg.setAttribute(`y`, `${i}`);
+				creatingImg.setAttribute(`data-x`, `${j}`);
+				creatingImg.setAttribute(`data-y`, `${i}`);
 				divForTiles.appendChild(creatingDiv);
 				creatingDiv.appendChild(creatingImg);
 			}
@@ -641,22 +642,21 @@ class Board {
 
 	deleteTiles() {
 		var array = this.arrayOfTiles,
-			tile = document.querySelectorAll('.tile');
-		function deleteT(k) {
-			tile[k].src = ``;
-			tile[k].className = `col-xs-2 no-padding`;
-			tile[k].parentNode.removeChild(tile[k]);
+			tile = document.getElementsByClassName('tile');
+		function deleteT(tileK) {
+			tileK.src = ``;
+			tileK.className = `col-xs-2 no-padding`;
+			tileK.parentNode.removeChild(tileK);
 		}
 		for (var i = 0; i < this.size; i += 1) {
 			for (var j = 0; j < this.size; j += 1) {
 				if (array[i][j].toDelete) {
 					for (var k = 0; k < tile.length; k += 1) {
-						if (parseInt(tile[k].getAttribute(`x`), 10) === j && parseInt(tile[k].getAttribute(`y`), 10) === i) {
-
+						if (parseInt(tile[k].getAttribute(`data-x`), 10) === j && parseInt(tile[k].getAttribute(`data-y`), 10) === i) {
 							TweenLite.to(tile[k], 0.2, {
 								opacity: `0`,
 								onComplete: deleteT,
-								onCompleteParams: [k]
+								onCompleteParams: [tile[k]]
 							});
 						}
 					}
@@ -707,8 +707,8 @@ class Board {
 					var creatingImg = document.createElement("img");
 					creatingImg.className = "no-padding tile";
 					creatingImg.src = `images/${this.arrayOfTiles[this.clearTilesObj[i][0]][this.clearTilesObj[i][1]].type}.svg`;
-					creatingImg.setAttribute(`x`, `${this.clearTilesObj[i][1]}`);
-					creatingImg.setAttribute(`y`, `${this.clearTilesObj[i][0]}`);
+					creatingImg.setAttribute(`data-x`, `${this.clearTilesObj[i][1]}`);
+					creatingImg.setAttribute(`data-y`, `${this.clearTilesObj[i][0]}`);
 					creatingImg.style.opacity = '0';
 					parentOfTile[k].appendChild(creatingImg);
 
@@ -1306,8 +1306,18 @@ function showCampaignDOM() {
 }
 
 function showHint(arr) {
-	var tileForHint = document.querySelector(`[x="${arr[1]}"][y="${arr[0]}"]`);
+	var tileForHint = getElementByDataXY("tile", [arr[1], arr[0]]);
 	tileForHint.parentNode.classList.toggle('hint');
+}
+
+function getElementByDataXY(klass, conditionsArr) {
+	var elements = document.getElementsByClassName(klass),
+		length = elements.length;
+	while(length--){
+		if(elements[length].dataset.x === `${conditionsArr[0]}` && elements[length].dataset.y === `${conditionsArr[1]}`){
+			return elements[length];
+		}
+	}
 }
 
 (function () {
