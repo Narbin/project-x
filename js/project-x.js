@@ -3,7 +3,7 @@
 var profile,
 	newBoard;
 for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) {
-	document.getElementsByClassName('btn')[i].addEventListener('click', function () {
+	document.getElementsByClassName('btn')[i].addEventListener('click', function (event) {
 		if (event.target.getAttribute('data-modal')) {
 			if (event.target.getAttribute('data-modal') === 'achievements') {
 				showAchievementsDOM();
@@ -77,7 +77,7 @@ ontouch(document.getElementsByClassName(`panel-body`)[0], function (evt, dir, ph
 	}
 });
 
-document.getElementsByClassName(`panel-body`)[0].addEventListener('click', function () {
+document.getElementsByClassName(`panel-body`)[0].addEventListener('click', function (event) {
 	whatTileWasClicked(event);
 });
 
@@ -157,7 +157,7 @@ function setMinHeight() {
 
 function whatTileWasClicked(event) {
 	if (event.target !== event.currentTarget) {
-		selectTileDOM(event.target);
+		selectTileDOM(event);
 	}
 	event.stopPropagation();
 }
@@ -260,7 +260,7 @@ function changeTilesPosition(tile) {
 	}
 }
 
-function selectTileDOM() {
+function selectTileDOM(event) {
 	setMinHeight();
 	var hintDiv = document.getElementsByClassName('hint')[0];
 	if (hintDiv) {
@@ -1289,11 +1289,11 @@ function showCampaignDOM() {
 		
 		if (profile.campaign[i].available && profile.campaign[i].completed) {
 			missionButton.className += " btn-success";
-			missionButton.addEventListener('click', function () {
+			missionButton.addEventListener('click', function (event) {
 				startMission(event.target.getAttribute('data-mission'));
 			});
 		} else if (!profile.campaign[i].completed && profile.campaign[i].available){
-			missionButton.addEventListener('click', function () {
+			missionButton.addEventListener('click', function (event) {
 				startMission(event.target.getAttribute('data-mission'));
 			});
 			missionButton.className += " btn-info";

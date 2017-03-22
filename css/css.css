@@ -99,6 +99,7 @@ body {
 .selected {
 	z-index:100;
 	border: #04ff00 3px ridge;
+	box-sizing: content-box;
 }
 
 .achievements-div, .campaigns-div, .overflow {
