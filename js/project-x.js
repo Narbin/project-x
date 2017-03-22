@@ -70,7 +70,7 @@ ontouch(document.getElementsByClassName(`panel-body`)[0], function (evt, dir, ph
 		changeTileWith(`left`);
 	} else if (swipetype === 'right') {
 		changeTileWith(`right`);
-	} else if (swipetype === 'top') {
+	} else if (swipetype === 'up') {
 		changeTileWith(`up`);
 	} else if (swipetype === 'down') {
 		changeTileWith(`down`);
