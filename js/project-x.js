@@ -1115,10 +1115,11 @@ function checkAllTasks() {
 				});
 			} else {
 				if (profile.campaign[newBoard.mission].condition <= profile.actualStatistics.points) {
-					profile.totalStatistics.completedGames[0] += 1;
+					if (!profile.campaign[newBoard.mission + 1].completed) {
+						profile.totalStatistics.completedGames[0] += 1;
+					}
 					profile.campaign[newBoard.mission].completed = true;
 					profile.campaign[newBoard.mission + 1].available = true;
-					profile.totalStatistics.completedMissions[0] += 1;
 					newBoard.mission = null;
 					document.getElementById('gainedPoints').innerHTML = '0';
 					toggleModal(`levelCompleted`);
