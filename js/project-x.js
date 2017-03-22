@@ -64,7 +64,7 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 
 ontouch(document.getElementsByClassName(`panel-body`)[0], function (evt, dir, phase, swipetype, distance) {
 	if (dir === 'none' && phase === 'start') {
-		whatTileWasClicked(event);
+		whatTileWasClicked(evt);
 	}
 	if (swipetype === 'left') {
 		changeTileWith(`left`);
