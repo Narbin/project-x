@@ -98,7 +98,7 @@ body {
 
 .selected {
 	z-index:100;
-    animation: selectedDiv 2s ease infinite; 
+	border: #04ff00 3px ridge;
 }
 
 .achievements-div, .campaigns-div, .overflow {
@@ -214,34 +214,6 @@ body {
 	display: inline-flex;
 }
 
-@keyframes selectedDiv { 
-    0%{
-    	box-shadow: 
-    	cyan 0px 3px 3px -1px,
-    	red 0px -3px 3px -1px;
-    }
-    25%{
-    	box-shadow: 
-    	cyan 3px 0px 3px -1px,
-    	red -3px 0px 3px -1px;
-    }
-    50%{
-    	box-shadow: 
-    	cyan 0px -3px 3px -1px,
-    	red 0px 3px 3px -1px;
-    }
-    75%{
-    	box-shadow: 
-    	cyan -3px 0px 3px -1px,
-    	red 3px 0px 3px -1px;
-    }
-    100%{
-    	box-shadow: 
-    	cyan 0px 3px 3px -1px,
-    	red 0px -3px 3px -1px;
-    }
-}
-
 .table > tr:nth-child(odd) {
 	background-color: rgba(136, 255, 250, 0.5);
 }
@@ -251,29 +223,22 @@ body {
 }
 
 .hint {
-	background: linear-gradient(270deg, #ff0000, #0600ff);
-	background-size: 400% 400%;
-	border-radius: 15px;
-
-	-webkit-animation: hintAnim 3s ease infinite;
-	-moz-animation: hintAnim 3s ease infinite;
-	animation: hintAnim 3s ease infinite;
+	-webkit-animation: hintAnim 1s ease infinite alternate;
+	-moz-animation: hintAnim 1s ease infinite alternate;
+	animation: hintAnim 1s ease infinite alternate;
 }
 
 @-webkit-keyframes hintAnim {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+    0%{transform: scale(1)}
+    100%{transform: scale(.8)}
 }
 @-moz-keyframes hintAnim {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+    0%{transform: scale(1)}
+    100%{transform: scale(.8)}
 }
 @keyframes hintAnim { 
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+    0%{transform: scale(1)}
+    100%{transform: scale(.8)}
 }
 
 .noMove {
