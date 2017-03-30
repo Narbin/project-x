@@ -141,8 +141,9 @@ function moveDownTile(firstTileY, firstTileX) {
 		i += 1;
 	}
 	setTimeout(function () {
-		newBoard.generateNewTiles();
-	}, 300);
+		newBoard.deleteTiles();
+	}, 200);
+	
 }
 
 function setMinHeight() {
@@ -646,13 +647,9 @@ class Board {
 		return this;
 	}
 
-	deleteTiles() {
+	hideTiles() {
 		var array = this.arrayOfTiles,
 			tile = document.getElementsByClassName('tile');
-		function deleteT(tileK) {
-			tileK.src = ``;
-			tileK.parentNode.removeChild(tileK);
-		}
 		for (var i = 0; i < this.size; i += 1) {
 			for (var j = 0; j < this.size; j += 1) {
 				if (array[i][j].toDelete) {
@@ -660,16 +657,37 @@ class Board {
 						if (parseInt(tile[k].getAttribute(`data-x`), 10) === j && parseInt(tile[k].getAttribute(`data-y`), 10) === i) {
 							TweenLite.to(tile[k], 0.2, {
 								opacity: 0,
-								onComplete: deleteT,
-								onCompleteParams: [tile[k]]
+								onComplete: function () {
+									newBoard.findClearTiles();
+									newBoard.setClearTiles();
+								}
 							});
 						}
 					}
-					array[i][j].toDelete = false;
 					array[i][j].type = `clear`;
 				}
 			}
 		}
+		return this;
+	}
+
+	deleteTiles() {
+		var array = this.arrayOfTiles,
+			tile = document.getElementsByClassName('tile');
+		for (var i = 0; i < this.size; i += 1) {
+			for (var j = 0; j < this.size; j += 1) {
+				if (array[i][j].toDelete) {
+					for (var k = 0; k < tile.length; k += 1) {
+						if (parseInt(tile[k].getAttribute(`data-x`), 10) === j && parseInt(tile[k].getAttribute(`data-y`), 10) === i) {
+							tile[k].src = ``;
+							tile[k].parentNode.removeChild(tile[k]);
+						}
+					}
+					array[i][j].toDelete = false;
+				}
+			}
+		}
+		this.generateNewTiles();
 		return this;
 	}
 
@@ -878,9 +896,7 @@ function engine() {
 		
 		newBoard.countFoundedTiles()
 			.addPointsToProfile()
-			.deleteTiles()
-			.findClearTiles()
-			.setClearTiles();
+			.hideTiles();
 		refreshAmount(`points`, profile.actualStatistics.points);
 
 		profile.actualStatistics.combo += 1;
