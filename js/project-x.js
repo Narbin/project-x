@@ -45,6 +45,7 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 				generateTasksDOM();
 			}
 			toggleModal(`board`);
+			setMinHeight();
 			launchIntoFullscreen(document.documentElement);
 		} else if (event.target.getAttribute('data-arcade')) {
 			if (typeof newBoard === 'undefined') {
@@ -187,8 +188,8 @@ function changeTilesPosition(tile) {
 				distanseX,
 				distanseY;
 
-			distanseX = fromTop - toTop;
-			distanseY = fromLeft - toLeft;
+			distanseY = fromTop - toTop;
+			distanseX = fromLeft - toLeft;
 
 			tempTile = newBoard.arrayOfTiles[y2][x2];
 			newBoard.arrayOfTiles[y2][x2] = newBoard.arrayOfTiles[y1][x1];
@@ -201,20 +202,20 @@ function changeTilesPosition(tile) {
 				newBoard.arrayOfTiles[y2][x2] = tempTile;
 
 				TweenLite.to(tile, 0.2, {
-					left: `+=${distanseY}`,
-					top: `+=${distanseX}`
+					x:`+=${distanseX}`,
+					y:`+=${distanseY}`,
 				});
 				TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
-					left: `-=${distanseY}`,
-					top: `-=${distanseX}`,
+					x:`-=${distanseX}`, 
+					y:`-=${distanseY}`,
 					onComplete: function () {
 						TweenLite.to(tile, 0.2, {
-							left: `-=${distanseY}`,
-							top: `-=${distanseX}`,
+							x:`-=${distanseX}`, 
+							y:`-=${distanseY}`,
 						});
 						TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
-							left: `+=${distanseY}`,
-							top: `+=${distanseX}`,
+							x:`+=${distanseX}`,
+							y:`+=${distanseY}`,
 						});
 						newBoard.alreadyTileSelected = '';
 						newBoard.ableToSelect = true;
@@ -228,18 +229,24 @@ function changeTilesPosition(tile) {
 				newBoard.alreadyTileSelected.setAttribute('data-y', `${y1}`);
 
 				TweenLite.to(tile, 0.2, {
-					left: `+=${distanseY}`,
-					top: `+=${distanseX}`,
+					x: `+=${distanseX}`,
+					y: `+=${distanseY}`,
 					onComplete: function () {
-						tile.style.top = '0px';
-						tile.style.left = '0px';
+						TweenLite.to(tile, 0, {
+							x: 0,
+							y: 0,
+						});
 					}
 				});
 
 				TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
-					left: `-=${distanseY}`,
-					top: `-=${distanseX}`,
+					x: `-=${distanseX}`,
+					y: `-=${distanseY}`,
 					onComplete: function () {
+						TweenLite.to(newBoard.alreadyTileSelected, 0, {
+							x: 0,
+							y: 0,
+						});
 						newBoard.alreadyTileSelected.style.top = '0px';
 						newBoard.alreadyTileSelected.style.left = '0px';
 						parentFirstTile.replaceChild(childParentSecondTile, childParentFirstTile);
@@ -261,7 +268,6 @@ function changeTilesPosition(tile) {
 }
 
 function selectTileDOM(event) {
-	setMinHeight();
 	var hintDiv = document.getElementsByClassName('hint')[0];
 	if (hintDiv) {
 		hintDiv.classList.toggle('hint');
@@ -645,7 +651,6 @@ class Board {
 			tile = document.getElementsByClassName('tile');
 		function deleteT(tileK) {
 			tileK.src = ``;
-			tileK.className = `col-xs-2 no-padding`;
 			tileK.parentNode.removeChild(tileK);
 		}
 		for (var i = 0; i < this.size; i += 1) {
@@ -654,7 +659,7 @@ class Board {
 					for (var k = 0; k < tile.length; k += 1) {
 						if (parseInt(tile[k].getAttribute(`data-x`), 10) === j && parseInt(tile[k].getAttribute(`data-y`), 10) === i) {
 							TweenLite.to(tile[k], 0.2, {
-								opacity: `0`,
+								opacity: 0,
 								onComplete: deleteT,
 								onCompleteParams: [tile[k]]
 							});
@@ -1056,6 +1061,7 @@ function startMission(id) {
 	}
 	newBoard.mission = id;
 	toggleModal(`board`);
+	setMinHeight();
 	launchIntoFullscreen(document.documentElement);
 }
 
