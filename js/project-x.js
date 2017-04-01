@@ -202,21 +202,25 @@ function changeTilesPosition(tile) {
 				newBoard.arrayOfTiles[y1][x1] = newBoard.arrayOfTiles[y2][x2];
 				newBoard.arrayOfTiles[y2][x2] = tempTile;
 
-				TweenLite.to(tile, 0.2, {
+				TweenLite.to(tile, 0.4, {
 					x:`+=${distanseX}`,
 					y:`+=${distanseY}`,
+					ease: Back.easeInOut
 				});
-				TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
+				TweenLite.to(newBoard.alreadyTileSelected, 0.4, {
 					x:`-=${distanseX}`, 
 					y:`-=${distanseY}`,
+					ease: Back.easeInOut,
 					onComplete: function () {
-						TweenLite.to(tile, 0.2, {
+						TweenLite.to(tile, 0.4, {
 							x:`-=${distanseX}`, 
 							y:`-=${distanseY}`,
+							ease: Back.easeInOut
 						});
-						TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
+						TweenLite.to(newBoard.alreadyTileSelected, 0.4, {
 							x:`+=${distanseX}`,
 							y:`+=${distanseY}`,
+							ease: Back.easeInOut
 						});
 						newBoard.alreadyTileSelected = '';
 						newBoard.ableToSelect = true;
@@ -229,9 +233,10 @@ function changeTilesPosition(tile) {
 				newBoard.alreadyTileSelected.setAttribute('data-x', `${x1}`);
 				newBoard.alreadyTileSelected.setAttribute('data-y', `${y1}`);
 
-				TweenLite.to(tile, 0.2, {
+				TweenLite.to(tile, 0.4, {
 					x: `+=${distanseX}`,
 					y: `+=${distanseY}`,
+					ease: Quart.easeInOut,
 					onComplete: function () {
 						TweenLite.to(tile, 0, {
 							x: 0,
@@ -240,9 +245,10 @@ function changeTilesPosition(tile) {
 					}
 				});
 
-				TweenLite.to(newBoard.alreadyTileSelected, 0.2, {
+				TweenLite.to(newBoard.alreadyTileSelected, 0.4, {
 					x: `-=${distanseX}`,
 					y: `-=${distanseY}`,
+					ease: Quart.easeInOut,
 					onComplete: function () {
 						TweenLite.to(newBoard.alreadyTileSelected, 0, {
 							x: 0,
@@ -655,8 +661,9 @@ class Board {
 				if (array[i][j].toDelete) {
 					for (var k = 0; k < tile.length; k += 1) {
 						if (parseInt(tile[k].getAttribute(`data-x`), 10) === j && parseInt(tile[k].getAttribute(`data-y`), 10) === i) {
-							TweenLite.to(tile[k], 0.2, {
+							TweenLite.to(tile[k], 0.4, {
 								opacity: 0,
+								ease: Cubic.easeOut,
 								onComplete: function () {
 									newBoard.findClearTiles();
 									newBoard.setClearTiles();
@@ -735,7 +742,8 @@ class Board {
 					creatingImg.style.opacity = '0';
 					parentOfTile[k].appendChild(creatingImg);
 
-					TweenLite.to(creatingImg, 0.2, {
+					TweenLite.to(creatingImg, 0.4, {
+						ease: Cubic.easeOut,
 						opacity: `1`
 					});
 
