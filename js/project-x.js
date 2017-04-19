@@ -142,8 +142,7 @@ function moveDownTile(firstTileY, firstTileX) {
 	}
 	setTimeout(function () {
 		newBoard.deleteTiles();
-	}, 200);
-	
+	}, 100);
 }
 
 function setMinHeight() {
@@ -712,6 +711,7 @@ class Board {
 	}
 
 	setClearTiles() {
+
 		var objLength = this.clearTilesObj.length;
 
 		for (var i = 0; i < objLength; i += 1) {
@@ -911,7 +911,7 @@ function engine() {
 
 		setTimeout(function () {
 			engine();
-		}, 550);
+		}, 600);
 	} else {
 		if (newBoard.arcadeMode.condition) {
 			checkArcadeCondition();
