@@ -363,10 +363,10 @@ class Profile {
 			completedGames: [0, 'Ilość zakończonych misji:'],
 			maxCombo: [0, 'Największy combos:'],
 			timeInGame: [0, 'Czas w grze:'],
-			arcadeFirst: [0, 'Najwięcej punktów w 10 turach:', 10],
-			arcadeSecond: [0, 'Najwięcej punktów w 20 turach:', 20],
-			arcadeThird: [0, 'Najwięcej punktów w 50 turach:', 50],
-			arcadeFourth: [0, 'Najwięcej punktów w 100 turach:', 100],
+			arcade5: [0, 'Najwięcej punktów w 5 turach:', 5],
+			arcade10: [0, 'Najwięcej punktów w 10 turach:', 10],
+			arcade15: [0, 'Najwięcej punktów w 15 turach:', 15],
+			arcade20: [0, 'Najwięcej punktów w 20 turach:', 20],
 			completedMissions: [0, 'Ilość wykonanych misji kampanii']
 		};
 		this.campaign = [ ];
