@@ -64,6 +64,7 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 }
 
 ontouch(document.getElementsByClassName(`panel-body`)[0], function (evt, dir, phase, swipetype, distance) {
+
 	if (dir === 'none' && phase === 'start') {
 		whatTileWasClicked(evt);
 	}
@@ -83,7 +84,7 @@ document.getElementsByClassName(`panel-body`)[0].addEventListener('click', funct
 });
 
 function changeTileWith(direction) {
-	if (newBoard.alreadyTileSelected) {
+	if (newBoard.alreadyTileSelected && newBoard.ableToSelect) {
 		var x = parseInt(newBoard.alreadyTileSelected.getAttribute(`data-x`), 10),
 			y = parseInt(newBoard.alreadyTileSelected.getAttribute(`data-y`), 10);
 		switch (direction) {
