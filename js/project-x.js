@@ -26,9 +26,8 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 					generateArcadeInfoDOM(temp[0]);
 					launchIntoFullscreen(document.documentElement);
 				} else if (newBoard.mission !== null) {
-					console.log('wtf')
 					startMission(newBoard.mission);
-				} else {
+				} else if (newBoard.randMission){
 					var temp = newBoard.randMission;
 					if (typeof newBoard === 'undefined') {
 						newBoard = new Board(8, `gems`);
@@ -46,7 +45,7 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 				}
 
 		} else {
-			if(newBoard) {
+			if(event.target.getAttribute('data-modal') === 'modeMenu' && newBoard) {
 				newBoard.arcadeMode.condition = 0;
 				newBoard.arcadeMode.type = '';
 				newBoard.randMission = '';
