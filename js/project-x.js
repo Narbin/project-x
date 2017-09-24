@@ -473,8 +473,11 @@ class Profile {
 			this.campaign.push(new CampaignMisson(16500, [[2, 350]]));
 			this.campaign.push(new CampaignMisson(17000, [[4, 350]]));
 			this.campaign.push(new CampaignMisson(25000, [[0, 250], [1, 250], [2, 250], [3, 250], [4, 250], [5, 250]]));
-
-
+			this.campaign.push(new CampaignMisson(33333, [[0, 333], [1, 333], [2, 333], [3, 333], [4, 333], [5, 333]]));
+			this.campaign.push(new CampaignMisson(35000, [[0, 350], [1, 350], [2, 350], [3, 350], [4, 350], [5, 350]]));
+			this.campaign.push(new CampaignMisson(45678, [[0, 456], [1, 456], [2, 456], [3, 456], [4, 456], [5, 456]]));
+			this.campaign.push(new CampaignMisson(12345, [[0, 678], [1, 901], [2, 234], [3, 567], [4, 890], [5, 123]]));
+			this.campaign.push(new CampaignMisson(100000, [[0, 1000], [1, 1000], [2, 1000], [3, 1000], [4, 1000], [5, 1000]]));
 		}
 		this.campaign[0].available = true;
 	}
