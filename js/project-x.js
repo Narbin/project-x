@@ -14,11 +14,48 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 			} else if (event.target.getAttribute('data-modal') === `campaignModal`) {
 				showCampaignDOM();
 				toggleModal(`${event.target.getAttribute('data-modal')}`);
-			} else {
-				toggleModal(`${event.target.getAttribute('data-modal')}`);
-				exitFullscreen();
+			} else if (event.target.getAttribute('data-modal') === `playAgain`) {
+				if (newBoard.arcadeMode.type) {
+					var temp = [newBoard.arcadeMode.type, newBoard.arcadeMode.condition];
+					resetActualGame();
+					newBoard = new Board(8, `gems`);
+					newBoard.arcadeMode.type = temp[0];
+					newBoard.arcadeMode.condition = temp[1];
+					toggleModal(`board`);
+					setMinHeight();
+					generateArcadeInfoDOM(temp[0]);
+					launchIntoFullscreen(document.documentElement);
+				} else if (newBoard.mission !== null) {
+					console.log('wtf')
+					startMission(newBoard.mission);
+				} else {
+					var temp = newBoard.randMission;
+					if (typeof newBoard === 'undefined') {
+						newBoard = new Board(8, `gems`);
+						generateRandomTasks(temp);
+						generateTasksDOM();
+					} else {
+						resetActualGame();
+						newBoard = new Board(8, `gems`);
+						generateRandomTasks(temp);
+						generateTasksDOM();
+					}
+					toggleModal(`board`);
+					setMinHeight();
+					launchIntoFullscreen(document.documentElement);
+				}
+
+		} else {
+			if(newBoard) {
+				newBoard.arcadeMode.condition = 0;
+				newBoard.arcadeMode.type = '';
+				newBoard.randMission = '';
+				newBoard.mission = null;
 			}
-		} else if (event.target.getAttribute('data-mission')) {
+			toggleModal(`${event.target.getAttribute('data-modal')}`);
+			exitFullscreen();
+		}
+	} else if (event.target.getAttribute('data-mission')) {
 			startMission(event.target.getAttribute('data-mission'));
 		} else if (event.target.getAttribute('data-resetBoard')) {
 			newBoard.clearBoardDOM();
@@ -473,6 +510,7 @@ class Board {
 		this.mission = null;
 		this.maxTurns = 0;
 		this.hintTimerId = 0;
+		this.randMission = '';
 		this.createTiles();
 		this.shuffleBoard();
 		this.setImageSrc();
@@ -620,34 +658,10 @@ class Board {
 	addPointsToProfile() {
 		var len = this.typesOfTiles.length - 1;
 		for (var i = 0; i <= len; i += 1) {
-			switch (this.typesOfTiles[i]) {
-				case 3:
-				case 6:
-				case 9:
-					profile.actualStatistics.points += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * profile.actualStatistics.combo);
-					profile.totalStatistics.points[0] += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * profile.actualStatistics.combo);
-					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
-					break;
-				case 4:
-				case 8:
-					profile.actualStatistics.points += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2 + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) * profile.actualStatistics.combo);
-					profile.totalStatistics.points[0] += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2 + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) * profile.actualStatistics.combo);
-					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
-					break;
-				case 5:
-				case 10:
-					profile.actualStatistics.points += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 3 + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 3) * profile.actualStatistics.combo);
-					profile.totalStatistics.points[0] += (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 3 + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 3) * profile.actualStatistics.combo);
-					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
-					break;
-				case 7:
-					profile.actualStatistics.points += ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) * profile.actualStatistics.combo);
-					profile.totalStatistics.points[0] += ((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) + (((this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) + (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * 2) * profile.actualStatistics.combo);
-					profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
-					break;
-				default:
-					break;
-			}
+			var increase = (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * (1 + profile.actualStatistics.combo);
+			profile.actualStatistics.points += increase;
+			profile.totalStatistics.points[0] += increase;
+			profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
 		}
 		this.typesOfTiles = [0, 0, 0, 0, 0, 0];
 		return this;
@@ -1153,7 +1167,7 @@ function checkAllTasks() {
 						profile.campaign[newBoard.mission].completed = true;
 						profile.campaign[newBoard.mission + 1].available = true;
 					}
-					newBoard.mission = null;
+					//newBoard.mission = null;
 					document.getElementById('gainedPoints').innerHTML = '0';
 					toggleModal(`levelCompleted`);
 					refreshAmount('gainedPoints', profile.actualStatistics.points, 2500, function () {
@@ -1219,6 +1233,7 @@ function generateRandomTasks(difficulty) {
 		k = 0,
 		randomAmountOfTasks;
 	shuffle(randomArr);
+	newBoard.randMission = difficulty;
 	switch (difficulty) {
 		case 'easy':
 			randomAmountOfTasks = Math.floor(Math.random() * 2 + 1);
@@ -1279,8 +1294,8 @@ function checkArcadeCondition() {
 			resetActualGame();
 		});
 		profile.totalStatistics.completedGames[0] += 1;
-		newBoard.arcadeMode.condition = 0;
-		newBoard.arcadeMode.type = '';
+		//newBoard.arcadeMode.condition = 0;
+		//newBoard.arcadeMode.type = '';
 	}
 }
 
