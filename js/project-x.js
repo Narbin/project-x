@@ -472,12 +472,12 @@ class Profile {
 			this.campaign.push(new CampaignMisson(16000, [[3, 111], [2, 111], [1, 111], [5, 111], [4, 111], [0, 111]]));
 			this.campaign.push(new CampaignMisson(16500, [[2, 350]]));
 			this.campaign.push(new CampaignMisson(17000, [[4, 350]]));
-			this.campaign.push(new CampaignMisson(5655, [[0, 91], [1, 82], [2, 73], [3, 64], [4, 55], [5, 46]]));
-			this.campaign.push(new CampaignMisson(6235, [[0, 66], [1, 77], [2, 66], [3, 77], [4, 66], [5, 77]]));
-			this.campaign.push(new CampaignMisson(6611, [[0, 36], [1, 66], [2, 33], [3, 63], [4, 93], [5, 96]]));
-			this.campaign.push(new CampaignMisson(7355, [[0, 15], [1, 51], [2, 15], [3, 51], [4, 15], [5, 51]]));
-			this.campaign.push(new CampaignMisson(8888, [[0, 88], [1, 88], [2, 88], [3, 88], [4, 88], [5, 88]]));
-			this.campaign.push(new CampaignMisson(9630, [[0, 96], [1, 30], [2, 96], [3, 30], [4, 96], [5, 30]]));
+			this.campaign.push(new CampaignMisson(4655, [[0, 91], [1, 82], [2, 73], [3, 64], [4, 55], [5, 46]]));
+			this.campaign.push(new CampaignMisson(5235, [[0, 66], [1, 77], [2, 66], [3, 77], [4, 66], [5, 77]]));
+			this.campaign.push(new CampaignMisson(5611, [[0, 111], [1, 123], [2, 134], [3, 145], [4, 156], [5, 167]]));
+			this.campaign.push(new CampaignMisson(5355, [[0, 150], [1, 150], [2, 150], [3, 150], [4, 150], [5, 150]]));
+			this.campaign.push(new CampaignMisson(6888, [[0, 170], [1, 170], [2, 170], [3, 170], [4, 170], [5, 170]]));
+			this.campaign.push(new CampaignMisson(6630, [[0, 200], [1, 200], [2, 200], [3, 200], [4, 200], [5, 200]]));
 		}
 		this.campaign[0].available = true;
 	}
