@@ -14,7 +14,7 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 			} else if (event.target.getAttribute('data-modal') === `campaignModal`) {
 				showCampaignDOM();
 				toggleModal(`${event.target.getAttribute('data-modal')}`);
-			} else if (event.target.getAttribute('data-modal') === `playAgain`) {
+			} else if (event.target.getAttribute('data-modal') === `play`) {
 				if (newBoard.arcadeMode.type) {
 					var temp = [newBoard.arcadeMode.type, newBoard.arcadeMode.condition];
 					resetActualGame();
@@ -26,7 +26,7 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 					generateArcadeInfoDOM(temp[0]);
 					launchIntoFullscreen(document.documentElement);
 				} else if (newBoard.mission !== null) {
-					startMission(newBoard.mission);
+					startMission(1 + newBoard.mission);
 				} else if (newBoard.randMission){
 					var temp = newBoard.randMission;
 					if (typeof newBoard === 'undefined') {
