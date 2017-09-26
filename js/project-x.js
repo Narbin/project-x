@@ -774,7 +774,7 @@ class Board {
 			var increase = (this.typesOfTiles[i] * this.arrayOfTiles[0][0].points) * (1 + profile.actualStatistics.combo);
 			profile.actualStatistics.points += increase;
 			profile.totalStatistics.points[0] += increase;
-			profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i];
+			profile.actualStatistics.typesOfTiles[i] += this.typesOfTiles[i] * (1 + profile.actualStatistics.combo);
 		}
 		this.typesOfTiles = [0, 0, 0, 0, 0, 0];
 		return this;
