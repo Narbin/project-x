@@ -26,7 +26,11 @@ for (var i = 0; i <= document.getElementsByClassName('btn').length - 1; i += 1) 
 					generateArcadeInfoDOM(temp[0]);
 					launchIntoFullscreen(document.documentElement);
 				} else if (newBoard.mission !== null) {
-					startMission(1 + newBoard.mission);
+					if(1 + newBoard.mission <= profile.campaign.length - 1) {
+						startMission(1 + newBoard.mission);
+					} else {
+						startMission(newBoard.mission);
+					}
 				} else if (newBoard.randMission){
 					var temp = newBoard.randMission;
 					if (typeof newBoard === 'undefined') {
@@ -1145,10 +1149,13 @@ function checkAllTasks() {
 				if (profile.campaign[newBoard.mission].condition <= profile.actualStatistics.points) {
 					if (profile.campaign[newBoard.mission].completed) {
 						profile.totalStatistics.completedGames[0] += 1;
-					} else {
+					} else if(profile.campaign.length - 1 >= newBoard.mission + 1){
 						profile.totalStatistics.completedMissions[0] += 1;
 						profile.campaign[newBoard.mission].completed = true;
 						profile.campaign[newBoard.mission + 1].available = true;
+					} else {
+						profile.totalStatistics.completedMissions[0] += 1;
+						profile.campaign[newBoard.mission].completed = true;
 					}
 					//newBoard.mission = null;
 					document.getElementById('gainedPoints').innerHTML = '0';
